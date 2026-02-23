@@ -113,9 +113,18 @@ class ContratoTemplate(models.Model):
 
             record.available_variables = "\n".join([f"{{{{{v}}}}}" for v in vars_list])
 
+    def _get_base_path(self):
+        """Automatically detect the context directory relative to this file."""
+        # This file is in: extra_addons/contratos/models/contrato_template.py
+        # We need: extra_addons/context
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        # Go up 2 levels: models -> contratos -> extra_addons
+        extra_addons_path = os.path.abspath(os.path.join(current_dir, "..", ".."))
+        return os.path.join(extra_addons_path, "context")
+
     def _get_filesystem_content(self):
         """Helper to get and format the current filesystem content for comparison."""
-        base_path = "c:\\Users\\lilia\\Desktop\\Projects\\Odoo\\instancias\\odoo17_comercial2\\extra_addons\\context\\"
+        base_path = self._get_base_path()
         templates = {
             "mipyme": "contrato marco Mipyme",
             "tcp": "contrato marco TCP.txt",
@@ -338,7 +347,7 @@ class ContratoTemplate(models.Model):
 
     def action_import_from_filesystem(self):
         """Utility to force import/overwrite all templates from the known filesystem path."""
-        base_path = "c:\\Users\\lilia\\Desktop\\Projects\\Odoo\\instancias\\odoo17_comercial2\\extra_addons\\context\\"
+        base_path = self._get_base_path()
         templates = {
             "mipyme": "contrato marco Mipyme",
             "tcp": "contrato marco TCP.txt",
@@ -379,7 +388,7 @@ class ContratoTemplate(models.Model):
 
     def action_reset_from_filesystem(self):
         """Force overwrite this template with the content from the filesystem."""
-        base_path = "c:\\Users\\lilia\\Desktop\\Projects\\Odoo\\instancias\\odoo17_comercial2\\extra_addons\\context\\"
+        base_path = self._get_base_path()
         templates = {
             "mipyme": "contrato marco Mipyme",
             "tcp": "contrato marco TCP.txt",
