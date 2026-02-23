@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_contrato_template_tree" model="ir.ui.view">
+        <field name="name">contrato.template.tree</field>
+        <field name="model">contrato.template</field>
+        <field name="arch" type="xml">
+            <tree string="Contract Templates" create="0" delete="1">
+                <header>
+                    <button name="action_import_from_filesystem" string="Import All from Filesystem" type="object" class="oe_highlight"/>
+                </header>
+                <field name="name"/>
+                <field name="type"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_contrato_template_form" model="ir.ui.view">
+        <field name="name">contrato.template.form</field>
+        <field name="model">contrato.template</field>
+        <field name="arch" type="xml">
+            <form string="Contract Template" create="0" delete="1">
+                <header>
+                    <button name="action_reset_from_filesystem" string="Reset from Filesystem" type="object" class="btn-warning" confirm="Are you sure you want to overwrite this template with the original file content?"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name" string="Template Name"/>
+                        <h1>
+                            <field name="name" placeholder="e.g. MiPyme Master Contract Template"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="type" readonly="id"/>
+                        </group>
+                        <group>
+                            <field name="sequence"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="content" string="Content">
+                            <div style="max-width: 800px; margin: 0 auto; border: 1px solid #dee2e6; padding: 40px; background: white; min-height: 800px; overflow-wrap: break-word; font-family: 'Times New Roman', Times, serif;">
+                                <field name="content" widget="html" options="{'style-inline': true}"/>
+                            </div>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_contrato_template_search" model="ir.ui.view">
+        <field name="name">contrato.template.search</field>
+        <field name="model">contrato.template</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="type"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_contrato_template" model="ir.actions.act_window">
+        <field name="name">Contract Templates</field>
+        <field name="res_model">contrato.template</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_contrato_template_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a new contract template
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_contrato_template"
+              name="Templates"
+              parent="menu_contrato_root"
+              action="action_contrato_template"
+              sequence="20"/>
+</odoo>

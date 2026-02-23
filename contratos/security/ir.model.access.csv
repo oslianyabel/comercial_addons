@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_contrato_marco_user,contrato.marco user,model_contrato_marco,base.group_user,1,1,1,1
+access_contrato_template,contrato.template,model_contrato_template,base.group_user,1,1,1,1

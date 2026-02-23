@@ -1,0 +1,268 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# * contratos
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 17.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-02-21 00:00+0000\n"
+"PO-Revision-Date: 2026-02-21 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#. module: contratos
+#: model:ir.model,name:contratos.model_contrato_marco
+msgid "Master Contract"
+msgstr "Contrato Marco"
+
+#. module: contratos
+#: sql_constraint:contratos.model_contrato_marco:name_unique
+msgid "The Contract Number must be unique. A contract with this number already exists."
+msgstr "El Número de Contrato debe ser único. Ya existe un contrato con este número."
+
+#. module: contratos
+#: model:ir.model.fields,field_description:contratos.field_contrato_marco__name
+msgid "Contract Number"
+msgstr "Número de Contrato"
+
+#. module: contratos
+#: model:ir.model.fields,field_description:contratos.field_contrato_marco__contract_name
+msgid "Name"
+msgstr "Nombre"
+
+#. module: contratos
+#: model:ir.model.fields,field_description:contratos.field_contrato_marco__partner_id
+msgid "Customer"
+msgstr "Cliente"
+
+#. module: contratos
+#: model:ir.model.fields,field_description:contratos.field_contrato_marco__representative_id
+msgid "Customer Representative"
+msgstr "Representante del Cliente"
+
+#. module: contratos
+#: model:ir.model.fields,field_description:contratos.field_contrato_marco__our_representative_id
+msgid "Our Representative"
+msgstr "Nuestro Representante"
+
+#. module: contratos
+#: model:ir.model.fields,field_description:contratos.field_contrato_marco__our_rep_decision_number
+msgid "Our Rep. Decision Number"
+msgstr "Número de Decisión (Nuestro Rep.)"
+
+#. module: contratos
+#: model:ir.model.fields,field_description:contratos.field_contrato_marco__our_rep_decision_date
+msgid "Our Rep. Decision Date"
+msgstr "Fecha de Decisión (Nuestro Rep.)"
+
+#. module: contratos
+#: model:ir.model.fields,field_description:contratos.field_contrato_marco__date
+msgid "Contract Date"
+msgstr "Fecha del Contrato"
+
+#. module: contratos
+#: model:ir.model.fields,field_description:contratos.field_contrato_marco__contract_type
+msgid "Contract Type"
+msgstr "Tipo de Contrato"
+
+#. module: contratos
+#: model:ir.model.fields,selection:contratos.field_contrato_marco__contract_type:empresa
+msgid "Company"
+msgstr "Empresa"
+
+#. module: contratos
+#: model:ir.model.fields,field_description:contratos.field_contrato_marco__file_number
+msgid "File Number"
+msgstr "Número de Archivo"
+
+#. module: contratos
+#: model:ir.model.fields,field_description:contratos.field_contrato_marco__start_date
+msgid "Start Date"
+msgstr "Fecha de Inicio"
+
+#. module: contratos
+#: model:ir.model.fields,field_description:contratos.field_contrato_marco__end_date
+msgid "End Date"
+msgstr "Fecha de Finalización"
+
+#. module: contratos
+#: model:ir.model.fields,field_description:contratos.field_contrato_marco__validity_date
+msgid "Validity Date"
+msgstr "Fecha de Validez"
+
+#. module: contratos
+#: model:ir.model.fields,field_description:contratos.field_contrato_marco__hco
+msgid "HCO"
+msgstr "HCO"
+
+#. module: contratos
+#: model:ir.model.fields,field_description:contratos.field_contrato_marco__state
+msgid "Status"
+msgstr "Estado"
+
+#. module: contratos
+#: model:ir.model.fields,selection:contratos.field_contrato_marco__state:pendiente
+msgid "Pending"
+msgstr "Pendiente"
+
+#. module: contratos
+#: model:ir.model.fields,selection:contratos.field_contrato_marco__state:firmado
+msgid "Signed"
+msgstr "Firmado"
+
+#. module: contratos
+#: model:ir.model.fields,field_description:contratos.field_contrato_marco__creation_date_auto
+msgid "Creation Date"
+msgstr "Fecha de Creación"
+
+#. module: contratos
+#: model:ir.model.fields,field_description:contratos.field_contrato_marco__modification_date_auto
+msgid "Last Modification"
+msgstr "Última Modificación"
+
+#. module: contratos
+#: model:ir.model.fields,field_description:contratos.field_contrato_marco__content
+msgid "Contract Content"
+msgstr "Contenido del Contrato"
+
+#. module: contratos
+#: model_terms:ir.ui.view,arch_db:contratos.view_contrato_marco_form
+msgid "Generate Content"
+msgstr "Generar Contenido"
+
+#. module: contratos
+#: model_terms:ir.ui.view,arch_db:contratos.view_contrato_marco_form
+msgid "Contract Ref."
+msgstr "Ref. de Contrato"
+
+#. module: contratos
+#: model_terms:ir.ui.view,arch_db:contratos.view_contrato_marco_form
+msgid "Contract Title"
+msgstr "Título del Contrato"
+
+#. module: contratos
+#: model_terms:ir.ui.view,arch_db:contratos.view_contrato_marco_form
+msgid "General Information"
+msgstr "Información General"
+
+#. module: contratos
+#: model_terms:ir.ui.view,arch_db:contratos.view_contrato_marco_form
+msgid "Dates and Signatures"
+msgstr "Fechas y Firmas"
+
+#. module: contratos
+#: model_terms:ir.ui.view,arch_db:contratos.view_contrato_marco_form
+msgid "Representation"
+msgstr "Representación"
+
+#. module: contratos
+#: model_terms:ir.ui.view,arch_db:contratos.view_contrato_marco_form
+msgid "Agreement/Decision"
+msgstr "Acuerdo/Decisión"
+
+#. module: contratos
+#: model_terms:ir.ui.view,arch_db:contratos.view_contrato_marco_form
+msgid "Traceability"
+msgstr "Trazabilidad"
+
+#. module: contratos
+#: model_terms:ir.ui.view,arch_db:contratos.view_contrato_marco_form
+msgid "Contract Content"
+msgstr "Contenido del Contrato"
+
+#. module: contratos
+#: model_terms:ir.ui.view,arch_db:contratos.view_contrato_marco_form
+msgid "File Ref."
+msgstr "Ref. Archivo"
+
+#. module: contratos
+#: model_terms:ir.ui.view,arch_db:contratos.view_contrato_marco_search
+msgid "Pending"
+msgstr "Pendiente"
+
+#. module: contratos
+#: model_terms:ir.ui.view,arch_db:contratos.view_contrato_marco_search
+msgid "Signed"
+msgstr "Firmado"
+
+#. module: contratos
+#: model_terms:ir.ui.view,arch_db:contratos.view_contrato_marco_search
+msgid "End Date"
+msgstr "Fecha de Finalización"
+
+#. module: contratos
+#: model_terms:ir.ui.view,arch_db:contratos.view_contrato_marco_search
+msgid "Group By"
+msgstr "Agrupar Por"
+
+#. module: contratos
+#: model_terms:ir.ui.view,arch_db:contratos.view_contrato_marco_search
+msgid "Customer"
+msgstr "Cliente"
+
+#. module: contratos
+#: model_terms:ir.ui.view,arch_db:contratos.view_contrato_marco_search
+msgid "Status"
+msgstr "Estado"
+
+#. module: contratos
+#: model_terms:ir.ui.view,arch_db:contratos.view_contrato_marco_search
+msgid "Contract Type"
+msgstr "Tipo de Contrato"
+
+#. module: contratos
+#: model:ir.actions.act_window,name:contratos.action_contrato_marco
+msgid "Master Contracts"
+msgstr "Contratos Marcos"
+
+#. module: contratos
+#: model:ir.ui.menu,name:contratos.menu_contrato_root
+msgid "Contracts"
+msgstr "Contratos"
+
+#. module: contratos
+#: model:ir.ui.menu,name:contratos.menu_contrato_marco
+msgid "Master Contracts"
+msgstr "Contratos Marcos"
+
+#. module: contratos
+#: code:addons/contratos/models/contrato.py:0
+#, python-format
+msgid "The contract cannot be generated because the following data is missing:\n\n- %s"
+msgstr "No se puede generar el contrato porque faltan los siguientes datos:\n\n- %s"
+
+#. module: contratos
+#: code:addons/contratos/models/contrato.py:0
+#, python-format
+msgid "Customer: Titular"
+msgstr "Cliente: Titular"
+
+#. module: contratos
+#: code:addons/contratos/models/contrato.py:0
+#, python-format
+msgid "Our Representative"
+msgstr "Nuestro Representante"
+
+#. module: contratos
+#: code:addons/contratos/models/contrato.py:0
+#, python-format
+msgid "Our Rep. Decision Number"
+msgstr "Número de Decisión (Nuestro Rep.)"
+
+#. module: contratos
+#: code:addons/contratos/models/contrato.py:0
+#, python-format
+msgid "Our Rep. Decision Date"
+msgstr "Fecha de Decisión (Nuestro Rep.)"
+
+#. module: contratos
+#: code:addons/contratos/models/contrato.py:0
+#, python-format
+msgid "Customer Representative"
+msgstr "Representante del Cliente"

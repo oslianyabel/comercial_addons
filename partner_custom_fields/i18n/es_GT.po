@@ -1,0 +1,162 @@
+#, python-format
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 17.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-02-21 12:55+0000\n"
+"PO-Revision-Date: 2026-02-21 12:55+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: es_GT\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: partner_custom_fields
+msgid "Organism"
+msgstr "Organismo"
+
+#. module: partner_custom_fields
+msgid "Classification"
+msgstr "Clasificación"
+
+#. module: partner_custom_fields
+msgid "Abbreviated Name"
+msgstr "Nombre Abreviado"
+
+#. module: partner_custom_fields
+msgid "Titular"
+msgstr "Titular"
+
+#. module: partner_custom_fields
+msgid "Abbreviated Name..."
+msgstr "Nombre Abreviado..."
+
+#. module: partner_custom_fields
+msgid "Name of the titular..."
+msgstr "Nombre del titular..."
+
+#. module: partner_custom_fields
+msgid "ID Card"
+msgstr "Carné de Identidad"
+
+#. module: partner_custom_fields
+msgid "11 digits..."
+msgstr "11 dígitos..."
+
+#. module: partner_custom_fields
+msgid "Represented by"
+msgstr "Representada por"
+
+#. module: partner_custom_fields
+msgid "Appointed by Agreement No"
+msgstr "Nombrado mediante el Acuerdo No"
+
+#. module: partner_custom_fields
+msgid "Appointment Date"
+msgstr "Fecha del nombramiento"
+
+#. module: partner_custom_fields
+msgid "Resolution"
+msgstr "Resolución"
+
+#. module: partner_custom_fields
+msgid "Creation Resolution Number"
+msgstr "Número de resolución de creación"
+
+#. module: partner_custom_fields
+msgid "Creation Resolution Date"
+msgstr "Fecha de resolución de creación"
+
+#. module: partner_custom_fields
+msgid "Issued by (Creation)"
+msgstr "Emitida por (Creación)"
+
+#. module: partner_custom_fields
+msgid "Signer's Resolution Number"
+msgstr "Número de resolución del firmante"
+
+#. module: partner_custom_fields
+msgid "Signer's Resolution Date"
+msgstr "Fecha de resolución del firmante"
+
+#. module: partner_custom_fields
+msgid "Issued by (Signer)"
+msgstr "Emitida por (Firmante)"
+
+#. module: partner_custom_fields
+msgid "Notary Deed Number"
+msgstr "Número de Escritura Notarial"
+
+#. module: partner_custom_fields
+msgid "Mercantile Register"
+msgstr "Inscrita en el Registro Mercantil"
+
+#. module: partner_custom_fields
+msgid "Volume"
+msgstr "Tomo"
+
+#. module: partner_custom_fields
+msgid "Page"
+msgstr "Folio"
+
+#. module: partner_custom_fields
+msgid "Sheet"
+msgstr "Hoja"
+
+#. module: partner_custom_fields
+msgid "Representative"
+msgstr "Representante"
+
+#. module: partner_custom_fields
+msgid "REEUP"
+msgstr "REEUP"
+
+#. module: partner_custom_fields
+msgid "NIT"
+msgstr "NIT"
+
+#. module: partner_custom_fields
+msgid "CUP Account"
+msgstr "Cuenta CUP"
+
+#. module: partner_custom_fields
+msgid "MLC Account"
+msgstr "Cuenta MLC"
+
+#. module: partner_custom_fields
+msgid "Bank Branch Number (CUP)"
+msgstr "Número de sucursal del banco en CUP"
+
+#. module: partner_custom_fields
+msgid "Bank Branch Number (MLC)"
+msgstr "Número de sucursal del banco en MLC"
+
+#. module: partner_custom_fields
+msgid "MiPyme Branch (CUP)"
+msgstr "Sucursal de MiPyme (CUP)"
+
+#. module: partner_custom_fields
+msgid "MiPyme Branch (MLC)"
+msgstr "Sucursal de MiPyme (MLC)"
+
+#. module: partner_custom_fields
+msgid "TCP Branch (CUP)"
+msgstr "Sucursal de TCP (CUP)"
+
+#. module: partner_custom_fields
+msgid "TCP Branch (MLC)"
+msgstr "Sucursal de TCP (MLC)"
+
+#. module: partner_custom_fields
+msgid "Bank"
+msgstr "Banco"
+
+#. module: partner_custom_fields
+msgid "Organisms"
+msgstr "Organismos"
+
+#. module: partner_custom_fields
+msgid "Name"
+msgstr "Nombre"

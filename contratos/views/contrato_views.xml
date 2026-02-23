@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_contrato_marco_form" model="ir.ui.view">
+        <field name="name">contrato.marco.form</field>
+        <field name="model">contrato.marco</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_generate_content" string="Generate Content" type="object" class="oe_highlight"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name" string="Contract Ref."/>
+                        <h1>
+                            <field name="name" placeholder="e.g. 001/2026" autocomplete="off"/>
+                        </h1>
+                        <label for="contract_name" string="Contract Title"/>
+                        <h2>
+                            <field name="contract_name" placeholder="Describe the contract..." autocomplete="off"/>
+                        </h2>
+                    </div>
+                    <group>
+                        <group string="General Information">
+                            <field name="partner_id"/>
+                            <field name="contract_type"/>
+                            <field name="file_number" string="File Ref." autocomplete="off"/>
+                            <field name="state" widget="radio" options="{'horizontal': true}"/>
+                            <field name="hco"/>
+                        </group>
+                        <group string="Dates and Signatures">
+                            <field name="date"/>
+                            <field name="start_date"/>
+                            <field name="end_date"/>
+                            <field name="validity_date"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Representation">
+                            <field name="representative_id"/>
+                            <field name="our_representative_id"/>
+                            <field name="our_rep_decision_number" string="Agreement/Decision" autocomplete="off"/>
+                            <field name="our_rep_decision_date"/>
+                        </group>
+                        <group string="Traceability">
+                            <field name="creation_date_auto"/>
+                            <field name="modification_date_auto"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Contract Content">
+                            <div style="max-width: 800px; margin: 0 auto; border: 1px solid #dee2e6; padding: 40px; background: white; min-height: 1000px; overflow-wrap: break-word; font-family: 'Times New Roman', Times, serif;">
+                                <field name="content" widget="html" options="{'style-inline': true}"/>
+                            </div>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_contrato_marco_tree" model="ir.ui.view">
+        <field name="name">contrato.marco.tree</field>
+        <field name="model">contrato.marco</field>
+        <field name="arch" type="xml">
+            <tree decoration-info="state == 'pendiente'" decoration-success="state == 'firmado'">
+                <field name="name"/>
+                <field name="contract_type"/>
+                <field name="contract_name"/>
+                <field name="partner_id"/>
+                <field name="our_representative_id"/>
+                <field name="date"/>
+                <field name="end_date"/>
+                <field name="state" widget="badge" decoration-info="state == 'pendiente'" decoration-success="state == 'firmado'"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_contrato_marco_search" model="ir.ui.view">
+        <field name="name">contrato.marco.search</field>
+        <field name="model">contrato.marco</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="contract_name"/>
+                <field name="partner_id"/>
+                <field name="file_number"/>
+                
+                <filter string="HCO" name="hco" domain="[('hco', '=', True)]"/>
+                <separator/>
+                <filter string="Pending" name="state_pendiente" domain="[('state', '=', 'pendiente')]"/>
+                <filter string="Signed" name="state_firmado" domain="[('state', '=', 'firmado')]"/>
+                <separator/>
+                <filter string="End Date" name="end_date" date="end_date"/>
+                
+                <group expand="0" string="Group By">
+                    <filter string="Customer" name="group_partner" context="{'group_by': 'partner_id'}"/>
+                    <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Contract Type" name="group_type" context="{'group_by': 'contract_type'}"/>
+                    <filter string="HCO" name="group_hco" context="{'group_by': 'hco'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_contrato_marco" model="ir.actions.act_window">
+        <field name="name">Master Contracts</field>
+        <field name="res_model">contrato.marco</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_contrato_marco_search"/>
+    </record>
+
+    <menuitem id="menu_contrato_root" name="Contracts" sequence="10" web_icon="contratos,static/description/icon.png"/>
+    <menuitem id="menu_contrato_marco" name="Master Contracts" parent="menu_contrato_root" action="action_contrato_marco" sequence="10"/>
+</odoo>

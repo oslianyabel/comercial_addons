@@ -1,0 +1,170 @@
+#, python-format
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 17.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-02-21 13:08+0000\n"
+"PO-Revision-Date: 2026-02-21 13:08+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: es_DO\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: contratos
+msgid "Master Contract"
+msgstr "Contrato Marco"
+
+#. module: contratos
+msgid "Contract Number"
+msgstr "Número de Contrato"
+
+#. module: contratos
+msgid "Contract Ref."
+msgstr "Ref. de Contrato"
+
+#. module: contratos
+msgid "Customer"
+msgstr "Cliente"
+
+#. module: contratos
+msgid "Customer Representative"
+msgstr "Representante del Cliente"
+
+#. module: contratos
+msgid "Our Representative"
+msgstr "Nuestro Representante"
+
+#. module: contratos
+msgid "Our Rep. Decision Number"
+msgstr "Número de Decisión (Nuestro Rep.)"
+
+#. module: contratos
+msgid "Our Rep. Decision Date"
+msgstr "Fecha de Decisión (Nuestro Rep.)"
+
+#. module: contratos
+msgid "Contract Date"
+msgstr "Fecha del Contrato"
+
+#. module: contratos
+msgid "Contract Type"
+msgstr "Tipo de Contrato"
+
+#. module: contratos
+msgid "Company"
+msgstr "Empresa"
+
+#. module: contratos
+msgid "Name"
+msgstr "Nombre"
+
+#. module: contratos
+msgid "Contract Title"
+msgstr "Título del Contrato"
+
+#. module: contratos
+msgid "File Number"
+msgstr "Número de Archivo"
+
+#. module: contratos
+msgid "File Ref."
+msgstr "Ref. Archivo"
+
+#. module: contratos
+msgid "Start Date"
+msgstr "Fecha de Inicio"
+
+#. module: contratos
+msgid "End Date"
+msgstr "Fecha de Finalización"
+
+#. module: contratos
+msgid "Validity Date"
+msgstr "Fecha de Validez"
+
+#. module: contratos
+msgid "HCO"
+msgstr "HCO"
+
+#. module: contratos
+msgid "Status"
+msgstr "Estado"
+
+#. module: contratos
+msgid "Pending"
+msgstr "Pendiente"
+
+#. module: contratos
+msgid "Signed"
+msgstr "Firmado"
+
+#. module: contratos
+msgid "Creation Date"
+msgstr "Fecha de Creación"
+
+#. module: contratos
+msgid "Last Modification"
+msgstr "Última Modificación"
+
+#. module: contratos
+msgid "General Information"
+msgstr "Información General"
+
+#. module: contratos
+msgid "Dates and Signatures"
+msgstr "Fechas y Firmas"
+
+#. module: contratos
+msgid "Representation"
+msgstr "Representación"
+
+#. module: contratos
+msgid "Agreement/Decision"
+msgstr "Acuerdo/Decisión"
+
+#. module: contratos
+msgid "Traceability"
+msgstr "Trazabilidad"
+
+#. module: contratos
+msgid "Contract Content"
+msgstr "Contenido del Contrato"
+
+#. module: contratos
+msgid "Generate Content"
+msgstr "Generar Contenido"
+
+#. module: contratos
+msgid "Contracts"
+msgstr "Contratos"
+
+#. module: contratos
+msgid "Master Contracts"
+msgstr "Contratos Marcos"
+
+#. module: contratos
+msgid "Search"
+msgstr "Buscar"
+
+#. module: contratos
+msgid "Group By"
+msgstr "Agrupar Por"
+
+#. module: contratos
+msgid "The contract cannot be generated because the following data is missing:\n\n- %s"
+msgstr "No se puede generar el contrato porque faltan los siguientes datos:\n\n- %s"
+
+#. module: contratos
+msgid "e.g. 001/2026"
+msgstr "Ej. 001/2026"
+
+#. module: contratos
+msgid "Describe the contract..."
+msgstr "Describa el contrato..."
+
+#. module: contratos
+msgid "Customer: Titular"
+msgstr "Cliente: Titular"

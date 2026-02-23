@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_contrato_marco" model="ir.actions.report">
+        <field name="name">Imprimir Contrato</field>
+        <field name="model">contrato.marco</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">contratos.report_contrato_marco_template</field>
+        <field name="report_file">contratos.report_contrato_marco_template</field>
+        <field name="print_report_name">'Contrato - %s' % (object.name)</field>
+        <field name="binding_model_id" ref="model_contrato_marco"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_contrato_marco_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <div style="text-align: justify; font-size: 12px;">
+                            <t t-out="o.content"/>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>
