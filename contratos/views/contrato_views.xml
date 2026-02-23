@@ -6,7 +6,9 @@
         <field name="arch" type="xml">
             <form>
                 <header>
-                    <button name="action_generate_content" string="Generate Content" type="object" class="oe_highlight"/>
+                    <button name="action_generate_content" string="Generate Content" type="object" class="oe_highlight" invisible="state == 'firmado'"/>
+                    <button name="action_sign" string="Sign Contract" type="object" class="oe_highlight" invisible="state == 'firmado'"/>
+                    <button name="action_set_to_pending" string="Set to Pending" type="object" groups="base.group_system" invisible="state == 'pendiente'"/>
                 </header>
                 <sheet>
                     <div class="oe_title">
@@ -21,10 +23,11 @@
                     </div>
                     <group>
                         <group string="General Information">
+                            <field name="company_id"/>
                             <field name="partner_id"/>
                             <field name="contract_type"/>
                             <field name="file_number" string="File Ref." autocomplete="off"/>
-                            <field name="state" widget="radio" options="{'horizontal': true}"/>
+                            <field name="state" widget="radio" options="{'horizontal': true}" readonly="1"/>
                             <field name="hco"/>
                         </group>
                         <group string="Dates and Signatures">
@@ -42,6 +45,7 @@
                             <field name="our_rep_decision_date"/>
                         </group>
                         <group string="Traceability">
+                            <field name="created_by_id" widget="many2one_avatar_user"/>
                             <field name="creation_date_auto"/>
                             <field name="modification_date_auto"/>
                         </group>
@@ -62,14 +66,15 @@
         <field name="name">contrato.marco.tree</field>
         <field name="model">contrato.marco</field>
         <field name="arch" type="xml">
-            <tree decoration-info="state == 'pendiente'" decoration-success="state == 'firmado'">
-                <field name="name"/>
-                <field name="contract_type"/>
+            <tree decoration-info="state == 'pendiente'" decoration-success="state == 'firmado'" multi_edit="1">
+                <field name="name" readonly="1"/>
+                <field name="company_id" readonly="1"/>
+                <field name="contract_type" readonly="1"/>
                 <field name="contract_name"/>
-                <field name="partner_id"/>
+                <field name="partner_id" readonly="1"/>
                 <field name="our_representative_id"/>
-                <field name="date"/>
-                <field name="end_date"/>
+                <field name="date" readonly="1"/>
+                <field name="end_date" readonly="1"/>
                 <field name="state" widget="badge" decoration-info="state == 'pendiente'" decoration-success="state == 'firmado'"/>
             </tree>
         </field>
@@ -93,6 +98,7 @@
                 <filter string="End Date" name="end_date" date="end_date"/>
                 
                 <group expand="0" string="Group By">
+                    <filter string="Company" name="group_company" context="{'group_by': 'company_id'}"/>
                     <filter string="Customer" name="group_partner" context="{'group_by': 'partner_id'}"/>
                     <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
                     <filter string="Contract Type" name="group_type" context="{'group_by': 'contract_type'}"/>
