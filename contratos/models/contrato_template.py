@@ -22,15 +22,15 @@ class ContratoTemplate(models.Model):
     # Sync Tracking
     last_sync_date = fields.Datetime(string="Last Sync from Filesystem")
     sync_state = fields.Selection(
-        [("synced", "Sin modificar"), ("modified", "Modificado")],
+        [("synced", _("Synced")), ("modified", _("Modified"))],
         string="Sync Status",
         compute="_compute_sync_state",
     )
 
     available_variables = fields.Text(
-        string="Variables Disponibles",
+        string="Available Variables",
         compute="_compute_available_variables",
-        help="Lista de variables que puedes usar en esta plantilla.",
+        help="List of variables that you can use in this template.",
     )
 
     _sql_constraints = [

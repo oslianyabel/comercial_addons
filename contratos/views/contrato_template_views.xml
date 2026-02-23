@@ -41,7 +41,7 @@
                                 <field name="content" widget="html" options="{'style-inline': true}"/>
                             </div>
                         </page>
-                        <page name="help" string="Variables Disponibles">
+                        <page name="help" string="Available Variables">
                             <group>
                                 <field name="available_variables" readonly="1" nolabel="1"/>
                             </group>

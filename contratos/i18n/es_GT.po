@@ -168,3 +168,114 @@ msgstr "Describa el contrato..."
 #. module: contratos
 msgid "Customer: Titular"
 msgstr "Cliente: Titular"
+#. module: contratos
+#: model_terms:ir.ui.view,arch_db:contratos.view_contrato_marco_form
+msgid "Sign Contract"
+msgstr "Firmar Contrato"
+
+#. module: contratos
+#: model_terms:ir.ui.view,arch_db:contratos.view_contrato_marco_form
+msgid "Set to Pending"
+msgstr "Pasar a Pendiente"
+#. module: contratos
+#: model:ir.model,name:contratos.model_contrato_template
+msgid "Contract Template"
+msgstr "Plantilla de Contrato"
+
+#. module: contratos
+#: model:ir.model.fields,field_description:contratos.field_contrato_template__name
+msgid "Name"
+msgstr "Nombre"
+
+#. module: contratos
+#: model:ir.model.fields,field_description:contratos.field_contrato_template__type
+msgid "Contract Type"
+msgstr "Tipo de Contrato"
+
+#. module: contratos
+#: model:ir.model.fields,field_description:contratos.field_contrato_template__content
+msgid "Template Content"
+msgstr "Contenido de la Plantilla"
+
+#. module: contratos
+#: model:ir.model.fields,field_description:contratos.field_contrato_template__last_sync_date
+msgid "Last Sync from Filesystem"
+msgstr "Última Sincronización desde el Sistema de Archivos"
+
+#. module: contratos
+#: model:ir.model.fields,field_description:contratos.field_contrato_template__sync_state
+msgid "Sync Status"
+msgstr "Estado de Sincronización"
+
+#. module: contratos
+#: model:ir.model.fields,selection:contratos.field_contrato_template__sync_state:synced
+msgid "Synced"
+msgstr "Sincronizado"
+
+#. module: contratos
+msgid "Synced"
+msgstr "Sincronizado"
+
+#. module: contratos
+#: model:ir.model.fields,selection:contratos.field_contrato_template__sync_state:modified
+msgid "Modified"
+msgstr "Modificado"
+
+#. module: contratos
+msgid "Modified"
+msgstr "Modificado"
+
+#. module: contratos
+#: model:ir.model.fields,field_description:contratos.field_contrato_template__available_variables
+msgid "Available Variables"
+msgstr "Variables Disponibles"
+
+#. module: contratos
+#: model_terms:ir.ui.view,arch_db:contratos.view_contrato_template_form
+msgid "Template Name"
+msgstr "Nombre de la Plantilla"
+
+#. module: contratos
+#: model_terms:ir.ui.view,arch_db:contratos.view_contrato_template_form
+msgid "Contract Template"
+msgstr "Plantilla de Contrato"
+
+#. module: contratos
+#: model_terms:ir.ui.view,arch_db:contratos.view_contrato_template_form
+msgid "Available Variables"
+msgstr "Variables Disponibles"
+
+#. module: contratos
+#: model_terms:ir.ui.view,arch_db:contratos.view_contrato_template_form
+msgid "Content"
+msgstr "Contenido"
+
+#. module: contratos
+#: model_terms:ir.ui.view,arch_db:contratos.view_contrato_template_form
+msgid "Reset from Filesystem"
+msgstr "Restablecer desde el Sistema de Archivos"
+
+#. module: contratos
+#: model_terms:ir.ui.view,arch_db:contratos.view_contrato_template_form
+msgid "Are you sure you want to overwrite this template with the original file content?"
+msgstr "¿Está seguro de que desea sobrescribir esta plantilla con el contenido original del archivo?"
+
+#. module: contratos
+#: model_terms:ir.ui.view,arch_db:contratos.view_contrato_template_form
+msgid "e.g. MiPyme Master Contract Template"
+msgstr "ej. Plantilla de Contrato Marco MiPyme"
+
+#. module: contratos
+#: model_terms:ir.ui.view,arch_db:contratos.action_contrato_template
+msgid "Create a new contract template"
+msgstr "Crear una nueva plantilla de contrato"
+
+#. module: contratos
+#: model:ir.actions.act_window,name:contratos.action_contrato_template
+msgid "Contract Templates"
+msgstr "Plantillas de Contratos Marcos"
+
+#. module: contratos
+#: model_terms:ir.ui.view,arch_db:contratos.view_contrato_template_tree
+msgid "Contract Templates"
+msgstr "Plantillas de Contratos Marcos"
