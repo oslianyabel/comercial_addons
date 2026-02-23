@@ -19,6 +19,8 @@
         <field name="arch" type="xml">
             <form string="Contract Template" create="0" delete="1">
                 <header>
+                    <button name="action_open_import_wizard" string="Import TXT" type="object" class="btn-primary"/>
+                    <button name="action_export_txt" string="Export TXT" type="object" class="btn-secondary"/>
                     <button name="action_reset_from_filesystem" string="Reset from Filesystem" type="object" class="btn-warning" confirm="Are you sure you want to overwrite this template with the original file content?"/>
                 </header>
                 <sheet>

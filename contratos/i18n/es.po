@@ -397,3 +397,27 @@ msgstr "Creado por"
 #. module: contratos
 msgid "Are you sure you want to sign this contract? This action is irreversible."
 msgstr "Está seguro de que desea firmar este contrato? Esta acción es irreversible."
+
+#. module: contratos
+msgid "Import TXT"
+msgstr "Importar TXT"
+
+#. module: contratos
+msgid "Export TXT"
+msgstr "Exportar TXT"
+
+#. module: contratos
+msgid "Import Successful"
+msgstr "Importación Exitosa"
+
+#. module: contratos
+msgid "The template file has been replaced and the template content has been updated."
+msgstr "El archivo de plantilla ha sido reemplazado y el contenido de la plantilla ha sido actualizado."
+
+#. module: contratos
+msgid "TXT File"
+msgstr "Archivo TXT"
+
+#. module: contratos
+msgid "Import TXT for Contract Template"
+msgstr "Importar TXT para Plantilla de Contrato"

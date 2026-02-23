@@ -432,3 +432,59 @@ class ContratoTemplate(models.Model):
                 "sticky": False,
             },
         }
+
+    def action_export_txt(self):
+        """Export the current filesystem TXT file as a download."""
+        self.ensure_one()
+        import base64
+
+        base_path = self._get_base_path()
+        templates_map = {
+            "mipyme": "contrato marco Mipyme",
+            "tcp": "contrato marco TCP.txt",
+            "empresa": "contrato marco empresas.txt",
+        }
+        filename = templates_map.get(self.type)
+        if not filename:
+            raise UserError(_("Unknown template type."))
+
+        template_path = os.path.join(base_path, filename)
+        if not os.path.exists(template_path):
+            raise UserError(
+                _("The template file was not found on the filesystem: %s")
+                % template_path
+            )
+
+        with open(template_path, "r", encoding="utf-8") as f:
+            raw_content = f.read()
+
+        # Create a temporary attachment for download
+        export_filename = filename if filename.endswith(".txt") else f"{filename}.txt"
+        attachment = self.env["ir.attachment"].create(
+            {
+                "name": export_filename,
+                "type": "binary",
+                "datas": base64.b64encode(raw_content.encode("utf-8")),
+                "res_model": self._name,
+                "res_id": self.id,
+                "mimetype": "text/plain",
+            }
+        )
+
+        return {
+            "type": "ir.actions.act_url",
+            "url": f"/web/content/{attachment.id}?download=true",
+            "target": "self",
+        }
+
+    def action_open_import_wizard(self):
+        """Open the import TXT wizard for this template."""
+        self.ensure_one()
+        return {
+            "type": "ir.actions.act_window",
+            "name": _("Import TXT"),
+            "res_model": "contrato.template.import.wizard",
+            "view_mode": "form",
+            "target": "new",
+            "context": {"default_template_id": self.id},
+        }
