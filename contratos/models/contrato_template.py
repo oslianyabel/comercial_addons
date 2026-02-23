@@ -25,6 +25,7 @@ class ContratoTemplate(models.Model):
         [("synced", _("Synced")), ("modified", _("Modified"))],
         string="Sync Status",
         compute="_compute_sync_state",
+        store=True,
     )
 
     available_variables = fields.Text(
@@ -133,10 +134,26 @@ class ContratoTemplate(models.Model):
     def _compute_sync_state(self):
         for record in self:
             fs_content = record._get_filesystem_content()
-            if fs_content and record.content == fs_content:
+            if fs_content and self._prepare_for_comparison(
+                record.content
+            ) == self._prepare_for_comparison(fs_content):
                 record.sync_state = "synced"
             else:
                 record.sync_state = "modified"
+
+    def _prepare_for_comparison(self, html):
+        """Standardize HTML for comparison by removing all formatting noise, attributes and whitespace."""
+        if not html:
+            return ""
+        # Remove all attributes from tags
+        res = re.sub(r"<(\w+)[^>]*>", r"<\1>", html)
+        # Lowercase everything
+        res = res.lower()
+        # Remove all whitespaces and newlines
+        res = re.sub(r"\s+", "", res)
+        # Remove non-breaking spaces
+        res = res.replace("&nbsp;", "")
+        return res
 
     def unlink(self):
         """Allow deleting duplicates but protect the last remaining template of each type."""
@@ -384,7 +401,16 @@ class ContratoTemplate(models.Model):
                                 "last_sync_date": fields.Datetime.now(),
                             }
                         )
-                        return self._notify_import(1, title=_("Template Reset"))
+                        return {
+                            "type": "ir.actions.client",
+                            "tag": "display_notification",
+                            "params": {
+                                "title": _("Template Reset"),
+                                "message": _("Template restored from filesystem."),
+                                "sticky": False,
+                                "next": {"type": "ir.actions.client", "tag": "reload"},
+                            },
+                        }
         return False
 
     def _notify_import(self, count, title=None):
