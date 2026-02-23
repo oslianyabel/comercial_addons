@@ -12,7 +12,7 @@ class ContratoTemplate(models.Model):
 
     name = fields.Char(string="Name", required=True)
     type = fields.Selection(
-        [("mipyme", "MiPyme"), ("tcp", "TCP"), ("empresa", "Company")],
+        [("mipyme", "MiPyme"), ("tcp", "TCP"), ("empresa", "Empresa")],
         string="Contract Type",
         required=True,
     )

@@ -1,4 +1,4 @@
-#, python-format
+﻿#, python-format
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 17.0\n"
@@ -19,7 +19,7 @@ msgstr "Contrato Marco"
 
 #. module: contratos
 msgid "Contract Number"
-msgstr "Número de Contrato"
+msgstr "NÃºmero de Contrato"
 
 #. module: contratos
 msgid "Contract Ref."
@@ -39,11 +39,11 @@ msgstr "Nuestro Representante"
 
 #. module: contratos
 msgid "Our Rep. Decision Number"
-msgstr "Número de Decisión (Nuestro Rep.)"
+msgstr "NÃºmero de DecisiÃ³n (Nuestro Rep.)"
 
 #. module: contratos
 msgid "Our Rep. Decision Date"
-msgstr "Fecha de Decisión (Nuestro Rep.)"
+msgstr "Fecha de DecisiÃ³n (Nuestro Rep.)"
 
 #. module: contratos
 msgid "Contract Date"
@@ -63,11 +63,11 @@ msgstr "Nombre"
 
 #. module: contratos
 msgid "Contract Title"
-msgstr "Título del Contrato"
+msgstr "TÃ­tulo del Contrato"
 
 #. module: contratos
 msgid "File Number"
-msgstr "Número de Archivo"
+msgstr "NÃºmero de Archivo"
 
 #. module: contratos
 msgid "File Ref."
@@ -79,7 +79,7 @@ msgstr "Fecha de Inicio"
 
 #. module: contratos
 msgid "End Date"
-msgstr "Fecha de Finalización"
+msgstr "Fecha de FinalizaciÃ³n"
 
 #. module: contratos
 msgid "Validity Date"
@@ -103,15 +103,15 @@ msgstr "Firmado"
 
 #. module: contratos
 msgid "Creation Date"
-msgstr "Fecha de Creación"
+msgstr "Fecha de CreaciÃ³n"
 
 #. module: contratos
 msgid "Last Modification"
-msgstr "Última Modificación"
+msgstr "Ãšltima ModificaciÃ³n"
 
 #. module: contratos
 msgid "General Information"
-msgstr "Información General"
+msgstr "InformaciÃ³n General"
 
 #. module: contratos
 msgid "Dates and Signatures"
@@ -119,11 +119,11 @@ msgstr "Fechas y Firmas"
 
 #. module: contratos
 msgid "Representation"
-msgstr "Representación"
+msgstr "RepresentaciÃ³n"
 
 #. module: contratos
 msgid "Agreement/Decision"
-msgstr "Acuerdo/Decisión"
+msgstr "Acuerdo/DecisiÃ³n"
 
 #. module: contratos
 msgid "Traceability"
@@ -200,12 +200,12 @@ msgstr "Contenido de la Plantilla"
 #. module: contratos
 #: model:ir.model.fields,field_description:contratos.field_contrato_template__last_sync_date
 msgid "Last Sync from Filesystem"
-msgstr "Última Sincronización desde el Sistema de Archivos"
+msgstr "Ãšltima SincronizaciÃ³n desde el Sistema de Archivos"
 
 #. module: contratos
 #: model:ir.model.fields,field_description:contratos.field_contrato_template__sync_state
 msgid "Sync Status"
-msgstr "Estado de Sincronización"
+msgstr "Estado de SincronizaciÃ³n"
 
 #. module: contratos
 #: model:ir.model.fields,selection:contratos.field_contrato_template__sync_state:synced
@@ -258,7 +258,7 @@ msgstr "Restablecer desde el Sistema de Archivos"
 #. module: contratos
 #: model_terms:ir.ui.view,arch_db:contratos.view_contrato_template_form
 msgid "Are you sure you want to overwrite this template with the original file content?"
-msgstr "¿Está seguro de que desea sobrescribir esta plantilla con el contenido original del archivo?"
+msgstr "Â¿EstÃ¡ seguro de que desea sobrescribir esta plantilla con el contenido original del archivo?"
 
 #. module: contratos
 #: model_terms:ir.ui.view,arch_db:contratos.view_contrato_template_form
@@ -276,6 +276,25 @@ msgid "Contract Templates"
 msgstr "Plantillas de Contratos Marcos"
 
 #. module: contratos
-#: model_terms:ir.ui.view,arch_db:contratos.view_contrato_template_tree
-msgid "Contract Templates"
-msgstr "Plantillas de Contratos Marcos"
+msgid "Empresa"
+msgstr "Empresa"
+
+#. module: contratos
+msgid "Signing Date"
+msgstr "Fecha de firma"
+
+#. module: contratos
+msgid "Signed by"
+msgstr "Firmado por"
+
+#. module: contratos
+msgid "Authorized Contacts"
+msgstr "Contactos Autorizados"
+
+#. module: contratos
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: contratos
+msgid "Are you sure you want to sign this contract? This action is irreversible."
+msgstr "Está seguro de que desea firmar este contrato? Esta acción es irreversible."

@@ -33,7 +33,7 @@ class ContratoMarco(models.Model):
     our_rep_decision_date = fields.Date(string="Our Rep. Decision Date")
     date = fields.Date(string="Contract Date", default=fields.Date.context_today)
     contract_type = fields.Selection(
-        [("mipyme", "MiPyme"), ("tcp", "TCP"), ("empresa", "Company")],
+        [("mipyme", "MiPyme"), ("tcp", "TCP"), ("empresa", "Empresa")],
         string="Contract Type",
         required=True,
     )
@@ -56,6 +56,25 @@ class ContratoMarco(models.Model):
         string="Status",
         default="pendiente",
         required=True,
+        copy=False,
+    )
+
+    authorized_contact_ids = fields.Many2many(
+        "res.partner",
+        string="Authorized Contacts",
+        domain="[('is_company', '=', False), ('company_id', '=', company_id)]",
+        help="Contacts from our company authorized to sign this contract.",
+    )
+    signed_by_id = fields.Many2one(
+        "res.partner",
+        string="Signed by",
+        readonly=True,
+        copy=False,
+    )
+    signing_date = fields.Datetime(
+        string="Signing Date",
+        readonly=True,
+        copy=False,
     )
 
     created_by_id = fields.Many2one(
@@ -92,16 +111,39 @@ class ContratoMarco(models.Model):
         return super().write(vals)
 
     def action_sign(self):
-        """Transition contract to signed state."""
+        """Transition contract to signed state with authorization check."""
         for record in self:
+            if record.state == "firmado":
+                raise UserError(_("This contract is already signed."))
+
             if not record.content:
                 raise UserError(
                     _("Please generate the contract content before signing.")
                 )
-            record.state = "firmado"
+
+            # Authorization Check
+            user_partner = self.env.user.partner_id
+            if (
+                user_partner not in record.authorized_contact_ids
+                and not self.env.is_admin()
+            ):
+                raise UserError(_("Only authorized contacts can sign this contract."))
+
+            record.write(
+                {
+                    "state": "firmado",
+                    "signed_by_id": user_partner.id,
+                    "signing_date": fields.Datetime.now(),
+                }
+            )
 
     def action_set_to_pending(self):
-        """Allow reverting to pending state (admin only)."""
+        """Allow reverting to pending state (admin only) - Restricted for signed ones."""
+        for record in self:
+            if record.state == "firmado" and not self.env.is_admin():
+                raise UserError(
+                    _("Signed contracts cannot be reverted to pending state.")
+                )
         self.write({"state": "pendiente"})
 
     content = fields.Html(string="Contract Content")

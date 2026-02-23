@@ -7,7 +7,7 @@
             <form>
                 <header>
                     <button name="action_generate_content" string="Generate Content" type="object" class="oe_highlight" invisible="state == 'firmado'"/>
-                    <button name="action_sign" string="Sign Contract" type="object" class="oe_highlight" invisible="state == 'firmado'"/>
+                    <button name="action_sign" string="Sign Contract" type="object" class="oe_highlight" invisible="state == 'firmado'" confirm="Are you sure you want to sign this contract? This action is irreversible."/>
                     <button name="action_set_to_pending" string="Set to Pending" type="object" groups="base.group_system" invisible="state == 'pendiente'"/>
                 </header>
                 <sheet>
@@ -35,17 +35,20 @@
                             <field name="start_date"/>
                             <field name="end_date"/>
                             <field name="validity_date"/>
+                            <field name="signing_date" invisible="state == 'pendiente'"/>
                         </group>
                     </group>
                     <group>
                         <group string="Representation">
                             <field name="representative_id"/>
                             <field name="our_representative_id"/>
+                            <field name="authorized_contact_ids" widget="many2many_tags"/>
                             <field name="our_rep_decision_number" string="Agreement/Decision" autocomplete="off"/>
                             <field name="our_rep_decision_date"/>
                         </group>
                         <group string="Traceability">
                             <field name="created_by_id" widget="many2one_avatar_user"/>
+                            <field name="signed_by_id" invisible="state == 'pendiente'"/>
                             <field name="creation_date_auto"/>
                             <field name="modification_date_auto"/>
                         </group>
@@ -68,12 +71,15 @@
         <field name="arch" type="xml">
             <tree decoration-info="state == 'pendiente'" decoration-success="state == 'firmado'" multi_edit="1">
                 <field name="name" readonly="1"/>
-                <field name="company_id" readonly="1"/>
+                <field name="company_id" readonly="1" optional="hide"/>
                 <field name="contract_type" readonly="1"/>
                 <field name="contract_name"/>
                 <field name="partner_id" readonly="1"/>
                 <field name="our_representative_id"/>
-                <field name="date" readonly="1"/>
+                <field name="created_by_id" widget="many2one_avatar_user" optional="show"/>
+                <field name="signed_by_id" optional="show"/>
+                <field name="date" readonly="1" optional="hide"/>
+                <field name="signing_date" optional="show"/>
                 <field name="end_date" readonly="1"/>
                 <field name="state" widget="badge" decoration-info="state == 'pendiente'" decoration-success="state == 'firmado'"/>
             </tree>
