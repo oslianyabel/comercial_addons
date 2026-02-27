@@ -29,6 +29,7 @@
                             <field name="file_number" string="File Ref." autocomplete="off"/>
                             <field name="state" widget="radio" options="{'horizontal': true}" readonly="1"/>
                             <field name="hco"/>
+                            <field name="oeb"/>
                         </group>
                         <group string="Dates and Signatures">
                             <field name="date"/>
@@ -107,7 +108,7 @@
                     <filter string="Company" name="group_company" context="{'group_by': 'company_id'}"/>
                     <filter string="Customer" name="group_partner" context="{'group_by': 'partner_id'}"/>
                     <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
-                    <filter string="Contract Type" name="group_type" context="{'group_by': 'contract_type'}"/>
+                    <filter string="Client Type" name="group_type" context="{'group_by': 'contract_type'}"/>
                     <filter string="HCO" name="group_hco" context="{'group_by': 'hco'}"/>
                 </group>
             </search>

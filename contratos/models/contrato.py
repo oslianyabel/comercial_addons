@@ -34,7 +34,7 @@ class ContratoMarco(models.Model):
     date = fields.Date(string="Contract Date", default=fields.Date.context_today)
     contract_type = fields.Selection(
         [("mipyme", "MiPyme"), ("tcp", "TCP"), ("empresa", "Empresa")],
-        string="Contract Type",
+        string="Client Type",
         required=True,
     )
 
@@ -51,6 +51,7 @@ class ContratoMarco(models.Model):
         string="Validity Date", required=True, default=fields.Date.context_today
     )
     hco = fields.Boolean(string="HCO")
+    oeb = fields.Char(string="OEB")
     state = fields.Selection(
         [("pendiente", "Pending"), ("firmado", "Signed")],
         string="Status",

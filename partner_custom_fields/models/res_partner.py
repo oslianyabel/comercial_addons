@@ -26,7 +26,7 @@ class ResPartner(models.Model):
 
     organism_id = fields.Many2one("res.partner.organism", string="Organism")
     short_name = fields.Char(string="Abbreviated Name")
-    titular = fields.Char(string="Titular")
+    titular = fields.Char(string="Bank Account Holder")
     id_card = fields.Char(string="ID Card")
 
     # Representation Fields

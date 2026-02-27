@@ -1,4 +1,4 @@
-﻿# Translation of Odoo Server.
+# Translation of Odoo Server.
 # This file contains the translation of the following modules:
 # * contratos
 #
@@ -24,12 +24,12 @@ msgstr "Contrato Marco"
 #. module: contratos
 #: sql_constraint:contratos.model_contrato_marco:name_unique
 msgid "The Contract Number must be unique. A contract with this number already exists."
-msgstr "El NÃºmero de Contrato debe ser Ãºnico. Ya existe un contrato con este nÃºmero."
+msgstr "El Numero de Contrato debe ser unico. Ya existe un contrato con este numero."
 
 #. module: contratos
 #: model:ir.model.fields,field_description:contratos.field_contrato_marco__name
 msgid "Contract Number"
-msgstr "NÃºmero de Contrato"
+msgstr "Numero de Contrato"
 
 #. module: contratos
 #: model:ir.model.fields,field_description:contratos.field_contrato_marco__contract_name
@@ -54,12 +54,12 @@ msgstr "Nuestro Representante"
 #. module: contratos
 #: model:ir.model.fields,field_description:contratos.field_contrato_marco__our_rep_decision_number
 msgid "Our Rep. Decision Number"
-msgstr "NÃºmero de DecisiÃ³n (Nuestro Rep.)"
+msgstr "Numero de Decision (Nuestro Rep.)"
 
 #. module: contratos
 #: model:ir.model.fields,field_description:contratos.field_contrato_marco__our_rep_decision_date
 msgid "Our Rep. Decision Date"
-msgstr "Fecha de DecisiÃ³n (Nuestro Rep.)"
+msgstr "Fecha de Decision (Nuestro Rep.)"
 
 #. module: contratos
 #: model:ir.model.fields,field_description:contratos.field_contrato_marco__date
@@ -68,8 +68,8 @@ msgstr "Fecha del Contrato"
 
 #. module: contratos
 #: model:ir.model.fields,field_description:contratos.field_contrato_marco__contract_type
-msgid "Contract Type"
-msgstr "Tipo de Contrato"
+msgid "Client Type"
+msgstr "Tipo de Cliente"
 
 #. module: contratos
 #: model:ir.model.fields,selection:contratos.field_contrato_marco__contract_type:empresa
@@ -80,7 +80,7 @@ msgstr "Empresa"
 #. module: contratos
 #: model:ir.model.fields,field_description:contratos.field_contrato_marco__file_number
 msgid "File Number"
-msgstr "NÃºmero de Archivo"
+msgstr "Numero de Archivo"
 
 #. module: contratos
 #: model:ir.model.fields,field_description:contratos.field_contrato_marco__start_date
@@ -90,7 +90,7 @@ msgstr "Fecha de Inicio"
 #. module: contratos
 #: model:ir.model.fields,field_description:contratos.field_contrato_marco__end_date
 msgid "End Date"
-msgstr "Fecha de FinalizaciÃ³n"
+msgstr "Fecha de Finalizacion"
 
 #. module: contratos
 #: model:ir.model.fields,field_description:contratos.field_contrato_marco__validity_date
@@ -120,12 +120,12 @@ msgstr "Firmado"
 #. module: contratos
 #: model:ir.model.fields,field_description:contratos.field_contrato_marco__creation_date_auto
 msgid "Creation Date"
-msgstr "Fecha de CreaciÃ³n"
+msgstr "Fecha de Creacion"
 
 #. module: contratos
 #: model:ir.model.fields,field_description:contratos.field_contrato_marco__modification_date_auto
 msgid "Last Modification"
-msgstr "Ãšltima ModificaciÃ³n"
+msgstr "Ultima Modificacion"
 
 #. module: contratos
 #: model:ir.model.fields,field_description:contratos.field_contrato_marco__content
@@ -145,12 +145,12 @@ msgstr "Ref. de Contrato"
 #. module: contratos
 #: model_terms:ir.ui.view,arch_db:contratos.view_contrato_marco_form
 msgid "Contract Title"
-msgstr "TÃ­tulo del Contrato"
+msgstr "Titulo del Contrato"
 
 #. module: contratos
 #: model_terms:ir.ui.view,arch_db:contratos.view_contrato_marco_form
 msgid "General Information"
-msgstr "InformaciÃ³n General"
+msgstr "Informacion General"
 
 #. module: contratos
 #: model_terms:ir.ui.view,arch_db:contratos.view_contrato_marco_form
@@ -160,12 +160,12 @@ msgstr "Fechas y Firmas"
 #. module: contratos
 #: model_terms:ir.ui.view,arch_db:contratos.view_contrato_marco_form
 msgid "Representation"
-msgstr "RepresentaciÃ³n"
+msgstr "Representacion"
 
 #. module: contratos
 #: model_terms:ir.ui.view,arch_db:contratos.view_contrato_marco_form
 msgid "Agreement/Decision"
-msgstr "Acuerdo/DecisiÃ³n"
+msgstr "Acuerdo/Decision"
 
 #. module: contratos
 #: model_terms:ir.ui.view,arch_db:contratos.view_contrato_marco_form
@@ -184,38 +184,13 @@ msgstr "Ref. Archivo"
 
 #. module: contratos
 #: model_terms:ir.ui.view,arch_db:contratos.view_contrato_marco_search
-msgid "Pending"
-msgstr "Pendiente"
-
-#. module: contratos
-#: model_terms:ir.ui.view,arch_db:contratos.view_contrato_marco_search
-msgid "Signed"
-msgstr "Firmado"
-
-#. module: contratos
-#: model_terms:ir.ui.view,arch_db:contratos.view_contrato_marco_search
-msgid "End Date"
-msgstr "Fecha de FinalizaciÃ³n"
-
-#. module: contratos
-#: model_terms:ir.ui.view,arch_db:contratos.view_contrato_marco_search
 msgid "Group By"
 msgstr "Agrupar Por"
 
 #. module: contratos
 #: model_terms:ir.ui.view,arch_db:contratos.view_contrato_marco_search
-msgid "Customer"
-msgstr "Cliente"
-
-#. module: contratos
-#: model_terms:ir.ui.view,arch_db:contratos.view_contrato_marco_search
-msgid "Status"
-msgstr "Estado"
-
-#. module: contratos
-#: model_terms:ir.ui.view,arch_db:contratos.view_contrato_marco_search
-msgid "Contract Type"
-msgstr "Tipo de Contrato"
+msgid "Client Type"
+msgstr "Tipo de Cliente"
 
 #. module: contratos
 #: model:ir.actions.act_window,name:contratos.action_contrato_marco
@@ -241,32 +216,14 @@ msgstr "No se puede generar el contrato porque faltan los siguientes datos:\n\n-
 #. module: contratos
 #: code:addons/contratos/models/contrato.py:0
 #, python-format
-msgid "Customer: Titular"
-msgstr "Cliente: Titular"
+msgid "Company: Bank Account Holder"
+msgstr "Empresa: Titular de la Cuenta Bancaria"
 
 #. module: contratos
-#: code:addons/contratos/models/contrato.py:0
-#, python-format
-msgid "Our Representative"
-msgstr "Nuestro Representante"
+#: model:ir.model.fields,field_description:contratos.field_contrato_marco__oeb
+msgid "OEB"
+msgstr "OEB"
 
-#. module: contratos
-#: code:addons/contratos/models/contrato.py:0
-#, python-format
-msgid "Our Rep. Decision Number"
-msgstr "NÃºmero de DecisiÃ³n (Nuestro Rep.)"
-
-#. module: contratos
-#: code:addons/contratos/models/contrato.py:0
-#, python-format
-msgid "Our Rep. Decision Date"
-msgstr "Fecha de DecisiÃ³n (Nuestro Rep.)"
-
-#. module: contratos
-#: code:addons/contratos/models/contrato.py:0
-#, python-format
-msgid "Customer Representative"
-msgstr "Representante del Cliente"
 #. module: contratos
 #: model_terms:ir.ui.view,arch_db:contratos.view_contrato_marco_form
 msgid "Sign Contract"
@@ -276,20 +233,16 @@ msgstr "Firmar Contrato"
 #: model_terms:ir.ui.view,arch_db:contratos.view_contrato_marco_form
 msgid "Set to Pending"
 msgstr "Pasar a Pendiente"
+
 #. module: contratos
 #: model:ir.model,name:contratos.model_contrato_template
 msgid "Contract Template"
 msgstr "Plantilla de Contrato"
 
 #. module: contratos
-#: model:ir.model.fields,field_description:contratos.field_contrato_template__name
-msgid "Name"
-msgstr "Nombre"
-
-#. module: contratos
 #: model:ir.model.fields,field_description:contratos.field_contrato_template__type
-msgid "Contract Type"
-msgstr "Tipo de Contrato"
+msgid "Client Type"
+msgstr "Tipo de Cliente"
 
 #. module: contratos
 #: model:ir.model.fields,field_description:contratos.field_contrato_template__content
@@ -299,26 +252,16 @@ msgstr "Contenido de la Plantilla"
 #. module: contratos
 #: model:ir.model.fields,field_description:contratos.field_contrato_template__last_sync_date
 msgid "Last Sync from Filesystem"
-msgstr "Ãšltima SincronizaciÃ³n desde el Sistema de Archivos"
+msgstr "Ultima Sincronizacion desde el Sistema de Archivos"
 
 #. module: contratos
 #: model:ir.model.fields,field_description:contratos.field_contrato_template__sync_state
 msgid "Sync Status"
-msgstr "Estado de SincronizaciÃ³n"
-
-#. module: contratos
-#: model:ir.model.fields,selection:contratos.field_contrato_template__sync_state:synced
-msgid "Synced"
-msgstr "Sincronizado"
+msgstr "Estado de Sincronizacion"
 
 #. module: contratos
 msgid "Synced"
 msgstr "Sincronizado"
-
-#. module: contratos
-#: model:ir.model.fields,selection:contratos.field_contrato_template__sync_state:modified
-msgid "Modified"
-msgstr "Modificado"
 
 #. module: contratos
 msgid "Modified"
@@ -336,28 +279,13 @@ msgstr "Nombre de la Plantilla"
 
 #. module: contratos
 #: model_terms:ir.ui.view,arch_db:contratos.view_contrato_template_form
-msgid "Contract Template"
-msgstr "Plantilla de Contrato"
-
-#. module: contratos
-#: model_terms:ir.ui.view,arch_db:contratos.view_contrato_template_form
-msgid "Available Variables"
-msgstr "Variables Disponibles"
-
-#. module: contratos
-#: model_terms:ir.ui.view,arch_db:contratos.view_contrato_template_form
-msgid "Content"
-msgstr "Contenido"
-
-#. module: contratos
-#: model_terms:ir.ui.view,arch_db:contratos.view_contrato_template_form
 msgid "Reset from Filesystem"
 msgstr "Restablecer desde el Sistema de Archivos"
 
 #. module: contratos
 #: model_terms:ir.ui.view,arch_db:contratos.view_contrato_template_form
 msgid "Are you sure you want to overwrite this template with the original file content?"
-msgstr "Â¿EstÃ¡ seguro de que desea sobrescribir esta plantilla con el contenido original del archivo?"
+msgstr "Esta seguro de que desea sobrescribir esta plantilla con el contenido original del archivo?"
 
 #. module: contratos
 #: model_terms:ir.ui.view,arch_db:contratos.view_contrato_template_form
@@ -365,18 +293,9 @@ msgid "e.g. MiPyme Master Contract Template"
 msgstr "ej. Plantilla de Contrato Marco MiPyme"
 
 #. module: contratos
-#: model_terms:ir.ui.view,arch_db:contratos.action_contrato_template
-msgid "Create a new contract template"
-msgstr "Crear una nueva plantilla de contrato"
-
-#. module: contratos
 #: model:ir.actions.act_window,name:contratos.action_contrato_template
 msgid "Contract Templates"
 msgstr "Plantillas de Contratos Marcos"
-
-#. module: contratos
-msgid "Empresa"
-msgstr "Empresa"
 
 #. module: contratos
 msgid "Signing Date"
@@ -387,16 +306,23 @@ msgid "Signed by"
 msgstr "Firmado por"
 
 #. module: contratos
+#: model:ir.model.fields,field_description:contratos.field_contrato_marco__company_id
+msgid "Company"
+msgstr "Empresa"
+
+#. module: contratos
+#: model:ir.model.fields,field_description:contratos.field_contrato_marco__authorized_contact_ids
 msgid "Authorized Contacts"
 msgstr "Contactos Autorizados"
 
 #. module: contratos
+#: model:ir.model.fields,field_description:contratos.field_contrato_marco__created_by_id
 msgid "Created by"
 msgstr "Creado por"
 
 #. module: contratos
 msgid "Are you sure you want to sign this contract? This action is irreversible."
-msgstr "Está seguro de que desea firmar este contrato? Esta acción es irreversible."
+msgstr "Esta seguro de que desea firmar este contrato? Esta accion es irreversible."
 
 #. module: contratos
 msgid "Import TXT"
@@ -408,7 +334,7 @@ msgstr "Exportar TXT"
 
 #. module: contratos
 msgid "Import Successful"
-msgstr "Importación Exitosa"
+msgstr "Importacion Exitosa"
 
 #. module: contratos
 msgid "The template file has been replaced and the template content has been updated."

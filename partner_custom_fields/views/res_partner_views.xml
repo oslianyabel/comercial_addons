@@ -9,8 +9,8 @@
                 <div class="o_row">
                     <label for="short_name"/>
                     <field name="short_name" placeholder="Abbreviated Name..."/>
-                    <label for="titular" string="Titular"/>
-                    <field name="titular" placeholder="Name of the titular..."/>
+                    <label for="titular" string="Bank Account Holder" invisible="not is_company"/>
+                    <field name="titular" placeholder="Name of the bank account holder..." invisible="not is_company"/>
                 </div>
             </xpath>
             <xpath expr="//field[@name='vat']" position="after">

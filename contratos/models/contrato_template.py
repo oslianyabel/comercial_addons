@@ -51,6 +51,7 @@ class ContratoTemplate(models.Model):
             "our_rep_decision_date",
             "partner_name",
             "partner_via",
+            "partner_oeb",
             "partner_short_name",
             "partner_organism",
             "partner_resolution_number",
@@ -287,7 +288,6 @@ class ContratoTemplate(models.Model):
             ]
         elif template_type == "empresa":
             return common + [
-                "partner_via",
                 "partner_short_name",
                 "partner_organism",
                 "partner_resolution_number",

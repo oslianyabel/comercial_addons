@@ -1,8 +1,8 @@
 import os
+import re
 from html import unescape
 
 from markupsafe import Markup
-
 from odoo import _, models
 from odoo.exceptions import UserError
 
@@ -138,8 +138,8 @@ class ContratoMarco(models.Model):
             for f in req_p:
                 if not getattr(p, f):
                     missing.append(f"Cliente: {p._fields[f].string}")
-            if not p.titular:
-                missing.append("Customer: Titular")
+            if not comp_partner.titular:
+                missing.append("Company: Bank Account Holder")
 
             if missing:
                 raise UserError(
@@ -171,7 +171,7 @@ class ContratoMarco(models.Model):
                 "our_rep_decision_number": highlight(record.our_rep_decision_number),
                 "our_rep_decision_date": fmt_date(record.our_rep_decision_date),
                 "partner_name": highlight(p.name),
-                "partner_via": highlight("___________________"),
+                "partner_via": highlight(record.oeb) if record.oeb else "",
                 "partner_short_name": highlight(p.short_name),
                 "partner_organism": highlight(p.organism_id.name),
                 "partner_resolution_number": highlight(p.resolution_number),
@@ -183,7 +183,7 @@ class ContratoMarco(models.Model):
                 "partner_bank_branch": highlight(p.bank_branch_number),
                 "partner_bank_name": highlight(p.bank_id_ref.name),
                 "partner_bank_address": highlight(p.bank_id_ref.street),
-                "partner_titular": highlight(p.titular),
+                "partner_titular": highlight(comp_partner.titular),
                 "partner_phone": highlight(p.phone),
                 "partner_email": highlight(p.email),
                 "partner_tax_id": highlight(p.tax_id),
@@ -245,7 +245,25 @@ class ContratoMarco(models.Model):
 
             # Perform replacements
             for var_name, value in vals.items():
+                if var_name == "partner_via" and not record.oeb:
+                    continue  # Skip so the regex below can find and remove it
                 content = content.replace(f"{{{{{var_name}}}}}", value)
+
+            # If OEB is empty, remove the phrase "a través de {{partner_via}}"
+            # including any surrounding <strong> HTML tags from the template
+            if not record.oeb:
+                content = re.sub(
+                    r"\s*a\s+trav[ée]s\s+de\s+(<strong[^>]*>)?\s*\{\{partner_via\}\}\s*(</strong>)?",
+                    "",
+                    content,
+                    flags=re.IGNORECASE,
+                )
+                # Also remove any remaining {{partner_via}} placeholder (with or without <strong>)
+                content = re.sub(
+                    r"(<strong[^>]*>)?\s*\{\{partner_via\}\}\s*(</strong>)?",
+                    "",
+                    content,
+                )
 
             # --- FINAL FORMATTING PASS ---
             # We strip any dangling whitespaces and run it through the ultra-robust formatter
