@@ -194,9 +194,6 @@ class ContratoEspecificoTemplate(models.Model):
             for idx, linea in enumerate(lineas):
                 linea = linea.strip()
                 if not linea:
-                    formatted_lineas.append(
-                        '<p style="margin-bottom: 20px; line-height: 1.6;">&nbsp;</p>'
-                    )
                     continue
 
                 is_header = len(linea) < 120 and (linea.isupper() or idx == 0)
@@ -205,13 +202,13 @@ class ContratoEspecificoTemplate(models.Model):
                     font_size = "18px" if idx == 0 else "16px"
                     formatted_lineas.append(
                         '<h2 style="text-align: center; font-weight: bold;'
-                        " font-size: " + font_size + "; margin-top: 30px;"
-                        ' margin-bottom: 15px;">' + linea + "</h2>"
+                        " font-size: " + font_size + "; margin: 0; "
+                        'padding-top: 10px; padding-bottom: 5px;">' + linea + "</h2>"
                     )
                 else:
                     formatted_lineas.append(
-                        '<p style="text-align: justify; margin-bottom: 20px;'
-                        ' line-height: 1.6;">' + linea + "</p>"
+                        '<p style="text-align: justify; margin: 0;'
+                        ' line-height: 1.2;">' + linea + "</p>"
                     )
             raw_content = "".join(formatted_lineas)
 

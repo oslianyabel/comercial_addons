@@ -204,7 +204,7 @@ class ContratoEspecifico(models.Model):
             return ""
 
         table_style = (
-            "width: 100%; border-collapse: collapse; margin-top: 20px; "
+            "width: 100%; border-collapse: collapse; margin-top: 5px; "
             "font-family: Arial, sans-serif; font-size: 11px;"
         )
         th_style = (
@@ -232,31 +232,21 @@ class ContratoEspecifico(models.Model):
                 else ""
             )
             rows.append(
-                f"""
-                <tr>
-                    <td style="{td_style}">{line.product_id.name}</td>
-                    <td style="{td_style}">{line.name}</td>
-                    <td style="{td_num_style}">{line.quantity:.2f}</td>
-                    <td style="{td_style}">{line.uom_id.name}</td>
-                    <td style="{td_num_style}">{line.price_unit:,.2f}</td>
-                    <td style="{td_num_style}">{line.price_subtotal:,.2f}</td>
-                    <td style="{td_style}">{deadline}</td>
-                </tr>
-            """
+                f'<tr><td style="{td_style}">{line.product_id.name}</td>'
+                f'<td style="{td_style}">{line.name}</td>'
+                f'<td style="{td_num_style}">{line.quantity:.2f}</td>'
+                f'<td style="{td_style}">{line.uom_id.name}</td>'
+                f'<td style="{td_num_style}">{line.price_unit:,.2f}</td>'
+                f'<td style="{td_num_style}">{line.price_subtotal:,.2f}</td>'
+                f'<td style="{td_style}">{deadline}</td></tr>'
             )
 
-        html = f"""
-            <table style="{table_style}">
-                <thead>
-                    <tr>
-                        {"".join(f'<th style="{th_style}">{h}</th>' for h in headers)}
-                    </tr>
-                </thead>
-                <tbody>
-                    {"".join(rows)}
-                </tbody>
-            </table>
-        """
+        html = f'<table style="{table_style}"><thead><tr>'
+        for header in headers:
+            html += f'<th style="{th_style}">{header}</th>'
+        html += "</tr></thead><tbody>"
+        html += "".join(rows)
+        html += "</tbody></table>"
         return html
 
     def action_sign(self):
