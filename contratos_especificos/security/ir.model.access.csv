@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_contrato_especifico,contrato.especifico.all,model_contrato_especifico,,1,1,1,1
+access_contrato_especifico_template,contrato.especifico.template.all,model_contrato_especifico_template,,1,1,1,1
+access_contrato_especifico_template_import_wizard,contrato.especifico.import.wizard.all,model_contrato_especifico_import_wizard,,1,1,1,1
+access_contrato_especifico_line,contrato.especifico.line.all,model_contrato_especifico_line,,1,1,1,1

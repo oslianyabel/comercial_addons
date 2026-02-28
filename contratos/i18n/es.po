@@ -54,17 +54,17 @@ msgstr "Nuestro Representante"
 #. module: contratos
 #: model:ir.model.fields,field_description:contratos.field_contrato_marco__our_rep_decision_number
 msgid "Our Rep. Decision Number"
-msgstr "Numero de Decision (Nuestro Rep.)"
+msgstr "Número de la Resolución (nuestro rep.)"
 
 #. module: contratos
 #: model:ir.model.fields,field_description:contratos.field_contrato_marco__our_rep_decision_date
 msgid "Our Rep. Decision Date"
-msgstr "Fecha de Decision (Nuestro Rep.)"
+msgstr "Fecha de Resolución (nuestro rep.)"
 
 #. module: contratos
 #: model:ir.model.fields,field_description:contratos.field_contrato_marco__date
-msgid "Contract Date"
-msgstr "Fecha del Contrato"
+msgid "Contract Subscription Date"
+msgstr "Fecha de suscripción del contrato"
 
 #. module: contratos
 #: model:ir.model.fields,field_description:contratos.field_contrato_marco__contract_type
@@ -345,5 +345,13 @@ msgid "TXT File"
 msgstr "Archivo TXT"
 
 #. module: contratos
-msgid "Import TXT for Contract Template"
-msgstr "Importar TXT para Plantilla de Contrato"
+msgid "Cliente: %s"
+msgstr "Cliente: %s"
+
+#. module: contratos
+msgid "Company: Bank Account Holder"
+msgstr "Empresa: Titular de la Cuenta Bancaria"
+
+#. module: contratos
+msgid "The contract cannot be generated because the following data is missing:\n\n- %s"
+msgstr "No se puede generar el contrato porque faltan los siguientes datos:\n\n- %s"

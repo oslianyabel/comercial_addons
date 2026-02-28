@@ -63,8 +63,8 @@ msgstr "Fecha de Decision (Nuestro Rep.)"
 
 #. module: contratos
 #: model:ir.model.fields,field_description:contratos.field_contrato_marco__date
-msgid "Contract Date"
-msgstr "Fecha del Contrato"
+msgid "Contract Subscription Date"
+msgstr "Fecha de suscripción del contrato"
 
 #. module: contratos
 #: model:ir.model.fields,field_description:contratos.field_contrato_marco__contract_type

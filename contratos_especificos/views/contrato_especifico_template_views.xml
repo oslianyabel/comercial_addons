@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_contrato_especifico_template_form" model="ir.ui.view">
+        <field name="name">contrato.especifico.template.form</field>
+        <field name="model">contrato.especifico.template</field>
+        <field name="arch" type="xml">
+            <form create="false" delete="false">
+                <header>
+                    <button name="action_open_import_wizard" string="Import TXT" type="object" class="btn-primary"/>
+                    <button name="action_reset_from_filesystem" string="Reset from Filesystem" type="object" class="btn-warning" confirm="Are you sure you want to overwrite this template with the original file content?"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name" string="Template Name"/>
+                        <h1>
+                            <field name="name" placeholder="e.g. CGM Disponibilidad y Soporte" autocomplete="off"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="type" readonly="1"/>
+                            <field name="last_sync_date" readonly="1"/>
+                            <field name="sync_state" widget="badge" decoration-success="sync_state == 'synced'" decoration-warning="sync_state == 'modified'"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="content" string="Content">
+                            <div style="max-width: 800px; margin: 0 auto; border: 1px solid #dee2e6; padding: 40px; background: white; min-height: 800px; overflow-wrap: break-word; font-family: 'Times New Roman', Times, serif;">
+                                <field name="content" widget="html" options="{'style-inline': true}"/>
+                            </div>
+                        </page>
+                        <page name="help" string="Available Variables">
+                            <group>
+                                <field name="available_variables" readonly="1" nolabel="1"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_contrato_especifico_template_tree" model="ir.ui.view">
+        <field name="name">contrato.especifico.template.tree</field>
+        <field name="model">contrato.especifico.template</field>
+        <field name="arch" type="xml">
+            <tree create="false" delete="false" decoration-success="sync_state == 'synced'" decoration-warning="sync_state == 'modified'">
+                <field name="name"/>
+                <field name="type"/>
+                <field name="last_sync_date"/>
+                <field name="sync_state" widget="badge" decoration-success="sync_state == 'synced'" decoration-warning="sync_state == 'modified'"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_contrato_especifico_template" model="ir.actions.act_window">
+        <field name="name">Specific Contract Templates</field>
+        <field name="res_model">contrato.especifico.template</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_contrato_especifico_template"
+              name="Specific Templates"
+              parent="contratos.menu_contrato_root"
+              action="action_contrato_especifico_template"
+              sequence="30"/>
+</odoo>
