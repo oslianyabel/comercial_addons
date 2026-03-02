@@ -1,23 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="view_contrato_marco_form_inherit_signature" model="ir.ui.view">
-        <field name="name">contrato.marco.form.inherit.signature</field>
-        <field name="model">contrato.marco</field>
-        <field name="inherit_id" ref="contratos.view_contrato_marco_form"/>
-        <field name="arch" type="xml">
-            <xpath expr="//header/button[@name='action_sign']" position="attributes">
-                <attribute name="invisible">state != 'borrador'</attribute>
-            </xpath>
-            <xpath expr="//header/button[@name='action_cancel']" position="attributes">
-                <attribute name="invisible">state not in ['borrador', 'firmado']</attribute>
-            </xpath>
-            <xpath expr="//header/button[@name='action_draft']" position="attributes">
-                <attribute name="invisible">state != 'cancelado'</attribute>
-            </xpath>
-            <xpath expr="//group[@name='dates_and_signatures']" position="inside">
-                <field name="provider_signature_id" options="{'no_create': True}"/>
-                <field name="customer_signature_id" options="{'no_create': True}"/>
-            </xpath>
-        </field>
-    </record>
+    <data>
+        <record id="view_contrato_marco_form_inherit_signature" model="ir.ui.view">
+            <field name="name">contrato.marco.form.inherit.signature</field>
+            <field name="model">contrato.marco</field>
+            <field name="inherit_id" ref="contratos.view_contrato_marco_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//header/button[@name='action_sign']" position="attributes">
+                    <attribute name="invisible">state != 'borrador'</attribute>
+                </xpath>
+                <xpath expr="//header/button[@name='action_cancel']" position="attributes">
+                    <attribute name="invisible">state not in ['borrador', 'firmado']</attribute>
+                </xpath>
+                <xpath expr="//header/button[@name='action_draft']" position="attributes">
+                    <attribute name="invisible">state != 'cancelado'</attribute>
+                </xpath>
+                <xpath expr="//group[@name='dates_and_signatures']" position="inside">
+                    <field name="provider_signature_id" options="{'no_create': True}"/>
+                    <field name="customer_signature_id" options="{'no_create': True}"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
 </odoo>

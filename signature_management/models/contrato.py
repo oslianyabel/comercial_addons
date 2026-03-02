@@ -6,10 +6,10 @@ class ContratoMarco(models.Model):
     _inherit = "contrato.marco"
 
     provider_signature_id = fields.Many2one(
-        "signature.signature", string="Provider Signature"
+        "signature.signature", string="Firma del Prestador"
     )
     customer_signature_id = fields.Many2one(
-        "signature.signature", string="Customer Signature"
+        "signature.signature", string="Firma del Cliente"
     )
 
     def action_draft(self):
@@ -60,10 +60,10 @@ class ContratoEspecifico(models.Model):
     _inherit = "contrato.especifico"
 
     provider_signature_id = fields.Many2one(
-        "signature.signature", string="Provider Signature"
+        "signature.signature", string="Firma del Prestador"
     )
     customer_signature_id = fields.Many2one(
-        "signature.signature", string="Customer Signature"
+        "signature.signature", string="Firma del Cliente"
     )
 
     # Audit fields

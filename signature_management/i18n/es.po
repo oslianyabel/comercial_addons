@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 17.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-01 00:00+0000\n"
-"PO-Revision-Date: 2026-03-01 00:00+0000\n"
+"POT-Creation-Date: 2026-03-02 00:00+0000\n"
+"PO-Revision-Date: 2026-03-02 00:00+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: es\n"
@@ -17,53 +17,42 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #. module: signature_management
-#: model:ir.model,name:signature_management.model_signature_payment_form
-#: model:ir.model.fields,field_description:signature_management.field_account_move__payment_form_id
-#: model:ir.model.fields,field_description:signature_management.field_signature_selection_wizard__payment_form_id
-#: model:ir.ui.menu,name:signature_management.menu_signature_payment_form
-msgid "Payment Form"
-msgstr "Forma de pago"
+#: model:ir.model,name:signature_management.model_signature_signature
+msgid "Firma Digital"
+msgstr "Firma Digital"
 
 #. module: signature_management
-msgid "Facturar servicio"
-msgstr "Facturar servicio"
+#: model:ir.model.fields,field_description:signature_management.field_signature_signature__name
+msgid "Nombre"
+msgstr "Nombre"
 
 #. module: signature_management
-msgid "Firmas de Auditoría"
-msgstr "Firmas de Auditoría"
+#: model:ir.model.fields,field_description:signature_management.field_signature_signature__image
+msgid "Imagen de Firma"
+msgstr "Imagen de Firma"
 
 #. module: signature_management
-msgid "Realizada por"
-msgstr "Realizada por"
+#: model:ir.model.fields,field_description:signature_management.field_signature_signature__partner_ids
+msgid "Contactos Asociados"
+msgstr "Contactos Asociados"
 
 #. module: signature_management
-msgid "Transportado por"
-msgstr "Transportado por"
+#: model:ir.model.fields,field_description:signature_management.field_signature_signature__marco_ids
+msgid "Contratos Marcos Asociados"
+msgstr "Contratos Marcos Asociados"
 
 #. module: signature_management
-msgid "Recibido por"
-msgstr "Recibido por"
-
-#. module: signature_management
-msgid "Entregada por"
-msgstr "Entregada por"
-
-#. module: signature_management
-msgid "Contabilizada por"
-msgstr "Contabilizada por"
-
-#. module: signature_management
-msgid "Facturar"
-msgstr "Facturar"
-
-#. module: signature_management
-msgid "Signature Information"
-msgstr "Información de Firma"
-
-#. module: signature_management
+#: model_terms:ir.ui.view,arch_db:signature_management.view_res_signature_tree
 msgid "Firmas"
 msgstr "Firmas"
 
 #. module: signature_management
-msgid "Formas de pago"
-msgstr "Formas de pago"
+#: model_terms:ir.ui.view,arch_db:signature_management.view_res_signature_form
+msgid "Firma"
+msgstr "Firma"
+
+#. module: signature_management
+#: model:ir.actions.act_window,name:signature_management.action_res_signature
+#: model:ir.ui.menu,name:signature_management.menu_res_signature
+msgid "Firmas"
+msgstr "Firmas"

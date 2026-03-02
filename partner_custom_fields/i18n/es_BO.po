@@ -6,11 +6,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 17.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-21 00:00+0000\n"
-"PO-Revision-Date: 2026-02-21 00:00+0000\n"
+"POT-Creation-Date: 2026-03-02 00:00+0000\n"
+"PO-Revision-Date: 2026-03-02 00:00+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
-"Language: es_BO\n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -18,22 +18,22 @@ msgstr ""
 
 #. module: partner_custom_fields
 #: model:ir.model,name:partner_custom_fields.model_res_partner_organism
-msgid "Organism"
+msgid "Organismo"
 msgstr "Organismo"
 
 #. module: partner_custom_fields
 #: model:ir.model.fields,field_description:partner_custom_fields.field_res_partner__classification
-msgid "Classification"
-msgstr "Clasificacion"
+msgid "Clasificación"
+msgstr "Clasificación"
 
 #. module: partner_custom_fields
 #: model:ir.model.fields,selection:partner_custom_fields.field_res_partner__classification:empresa
-msgid "Company"
+msgid "Empresa"
 msgstr "Empresa"
 
 #. module: partner_custom_fields
 #: model:ir.model.fields,selection:partner_custom_fields.field_res_partner__classification:presupuestada
-msgid "State-funded"
+msgid "Presupuestada"
 msgstr "Presupuestada"
 
 #. module: partner_custom_fields
@@ -48,92 +48,92 @@ msgstr "TCP"
 
 #. module: partner_custom_fields
 #: model:ir.model.fields,field_description:partner_custom_fields.field_res_partner__organism_id
-msgid "Organism"
+msgid "Organismo"
 msgstr "Organismo"
 
 #. module: partner_custom_fields
 #: model:ir.model.fields,field_description:partner_custom_fields.field_res_partner__short_name
-msgid "Abbreviated Name"
+msgid "Nombre Abreviado"
 msgstr "Nombre Abreviado"
 
 #. module: partner_custom_fields
 #: model:ir.model.fields,field_description:partner_custom_fields.field_res_partner__titular
-msgid "Bank Account Holder"
-msgstr "Titular de la cuenta bancaria"
+msgid "Titular de Cuenta Bancaria"
+msgstr "Titular de Cuenta Bancaria"
 
 #. module: partner_custom_fields
 #: model:ir.model.fields,field_description:partner_custom_fields.field_res_partner__id_card
-msgid "ID Card"
-msgstr "Carne de Identidad"
+msgid "Carnet de Identidad"
+msgstr "Carnet de Identidad"
 
 #. module: partner_custom_fields
 #: model:ir.model.fields,field_description:partner_custom_fields.field_res_partner__represented_by_id
-msgid "Represented by"
-msgstr "Representada por"
+msgid "Representado por"
+msgstr "Representado por"
 
 #. module: partner_custom_fields
 #: model:ir.model.fields,field_description:partner_custom_fields.field_res_partner__appointed_by_agreement
-msgid "Appointed by Agreement No"
-msgstr "Nombrado mediante el Acuerdo No"
+msgid "Designado por Acuerdo No"
+msgstr "Designado por Acuerdo No"
 
 #. module: partner_custom_fields
 #: model:ir.model.fields,field_description:partner_custom_fields.field_res_partner__appointment_date
-msgid "Appointment Date"
-msgstr "Fecha del nombramiento"
+msgid "Fecha de Designación"
+msgstr "Fecha de Designación"
 
 #. module: partner_custom_fields
 #: model:ir.model.fields,field_description:partner_custom_fields.field_res_partner__resolution_number
-msgid "Creation Resolution Number"
-msgstr "Numero de resolucion de creacion"
+msgid "Número de Resolución de Creación"
+msgstr "Número de Resolución de Creación"
 
 #. module: partner_custom_fields
 #: model:ir.model.fields,field_description:partner_custom_fields.field_res_partner__creation_date
-msgid "Creation Resolution Date"
-msgstr "Fecha de resolucion de creacion"
+msgid "Fecha de Resolución de Creación"
+msgstr "Fecha de Resolución de Creación"
 
 #. module: partner_custom_fields
 #: model:ir.model.fields,field_description:partner_custom_fields.field_res_partner__issued_by
-msgid "Issued by (Creation)"
-msgstr "Emitida por (Creacion)"
+msgid "Emitido por (Creación)"
+msgstr "Emitido por (Creación)"
 
 #. module: partner_custom_fields
 #: model:ir.model.fields,field_description:partner_custom_fields.field_res_partner__current_resolution_number
-msgid "Signer's Resolution Number"
-msgstr "Numero de resolucion del firmante"
+msgid "Número de Resolución del Firmante"
+msgstr "Número de Resolución del Firmante"
 
 #. module: partner_custom_fields
 #: model:ir.model.fields,field_description:partner_custom_fields.field_res_partner__current_creation_date
-msgid "Signer's Resolution Date"
-msgstr "Fecha de resolucion del firmante"
+msgid "Fecha de Resolución del Firmante"
+msgstr "Fecha de Resolución del Firmante"
 
 #. module: partner_custom_fields
 #: model:ir.model.fields,field_description:partner_custom_fields.field_res_partner__current_issued_by
-msgid "Issued by (Signer)"
-msgstr "Emitida por (Firmante)"
+msgid "Emitido por (Firmante)"
+msgstr "Emitido por (Firmante)"
 
 #. module: partner_custom_fields
 #: model:ir.model.fields,field_description:partner_custom_fields.field_res_partner__notary_deed_number
-msgid "Notary Deed Number"
-msgstr "Numero de Escritura Notarial"
+msgid "Número de Escritura Notarial"
+msgstr "Número de Escritura Notarial"
 
 #. module: partner_custom_fields
 #: model:ir.model.fields,field_description:partner_custom_fields.field_res_partner__mercantile_register
-msgid "Mercantile Register"
-msgstr "Inscrita en el Registro Mercantil"
+msgid "Registro Mercantil"
+msgstr "Registro Mercantil"
 
 #. module: partner_custom_fields
 #: model:ir.model.fields,field_description:partner_custom_fields.field_res_partner__register_volume
-msgid "Volume"
+msgid "Tomo"
 msgstr "Tomo"
 
 #. module: partner_custom_fields
 #: model:ir.model.fields,field_description:partner_custom_fields.field_res_partner__register_page
-msgid "Page"
+msgid "Folio"
 msgstr "Folio"
 
 #. module: partner_custom_fields
 #: model:ir.model.fields,field_description:partner_custom_fields.field_res_partner__register_sheet
-msgid "Sheet"
+msgid "Hoja"
 msgstr "Hoja"
 
 #. module: partner_custom_fields
@@ -148,76 +148,100 @@ msgstr "NIT"
 
 #. module: partner_custom_fields
 #: model:ir.model.fields,field_description:partner_custom_fields.field_res_partner__bank_account_cup
-msgid "CUP Account"
+msgid "Cuenta CUP"
 msgstr "Cuenta CUP"
 
 #. module: partner_custom_fields
 #: model:ir.model.fields,field_description:partner_custom_fields.field_res_partner__bank_account_mlc
-msgid "MLC Account"
+msgid "Cuenta MLC"
 msgstr "Cuenta MLC"
 
 #. module: partner_custom_fields
 #: model:ir.model.fields,field_description:partner_custom_fields.field_res_partner__bank_branch_number
-msgid "Bank Branch Number (CUP)"
-msgstr "Numero de sucursal del banco en CUP"
+msgid "Número de Sucursal Bancaria (CUP)"
+msgstr "Número de Sucursal Bancaria (CUP)"
 
 #. module: partner_custom_fields
 #: model:ir.model.fields,field_description:partner_custom_fields.field_res_partner__bank_cup_branch
-msgid "MiPyme Branch (CUP)"
-msgstr "Sucursal de MiPyme (CUP)"
+msgid "Sucursal MiPyme (CUP)"
+msgstr "Sucursal MiPyme (CUP)"
 
 #. module: partner_custom_fields
 #: model:ir.model.fields,field_description:partner_custom_fields.field_res_partner__bank_mlc_branch
-msgid "MiPyme Branch (MLC)"
-msgstr "Sucursal de MiPyme (MLC)"
+msgid "Sucursal MiPyme (MLC)"
+msgstr "Sucursal MiPyme (MLC)"
 
 #. module: partner_custom_fields
 #: model:ir.model.fields,field_description:partner_custom_fields.field_res_partner__tcp_bank_cup_branch
-msgid "TCP Branch (CUP)"
-msgstr "Sucursal de TCP (CUP)"
+msgid "Sucursal TCP (CUP)"
+msgstr "Sucursal TCP (CUP)"
 
 #. module: partner_custom_fields
 #: model:ir.model.fields,field_description:partner_custom_fields.field_res_partner__tcp_bank_mlc_branch
-msgid "TCP Branch (MLC)"
-msgstr "Sucursal de TCP (MLC)"
+msgid "Sucursal TCP (MLC)"
+msgstr "Sucursal TCP (MLC)"
 
 #. module: partner_custom_fields
 #: model:ir.model.fields,field_description:partner_custom_fields.field_res_partner__bank_id_ref
-msgid "Bank"
+msgid "Banco"
 msgstr "Banco"
 
 #. module: partner_custom_fields
-#: model:ir.actions.act_window,name:partner_custom_fields.action_res_partner_organism
-msgid "Organisms"
-msgstr "Organismos"
+#: model:ir.model.fields,field_description:partner_custom_fields.field_res_company__contract_name
+msgid "Nombre de la Empresa en Contratos"
+msgstr "Nombre de la Empresa en Contratos"
 
 #. module: partner_custom_fields
-#: model:ir.ui.menu,name:partner_custom_fields.menu_res_partner_organism
-msgid "Organisms"
-msgstr "Organismos"
+#: model:ir.model.fields,field_description:partner_custom_fields.field_res_company__unit
+msgid "Unidad"
+msgstr "Unidad"
+
+#. module: partner_custom_fields
+#: model:ir.model.fields,field_description:partner_custom_fields.field_res_company__organism_id
+msgid "Organismo"
+msgstr "Organismo"
+
+#. module: partner_custom_fields
+#: model:ir.model.fields,field_description:partner_custom_fields.field_res_company__nit_code
+msgid "Código NIT"
+msgstr "Código NIT"
+
+#. module: partner_custom_fields
+#: model:ir.model.fields,field_description:partner_custom_fields.field_res_company__address_legal
+msgid "Dirección Legal"
+msgstr "Dirección Legal"
+
+#. module: partner_custom_fields
+#: model:ir.model.fields,field_description:partner_custom_fields.field_res_company__stamp_image
+msgid "Sello de la Empresa"
+msgstr "Sello de la Empresa"
 
 #. module: partner_custom_fields
 #: code:addons/partner_custom_fields/models/res_partner.py:0
 #, python-format
-msgid "For MiPymes, REEUP and NIT must be the same."
+msgid "Para MiPymes, el REEUP y el NIT deben ser iguales."
 msgstr "Para MiPymes, el REEUP y el NIT deben ser iguales."
 
 #. module: partner_custom_fields
 #: code:addons/partner_custom_fields/models/res_partner.py:0
 #, python-format
-msgid "The ID Card must contain exactly 11 digits."
-msgstr "El Carne de Identidad debe contener exactamente 11 digitos."
+msgid "El Carnet de Identidad debe contener exactamente 11 dígitos."
+msgstr "El Carnet de Identidad debe contener exactamente 11 dígitos."
 
 #. module: partner_custom_fields
 #: code:addons/partner_custom_fields/models/res_partner.py:0
 #, python-format
-msgid "Companies cannot have an ID Card (CI)."
-msgstr "Las empresas no pueden tener Carne de Identidad (CI)."
+msgid "Las empresas no pueden tener Carnet de Identidad (CI)."
+msgstr "Las empresas no pueden tener Carnet de Identidad (CI)."
 
 #. module: partner_custom_fields
-msgid "Bank Account Holder"
-msgstr "Titular de la cuenta bancaria"
+msgid "Datos de Contratos"
+msgstr "Datos de Contratos"
 
 #. module: partner_custom_fields
-msgid "Name of the bank account holder..."
-msgstr "Nombre del titular de la cuenta bancaria..."
+msgid "Información de la Compañía"
+msgstr "Información de la Compañía"
+
+#. module: partner_custom_fields
+msgid "Legal y Marca"
+msgstr "Legal y Marca"

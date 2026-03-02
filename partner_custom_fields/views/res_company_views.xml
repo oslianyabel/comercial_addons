@@ -1,26 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="view_company_form_inherit_legal" model="ir.ui.view">
-        <field name="name">res.company.form.inherit.legal</field>
-        <field name="model">res.company</field>
-        <field name="inherit_id" ref="base.view_company_form"/>
-        <field name="arch" type="xml">
-            <xpath expr="//notebook" position="inside">
-                <page string="Contracts Data" name="legal_metadata">
-                    <group>
-                        <group string="Company Information">
-                            <field name="contract_name"/>
-                            <field name="unit"/>
-                            <field name="organism_id"/>
-                            <field name="nit_code"/>
+    <data>
+        <record id="view_company_form_inherit_legal" model="ir.ui.view">
+            <field name="name">res.company.form.inherit.legal</field>
+            <field name="model">res.company</field>
+            <field name="inherit_id" ref="base.view_company_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook" position="inside">
+                    <page string="Datos de Contratos" name="legal_metadata">
+                        <group>
+                            <group string="Información de la Compañía">
+                                <field name="contract_name"/>
+                                <field name="unit"/>
+                                <field name="organism_id"/>
+                                <field name="nit_code"/>
+                            </group>
+                            <group string="Legal y Marca">
+                                <field name="address_legal"/>
+                                <field name="stamp_image" widget="image" class="oe_avatar"/>
+                            </group>
                         </group>
-                        <group string="Legal &amp; Branding">
-                            <field name="address_legal"/>
-                            <field name="stamp_image" widget="image" class="oe_avatar"/>
-                        </group>
-                    </group>
-                </page>
-            </xpath>
-        </field>
-    </record>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+    </data>
 </odoo>

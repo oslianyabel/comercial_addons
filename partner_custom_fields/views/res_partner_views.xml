@@ -1,96 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="view_partner_form_inherit_custom" model="ir.ui.view">
-        <field name="name">res.partner.form.inherit.custom</field>
-        <field name="model">res.partner</field>
-        <field name="inherit_id" ref="base.view_partner_form"/>
-        <field name="arch" type="xml">
-            <xpath expr="//h1" position="after">
-                <div class="o_row">
-                    <label for="short_name"/>
-                    <field name="short_name" placeholder="Abbreviated Name..."/>
-                </div>
-            </xpath>
-            <xpath expr="//field[@name='vat']" position="after">
-                <field name="id_card" placeholder="11 digits..." invisible="is_company"/>
-                <field name="classification" invisible="not is_company"/>
-                <field name="organism_id" invisible="not is_company"/>
-                
-                <!-- Resolution Section -->
-                <separator string="Resolution" invisible="classification != 'empresa'"/>
-                <field name="resolution_number" invisible="classification != 'empresa'"/>
-                <field name="creation_date" invisible="classification != 'empresa'"/>
-                <field name="issued_by" invisible="classification != 'empresa'"/>
-                <field name="current_resolution_number" invisible="classification != 'empresa'"/>
-                <field name="current_creation_date" invisible="classification != 'empresa'"/>
-                <field name="current_issued_by" invisible="classification != 'empresa'"/>
-                <separator invisible="classification != 'empresa'"/>
-                
-                <!-- MiPyme Registration -->
-                <field name="notary_deed_number" invisible="classification != 'mipyme'"/>
-                <field name="mercantile_register" invisible="classification != 'mipyme'"/>
-                <field name="register_volume" invisible="classification != 'mipyme'"/>
-                <field name="register_page" invisible="classification != 'mipyme'"/>
-                <field name="register_sheet" invisible="classification != 'mipyme'"/>
-                
-                <!-- Representative Section -->
-                <separator string="Representative" invisible="classification != 'mipyme'"/>
-                <field name="represented_by_id" invisible="classification != 'mipyme'"/>
-                <field name="appointed_by_agreement" invisible="classification != 'mipyme'"/>
-                <field name="appointment_date" invisible="classification != 'mipyme'"/>
-                <separator invisible="classification != 'mipyme'"/>
+    <data>
+        <record id="view_partner_form_inherit_custom" model="ir.ui.view">
+            <field name="name">res.partner.form.inherit.custom</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//h1" position="after">
+                    <div class="o_row">
+                        <label for="short_name"/>
+                        <field name="short_name" placeholder="Nombre Abreviado..."/>
+                    </div>
+                </xpath>
+                <xpath expr="//field[@name='vat']" position="after">
+                    <field name="id_card" placeholder="11 dígitos..." invisible="is_company"/>
+                    <field name="classification" invisible="not is_company"/>
+                    <field name="organism_id" invisible="not is_company"/>
+                    
+                    <!-- Sección de Resolución -->
+                    <separator string="Resolución" invisible="classification != 'empresa'"/>
+                    <field name="resolution_number" invisible="classification != 'empresa'"/>
+                    <field name="creation_date" invisible="classification != 'empresa'"/>
+                    <field name="issued_by" invisible="classification != 'empresa'"/>
+                    <field name="current_resolution_number" invisible="classification != 'empresa'"/>
+                    <field name="current_creation_date" invisible="classification != 'empresa'"/>
+                    <field name="current_issued_by" invisible="classification != 'empresa'"/>
+                    <separator invisible="classification != 'empresa'"/>
+                    
+                    <!-- Registro de MiPyme -->
+                    <field name="notary_deed_number" invisible="classification != 'mipyme'"/>
+                    <field name="mercantile_register" invisible="classification != 'mipyme'"/>
+                    <field name="register_volume" invisible="classification != 'mipyme'"/>
+                    <field name="register_page" invisible="classification != 'mipyme'"/>
+                    <field name="register_sheet" invisible="classification != 'mipyme'"/>
+                    
+                    <!-- Sección de Representante -->
+                    <separator string="Representante" invisible="classification != 'mipyme'"/>
+                    <field name="represented_by_id" invisible="classification != 'mipyme'"/>
+                    <field name="appointed_by_agreement" invisible="classification != 'mipyme'"/>
+                    <field name="appointment_date" invisible="classification != 'mipyme'"/>
+                    <separator invisible="classification != 'mipyme'"/>
 
-                <field name="reeup" invisible="not is_company"/>
-                <field name="tax_id" invisible="not is_company"/>
-                
-                <field name="bank_id_ref" invisible="not is_company"/>
-                <field name="titular" invisible="not is_company"/>
-                <field name="bank_account_cup" invisible="not is_company"/>
-                <field name="bank_account_mlc" invisible="not is_company"/>
-                <field name="bank_branch_number" invisible="not is_company or classification == 'mipyme'"/>
-                <field name="bank_cup_branch" invisible="classification != 'mipyme'"/>
-                <field name="bank_mlc_branch" invisible="classification != 'mipyme'"/>
-                
-                <!-- TCP Bank Fields -->
-                <field name="tcp_bank_cup_branch" invisible="classification != 'tcp'"/>
-                <field name="tcp_bank_mlc_branch" invisible="classification != 'tcp'"/>
-            </xpath>
-        </field>
-    </record>
+                    <field name="reeup" invisible="not is_company"/>
+                    <field name="tax_id" invisible="not is_company"/>
+                    
+                    <field name="bank_id_ref" invisible="not is_company"/>
+                    <field name="titular" invisible="not is_company"/>
+                    <field name="bank_account_cup" invisible="not is_company"/>
+                    <field name="bank_account_mlc" invisible="not is_company"/>
+                    <field name="bank_branch_number" invisible="not is_company or classification == 'mipyme'"/>
+                    <field name="bank_cup_branch" invisible="classification != 'mipyme'"/>
+                    <field name="bank_mlc_branch" invisible="classification != 'mipyme'"/>
+                    
+                    <!-- Campos de Banco TCP -->
+                    <field name="tcp_bank_cup_branch" invisible="classification != 'tcp'"/>
+                    <field name="tcp_bank_mlc_branch" invisible="classification != 'tcp'"/>
+                </xpath>
+            </field>
+        </record>
 
-    <record id="view_res_partner_organism_tree" model="ir.ui.view">
-        <field name="name">res.partner.organism.tree</field>
-        <field name="model">res.partner.organism</field>
-        <field name="arch" type="xml">
-            <tree editable="bottom">
-                <field name="name"/>
-            </tree>
-        </field>
-    </record>
+        <record id="view_res_partner_organism_tree" model="ir.ui.view">
+            <field name="name">res.partner.organism.tree</field>
+            <field name="model">res.partner.organism</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom" string="Organismos">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
 
-    <record id="view_res_partner_organism_form" model="ir.ui.view">
-        <field name="name">res.partner.organism.form</field>
-        <field name="model">res.partner.organism</field>
-        <field name="arch" type="xml">
-            <form>
-                <sheet>
-                    <group>
-                        <field name="name"/>
-                    </group>
-                </sheet>
-            </form>
-        </field>
-    </record>
+        <record id="view_res_partner_organism_form" model="ir.ui.view">
+            <field name="name">res.partner.organism.form</field>
+            <field name="model">res.partner.organism</field>
+            <field name="arch" type="xml">
+                <form string="Organismo">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
 
-    <record id="action_res_partner_organism" model="ir.actions.act_window">
-        <field name="name">Organisms</field>
-        <field name="res_model">res.partner.organism</field>
-        <field name="view_mode">tree,form</field>
-    </record>
+        <record id="action_res_partner_organism" model="ir.actions.act_window">
+            <field name="name">Organismos</field>
+            <field name="res_model">res.partner.organism</field>
+            <field name="view_mode">tree,form</field>
+        </record>
 
-    <menuitem id="menu_res_partner_organism"
-        name="Organisms"
-        action="action_res_partner_organism"
-        parent="contacts.res_partner_menu_config"
-        sequence="20"/>
+        <menuitem id="menu_res_partner_organism"
+            name="Organismos"
+            action="action_res_partner_organism"
+            parent="contacts.res_partner_menu_config"
+            sequence="20"/>
+    </data>
 </odoo>

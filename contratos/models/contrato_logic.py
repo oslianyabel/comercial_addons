@@ -82,13 +82,13 @@ class ContratoMarco(models.Model):
             # Validation
             missing = []
             if not record.our_representative_id:
-                missing.append(_("Our Representative"))
+                missing.append(_("Nuestro Representante"))
             if not record.our_rep_decision_number:
-                missing.append(_("Our Rep. Decision Number"))
+                missing.append(_("Nuestro Rep. Número de Resolución"))
             if not record.our_rep_decision_date:
-                missing.append(_("Our Rep. Decision Date"))
+                missing.append(_("Nuestro Rep. Fecha de Resolución"))
             if not r:
-                missing.append(_("Customer Representative"))
+                missing.append(_("Representante del Cliente"))
 
             req_p = [
                 "tax_id",
@@ -137,9 +137,9 @@ class ContratoMarco(models.Model):
 
             for f in req_p:
                 if not getattr(p, f):
-                    missing.append(_("Client: %s") % _(p._fields[f].string))
+                    missing.append(_("Cliente: %s") % _(p._fields[f].string))
             if not comp_partner.titular:
-                missing.append(_("Company: Bank Account Holder"))
+                missing.append(_("Compañía: Titular de Cuenta Bancaria"))
 
             if missing:
                 raise UserError(

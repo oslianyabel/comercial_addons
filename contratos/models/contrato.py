@@ -4,61 +4,61 @@ from odoo.exceptions import UserError
 
 class ContratoMarco(models.Model):
     _name = "contrato.marco"
-    _description = "Master Contract"
+    _description = "Contrato Marco"
 
-    name = fields.Char(string="Contract Number", required=True)
+    name = fields.Char(string="Número de Contrato", required=True)
     company_id = fields.Many2one(
         "res.company",
-        string="Company",
+        string="Compañía",
         required=True,
         default=lambda self: self.env.company,
     )
     partner_id = fields.Many2one(
         "res.partner",
-        string="Customer",
+        string="Cliente",
         required=True,
         domain=[("is_company", "=", True)],
     )
     representative_id = fields.Many2one(
         "res.partner",
-        string="Customer Representative",
+        string="Representante del Cliente",
         domain="[('parent_id', '=', partner_id)]",
     )
     our_representative_id = fields.Many2one(
         "res.partner",
-        string="Our Representative",
+        string="Nuestro Representante",
         domain="[('is_company', '=', False), ('company_id', '=', company_id)]",
     )
-    our_rep_decision_number = fields.Char(string="Our Rep. Decision Number")
-    our_rep_decision_date = fields.Date(string="Our Rep. Decision Date")
-    date = fields.Date(string="Contract Date", default=fields.Date.context_today)
+    our_rep_decision_number = fields.Char(string="Número de Resolución del Rep.")
+    our_rep_decision_date = fields.Date(string="Fecha de Resolución del Rep.")
+    date = fields.Date(string="Fecha del Contrato", default=fields.Date.context_today)
     contract_type = fields.Selection(
         [("mipyme", "MiPyme"), ("tcp", "TCP"), ("empresa", "Empresa")],
-        string="Contract Type",
+        string="Tipo de Contrato",
         required=True,
     )
 
     # New Fields
-    contract_name = fields.Char(string="Name", required=True, default="/")
-    file_number = fields.Char(string="File Number", required=True, default="/")
+    contract_name = fields.Char(string="Nombre", required=True, default="/")
+    file_number = fields.Char(string="Número de Expediente", required=True, default="/")
     start_date = fields.Date(
-        string="Start Date", required=True, default=fields.Date.context_today
+        string="Fecha de Inicio", required=True, default=fields.Date.context_today
     )
     end_date = fields.Date(
-        string="End Date", required=True, default=fields.Date.context_today
+        string="Fecha de Fin", required=True, default=fields.Date.context_today
     )
     validity_date = fields.Date(
-        string="Validity Date", required=True, default=fields.Date.context_today
+        string="Fecha de Vigencia", required=True, default=fields.Date.context_today
     )
     hco = fields.Boolean(string="HCO")
     oeb = fields.Char(string="OEB")
     state = fields.Selection(
         [
-            ("borrador", "Draft"),
-            ("firmado", "Signed"),
-            ("cancelado", "Cancelled"),
+            ("borrador", "Borrador"),
+            ("firmado", "Firmado"),
+            ("cancelado", "Cancelado"),
         ],
-        string="Status",
+        string="Estado",
         default="borrador",
         required=True,
         copy=False,
@@ -66,40 +66,40 @@ class ContratoMarco(models.Model):
 
     authorized_contact_ids = fields.Many2many(
         "res.partner",
-        string="Authorized Contacts",
+        string="Contactos Autorizados",
         domain="[('is_company', '=', False), ('company_id', '=', company_id)]",
-        help="Contacts from our company authorized to sign this contract.",
+        help="Contactos de nuestra empresa autorizados para firmar este contrato.",
     )
     signed_by_id = fields.Many2one(
         "res.partner",
-        string="Signed by",
+        string="Firmado por",
         readonly=True,
         copy=False,
     )
     signing_date = fields.Datetime(
-        string="Signing Date",
+        string="Fecha de Firma",
         readonly=True,
         copy=False,
     )
 
     created_by_id = fields.Many2one(
         "res.users",
-        string="Created by",
+        string="Creado por",
         default=lambda self: self.env.user,
         readonly=True,
     )
     creation_date_auto = fields.Datetime(
-        string="Creation Date", default=fields.Datetime.now, readonly=True
+        string="Fecha de Creación", default=fields.Datetime.now, readonly=True
     )
     modification_date_auto = fields.Datetime(
-        string="Last Modification", compute="_compute_dates", store=True
+        string="Última Modificación", compute="_compute_dates", store=True
     )
 
     _sql_constraints = [
         (
             "name_unique",
             "UNIQUE(name)",
-            "The Contract Number must be unique. A contract with this number already exists.",
+            "El Número de Contrato debe ser único. Ya existe un contrato con este número.",
         )
     ]
 
@@ -112,7 +112,7 @@ class ContratoMarco(models.Model):
         """Prevent editing signed contracts."""
         if any(r.state == "firmado" for r in self) and not self.env.su:
             if not (len(vals) == 1 and "state" in vals):
-                raise UserError(_("You cannot edit a signed contract."))
+                raise UserError(_("No puede editar un contrato firmado."))
         return super().write(vals)
 
     def action_draft(self):
@@ -129,11 +129,13 @@ class ContratoMarco(models.Model):
         """Transition contract to signed state with authorization check."""
         for record in self:
             if record.state not in ["borrador", "cancelado"]:
-                raise UserError(_("Only draft or cancelled contracts can be signed."))
+                raise UserError(
+                    _("Solo se pueden firmar contratos en borrador o cancelados.")
+                )
 
             if not record.content:
                 raise UserError(
-                    _("Please generate the contract content before signing.")
+                    _("Por favor, genere el contenido del contrato antes de firmar.")
                 )
 
             # Authorization Check
@@ -142,7 +144,9 @@ class ContratoMarco(models.Model):
                 user_partner not in record.authorized_contact_ids
                 and not self.env.is_admin()
             ):
-                raise UserError(_("Only authorized contacts can sign this contract."))
+                raise UserError(
+                    _("Solo los contactos autorizados pueden firmar este contrato.")
+                )
 
             record.write(
                 {
@@ -152,7 +156,7 @@ class ContratoMarco(models.Model):
                 }
             )
 
-    content = fields.Html(string="Contract Content")
+    content = fields.Html(string="Contenido del Contrato")
 
     @api.onchange("partner_id")
     def _onchange_partner_id(self):
@@ -172,7 +176,10 @@ class ContratoMarco(models.Model):
             [("type", "=", self.contract_type)], limit=1
         )
         if not template:
-            raise UserError(_("No template found for type %s") % self.contract_type)
+            raise UserError(
+                _("No se encontró ninguna plantilla para el tipo %s")
+                % self.contract_type
+            )
 
         content = template.content
         # Basic replacement simulation

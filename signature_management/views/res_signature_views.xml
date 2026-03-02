@@ -1,60 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="view_res_signature_tree" model="ir.ui.view">
-        <field name="name">signature.signature.tree</field>
-        <field name="model">signature.signature</field>
-        <field name="arch" type="xml">
-            <tree string="Signatures">
-                <field name="name"/>
-                <field name="image" widget="image" options="{'size': [50, 50]}"/>
-            </tree>
-        </field>
-    </record>
+    <data>
+        <record id="view_res_signature_tree" model="ir.ui.view">
+            <field name="name">signature.signature.tree</field>
+            <field name="model">signature.signature</field>
+            <field name="arch" type="xml">
+                <tree string="Firmas">
+                    <field name="name"/>
+                    <field name="image" widget="image" options="{'size': [50, 50]}"/>
+                </tree>
+            </field>
+        </record>
 
-    <record id="view_res_signature_form" model="ir.ui.view">
-        <field name="name">signature.signature.form</field>
-        <field name="model">signature.signature</field>
-        <field name="arch" type="xml">
-            <form string="Signature">
-                <sheet>
-                    <group>
-                        <field name="name"/>
-                        <field name="image" widget="image" class="oe_avatar"/>
-                    </group>
-                    <notebook>
-                        <page string="Associated Contacts" name="contacts">
-                            <field name="partner_ids" readonly="1">
-                                <tree>
-                                    <field name="name"/>
-                                    <field name="phone"/>
-                                    <field name="email"/>
-                                </tree>
-                            </field>
-                        </page>
-                        <page string="Associated Master Contracts" name="contracts">
-                            <field name="marco_ids" readonly="1">
-                                <tree>
-                                    <field name="name"/>
-                                    <field name="partner_id"/>
-                                    <field name="state" widget="badge"/>
-                                </tree>
-                            </field>
-                        </page>
-                    </notebook>
-                </sheet>
-            </form>
-        </field>
-    </record>
+        <record id="view_res_signature_form" model="ir.ui.view">
+            <field name="name">signature.signature.form</field>
+            <field name="model">signature.signature</field>
+            <field name="arch" type="xml">
+                <form string="Firma">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="image" widget="image" class="oe_avatar"/>
+                        </group>
+                        <notebook>
+                            <page string="Contactos Asociados" name="contacts">
+                                <field name="partner_ids" readonly="1">
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="phone"/>
+                                        <field name="email"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Contratos Marcos Asociados" name="contracts">
+                                <field name="marco_ids" readonly="1">
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="partner_id"/>
+                                        <field name="state" widget="badge"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
 
-    <record id="action_res_signature" model="ir.actions.act_window">
-        <field name="name">Signatures</field>
-        <field name="res_model">signature.signature</field>
-        <field name="view_mode">tree,form</field>
-    </record>
+        <record id="action_res_signature" model="ir.actions.act_window">
+            <field name="name">Firmas</field>
+            <field name="res_model">signature.signature</field>
+            <field name="view_mode">tree,form</field>
+        </record>
 
-    <menuitem id="menu_res_signature"
-              name="Firmas"
-              parent="contacts.res_partner_menu_config"
-              action="action_res_signature"
-              sequence="60"/>
+        <menuitem id="menu_res_signature"
+                  name="Firmas"
+                  parent="contacts.res_partner_menu_config"
+                  action="action_res_signature"
+                  sequence="60"/>
+    </data>
 </odoo>
