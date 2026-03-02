@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Report Action for Specific Contract -->
+    <record id="action_report_contrato_especifico" model="ir.actions.report">
+        <field name="name">Imprimir Contrato Específico</field>
+        <field name="model">contrato.especifico</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">signature_management.report_contrato_especifico_template</field>
+        <field name="report_file">signature_management.report_contrato_especifico_template</field>
+        <field name="print_report_name">'Contrato Específico - %s' % (object.name)</field>
+        <field name="binding_model_id" ref="contratos_especificos.model_contrato_especifico"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- Reusable Signature Snippet -->
+    <template id="report_signature_block">
+        <div class="mt-5" style="page-break-inside: avoid;">
+            <table class="table table-borderless" style="width: 100%;">
+                <tr>
+                    <td style="width: 50%; text-align: center; vertical-align: top; border: none;">
+                        <div style="border-bottom: 1px solid black; min-height: 80px; margin-bottom: 10px;">
+                            <t t-if="o.provider_signature_id.image">
+                                <img t-att-src="image_data_uri(o.provider_signature_id.image)" style="max-height: 80px; max-width: 200px;"/>
+                            </t>
+                        </div>
+                        <div style="font-weight: bold; text-transform: uppercase;">firma del prestador</div>
+                        <div t-field="o.provider_signature_id.name" style="font-size: 11px;"/>
+                    </td>
+                    <td style="width: 50%; text-align: center; vertical-align: top; border: none;">
+                        <div style="border-bottom: 1px solid black; min-height: 80px; margin-bottom: 10px;">
+                            <t t-if="o.customer_signature_id.image">
+                                <img t-att-src="image_data_uri(o.customer_signature_id.image)" style="max-height: 80px; max-width: 200px;"/>
+                            </t>
+                        </div>
+                        <div style="font-weight: bold; text-transform: uppercase;">firma del cliente</div>
+                        <div t-field="o.customer_signature_id.name" style="font-size: 11px;"/>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </template>
+
+    <!-- Specific Contract Template -->
+    <template id="report_contrato_especifico_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <div style="text-align: justify; font-size: 12px;">
+                            <t t-out="o.content"/>
+                        </div>
+                        <!-- Signature Block -->
+                        <t t-call="signature_management.report_signature_block"/>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <!-- Inherit Master Contract Template to add signatures -->
+    <template id="report_contrato_marco_signatures" inherit_id="contratos.report_contrato_marco_template">
+        <xpath expr="//div[contains(@class, 'page')]" position="inside">
+            <t t-call="signature_management.report_signature_block"/>
+        </xpath>
+    </template>
+</odoo>

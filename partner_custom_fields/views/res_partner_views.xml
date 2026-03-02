@@ -9,8 +9,6 @@
                 <div class="o_row">
                     <label for="short_name"/>
                     <field name="short_name" placeholder="Abbreviated Name..."/>
-                    <label for="titular" string="Bank Account Holder" invisible="not is_company"/>
-                    <field name="titular" placeholder="Name of the bank account holder..." invisible="not is_company"/>
                 </div>
             </xpath>
             <xpath expr="//field[@name='vat']" position="after">
@@ -46,6 +44,7 @@
                 <field name="tax_id" invisible="not is_company"/>
                 
                 <field name="bank_id_ref" invisible="not is_company"/>
+                <field name="titular" invisible="not is_company"/>
                 <field name="bank_account_cup" invisible="not is_company"/>
                 <field name="bank_account_mlc" invisible="not is_company"/>
                 <field name="bank_branch_number" invisible="not is_company or classification == 'mipyme'"/>

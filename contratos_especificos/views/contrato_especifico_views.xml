@@ -7,12 +7,14 @@
             <form>
                 <header>
                     <button name="action_generate_content" string="Generate Content" type="object" class="oe_highlight" invisible="state == 'firmado'"/>
-                    <button name="action_sign" string="Sign Contract" type="object" class="oe_highlight" invisible="state == 'firmado'" confirm="Are you sure you want to sign this contract? This action is irreversible."/>
-                    <button name="action_set_to_pending" string="Set to Pending" type="object" groups="base.group_system" invisible="state == 'pendiente'"/>
+                    <button name="action_sign" string="Sign Contract" type="object" class="oe_highlight" invisible="state == 'firmado'" confirm="Are you sure you want to sign this contract?"/>
+                    <button name="action_cancel" string="Cancel" type="object" invisible="state != 'borrador'"/>
+                    <button name="action_draft" string="Set to Draft" type="object" invisible="state == 'borrador'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="borrador,firmado,cancelado"/>
                 </header>
                 <sheet>
                     <div class="oe_title">
-                        <label for="name" string="Contract Ref."/>
+                        <label for="name" string="Número del contrato"/>
                         <h1>
                             <field name="name" placeholder="e.g. CE-001" autocomplete="off"/>
                         </h1>
@@ -22,11 +24,9 @@
                             <field name="marco_id"/>
                             <field name="company_id" readonly="1"/>
                             <field name="partner_id" readonly="1"/>
-                            <field name="contract_type" readonly="1"/>
                             <field name="template_id" string="Contract Type"/>
-                            <field name="state" widget="radio" options="{'horizontal': true}" readonly="1"/>
                         </group>
-                        <group string="Dates">
+                        <group name="dates" string="Dates">
                             <field name="date"/>
                             <field name="start_date" required="template_id"/>
                             <field name="end_date"/>
@@ -45,8 +45,8 @@
                         </group>
                     </group>
                     <notebook>
-                        <page string="Anexo No.1 (Servicios)" name="service_lines">
-                            <field name="line_ids">
+                        <page string="Lineas de servicios" name="service_lines">
+                            <field name="line_ids" readonly="state == 'firmado'">
                                 <tree editable="bottom">
                                     <field name="product_id"/>
                                     <field name="name"/>
@@ -74,7 +74,7 @@
         <field name="name">contrato.especifico.tree</field>
         <field name="model">contrato.especifico</field>
         <field name="arch" type="xml">
-            <tree decoration-info="state == 'pendiente'" decoration-success="state == 'firmado'" multi_edit="1">
+            <tree decoration-info="state == 'borrador'" decoration-success="state == 'firmado'" decoration-muted="state == 'cancelado'" multi_edit="1">
                 <field name="name" readonly="1"/>
                 <field name="marco_id" readonly="1"/>
                 <field name="partner_id" readonly="1"/>
@@ -82,7 +82,7 @@
                 <field name="date" readonly="1" optional="hide"/>
                 <field name="start_date" optional="show"/>
                 <field name="end_date" optional="show"/>
-                <field name="state" widget="badge" decoration-info="state == 'pendiente'" decoration-success="state == 'firmado'"/>
+                <field name="state" widget="badge" decoration-info="state == 'borrador'" decoration-success="state == 'firmado'" decoration-muted="state == 'cancelado'"/>
             </tree>
         </field>
     </record>
@@ -96,8 +96,9 @@
                 <field name="partner_id"/>
                 <field name="marco_id"/>
 
-                <filter string="Pending" name="state_pendiente" domain="[('state', '=', 'pendiente')]"/>
+                <filter string="Draft" name="state_borrador" domain="[('state', '=', 'borrador')]"/>
                 <filter string="Signed" name="state_firmado" domain="[('state', '=', 'firmado')]"/>
+                <filter string="Cancelled" name="state_cancelado" domain="[('state', '=', 'cancelado')]"/>
                 <separator/>
                 <filter string="End Date" name="end_date" date="end_date"/>
 
@@ -105,7 +106,7 @@
                     <filter string="Master Contract" name="group_marco" context="{'group_by': 'marco_id'}"/>
                     <filter string="Customer" name="group_partner" context="{'group_by': 'partner_id'}"/>
                     <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
-                    <filter string="Client Type" name="group_type" context="{'group_by': 'contract_type'}"/>
+                    <filter string="Contract Type" name="group_type" context="{'group_by': 'contract_type'}"/>
                 </group>
             </search>
         </field>

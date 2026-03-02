@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_contrato_especifico_delete_wizard_form" model="ir.ui.view">
+        <field name="name">contrato.especifico.delete.wizard.form</field>
+        <field name="model">contrato.especifico.delete.wizard</field>
+        <field name="priority">1</field>
+        <field name="arch" type="xml">
+            <form string="Confirm Deletion">
+                <sheet>
+                    <div class="alert alert-danger" role="alert">
+                        <p style="font-size: 1.2em;"><strong>🚨 ATENCIÓN: Acción Irreversible</strong></p>
+                        <p>Esta acción eliminará permanentemente el contrato y todas sus facturas asociadas.</p>
+                    </div>
+                    
+                    <group>
+                        <field name="contrato_id" readonly="1" force_save="1" options="{'no_open': True}"/>
+                        <field name="invoice_count" invisible="1"/>
+                    </group>
+
+                    <div class="alert alert-warning" role="alert" invisible="invoice_count == 0">
+                        <p>Se han encontrado <strong><field name="invoice_count"/></strong> facturas vinculadas que serán borradas.</p>
+                        <field name="invoice_ids" widget="many2many_tags" readonly="1"/>
+                    </div>
+                    
+                    <div class="alert alert-info" role="alert" invisible="invoice_count != 0">
+                        <p>Este contrato no tiene facturas asociadas. Solo se eliminará el registro del contrato.</p>
+                    </div>
+                </sheet>
+                <footer>
+                    <button name="action_confirm_delete" string="Confirmar Eliminación" type="object" class="btn-danger" data-hotkey="q"/>
+                    <button string="Cancelar" class="btn-secondary" special="cancel" data-hotkey="x"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_contrato_especifico_delete_wizard" model="ir.actions.act_window">
+        <field name="name">Confirm Deletion</field>
+        <field name="res_model">contrato.especifico.delete.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

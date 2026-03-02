@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_partner_form_inherit_signature_metadata" model="ir.ui.view">
+        <field name="name">res.partner.form.inherit.signature.metadata</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="priority">25</field>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page name="signature_metadata" string="Información de Firma">
+                    <group>
+                        <group>
+                            <field name="ch_number"/>
+                            <field name="license_number"/>
+                        </group>
+                        <group>
+                            <field name="signature_id" options="{'no_create': True}"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

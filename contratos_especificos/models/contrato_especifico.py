@@ -31,7 +31,7 @@ class ContratoEspecifico(models.Model):
     )
     contract_type = fields.Selection(
         related="marco_id.contract_type",
-        string="Client Type",
+        string="Contract Type",
         store=True,
     )
     template_id = fields.Many2one(
@@ -70,9 +70,13 @@ class ContratoEspecifico(models.Model):
     end_date = fields.Date(string="End Date")
 
     state = fields.Selection(
-        [("pendiente", "Pending"), ("firmado", "Signed")],
+        [
+            ("borrador", "Draft"),
+            ("firmado", "Signed"),
+            ("cancelado", "Cancelled"),
+        ],
         string="Status",
-        default="pendiente",
+        default="borrador",
         required=True,
         copy=False,
     )
@@ -249,21 +253,30 @@ class ContratoEspecifico(models.Model):
         html += "</tbody></table>"
         return html
 
-    def action_sign(self):
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if not vals.get("state"):
+                vals["state"] = "borrador"
+        return super().create(vals_list)
+
+    def action_draft(self):
+        """Revert to draft state."""
         for record in self:
-            if record.state == "firmado":
-                raise UserError(_("This contract is already signed."))
+            record.write({"state": "borrador"})
+
+    def action_cancel(self):
+        """Cancel the contract."""
+        for record in self:
+            record.write({"state": "cancelado"})
+
+    def action_sign(self):
+        """Transition contract to signed state."""
+        for record in self:
+            if record.state not in ["borrador", "cancelado"]:
+                raise UserError(_("Only draft or cancelled contracts can be signed."))
             if not record.content:
                 raise UserError(
                     _("Please generate the contract content before signing.")
                 )
             record.write({"state": "firmado"})
-
-    def action_set_to_pending(self):
-        """Revert to pending state (admin only)."""
-        for record in self:
-            if record.state == "firmado" and not self.env.is_admin():
-                raise UserError(
-                    _("Signed contracts cannot be reverted to pending state.")
-                )
-        self.write({"state": "pendiente"})

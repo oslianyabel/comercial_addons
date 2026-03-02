@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_contrato_especifico_form_inherit_signature" model="ir.ui.view">
+        <field name="name">contrato.especifico.form.inherit.signature</field>
+        <field name="model">contrato.especifico</field>
+        <field name="inherit_id" ref="contratos_especificos.view_contrato_especifico_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header/button[@name='action_sign']" position="attributes">
+                <attribute name="invisible">state != 'borrador'</attribute>
+            </xpath>
+            <xpath expr="//header/button[@name='action_cancel']" position="attributes">
+                <attribute name="invisible">state not in ['borrador', 'firmado']</attribute>
+            </xpath>
+            <xpath expr="//header/button[@name='action_draft']" position="attributes">
+                <attribute name="invisible">state != 'cancelado'</attribute>
+            </xpath>
+            <xpath expr="//sheet" position="after">
+                <field name="invoice_count" invisible="1"/>
+            </xpath>
+            <xpath expr="//sheet" position="inside">
+                <div class="oe_button_box" name="button_box">
+                    <button name="action_view_invoices" type="object" class="oe_stat_button" icon="fa-pencil-square-o" invisible="invoice_count == 0">
+                        <field name="invoice_count" widget="statinfo" string="Invoices"/>
+                    </button>
+                </div>
+            </xpath>
+            <xpath expr="//group[@name='dates']" position="after">
+                <group string="Signatures">
+                    <field name="service_line_state" widget="badge" decoration-info="service_line_state == 'pending'" decoration-danger="service_line_state == 'delayed'" decoration-success="service_line_state == 'invoiced'"/>
+                    <field name="provider_signature_id" options="{'no_create': True}"/>
+                    <field name="customer_signature_id" options="{'no_create': True}"/>
+                </group>
+                <group string="Audit / Operations">
+                    <field name="realizada_por_id" options="{'no_create': True}"/>
+                    <field name="transportado_por_id" options="{'no_create': True}"/>
+                    <field name="recibido_por_id" options="{'no_create': True}"/>
+                    <field name="entregada_por_id" options="{'no_create': True}"/>
+                    <field name="contabilizada_por_id" options="{'no_create': True}"/>
+                </group>
+            </xpath>
+            <xpath expr="//field[@name='line_ids']/tree" position="inside">
+                <button name="action_uninvoice" type="object" string="Uninvoice" icon="fa-undo" invisible="not invoiced" confirm="This will delete the associated invoice. Are you sure?"/>
+                <button name="%(signature_management.action_signature_selection_wizard)d" 
+                        string="Facturar servicio" 
+                        type="action" 
+                        class="oe_highlight"
+                        invisible="invoiced or parent.state != 'firmado'"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="view_contrato_especifico_tree_inherit_signature" model="ir.ui.view">
+        <field name="name">contrato.especifico.tree.inherit.signature</field>
+        <field name="model">contrato.especifico</field>
+        <field name="inherit_id" ref="contratos_especificos.view_contrato_especifico_tree"/>
+        <field name="arch" type="xml">
+            <field name="state" position="before">
+                <field name="service_line_state" widget="badge" decoration-info="service_line_state == 'pending'" decoration-danger="service_line_state == 'delayed'" decoration-success="service_line_state == 'invoiced'" optional="show"/>
+            </field>
+        </field>
+    </record>
+    <record id="view_contrato_especifico_search_inherit_signature" model="ir.ui.view">
+        <field name="name">contrato.especifico.search.inherit.signature</field>
+        <field name="model">contrato.especifico</field>
+        <field name="inherit_id" ref="contratos_especificos.view_contrato_especifico_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='group_type']" position="after">
+                <filter string="Service Billing Status" name="group_service_state" context="{'group_by': 'service_line_state'}"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

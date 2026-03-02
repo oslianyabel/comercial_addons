@@ -34,7 +34,7 @@ class ContratoMarco(models.Model):
     date = fields.Date(string="Contract Date", default=fields.Date.context_today)
     contract_type = fields.Selection(
         [("mipyme", "MiPyme"), ("tcp", "TCP"), ("empresa", "Empresa")],
-        string="Client Type",
+        string="Contract Type",
         required=True,
     )
 
@@ -53,9 +53,13 @@ class ContratoMarco(models.Model):
     hco = fields.Boolean(string="HCO")
     oeb = fields.Char(string="OEB")
     state = fields.Selection(
-        [("pendiente", "Pending"), ("firmado", "Signed")],
+        [
+            ("borrador", "Draft"),
+            ("firmado", "Signed"),
+            ("cancelado", "Cancelled"),
+        ],
         string="Status",
-        default="pendiente",
+        default="borrador",
         required=True,
         copy=False,
     )
@@ -111,11 +115,21 @@ class ContratoMarco(models.Model):
                 raise UserError(_("You cannot edit a signed contract."))
         return super().write(vals)
 
+    def action_draft(self):
+        """Revert to draft state."""
+        for record in self:
+            record.write({"state": "borrador"})
+
+    def action_cancel(self):
+        """Cancel the contract."""
+        for record in self:
+            record.write({"state": "cancelado"})
+
     def action_sign(self):
         """Transition contract to signed state with authorization check."""
         for record in self:
-            if record.state == "firmado":
-                raise UserError(_("This contract is already signed."))
+            if record.state not in ["borrador", "cancelado"]:
+                raise UserError(_("Only draft or cancelled contracts can be signed."))
 
             if not record.content:
                 raise UserError(
@@ -137,15 +151,6 @@ class ContratoMarco(models.Model):
                     "signing_date": fields.Datetime.now(),
                 }
             )
-
-    def action_set_to_pending(self):
-        """Allow reverting to pending state (admin only) - Restricted for signed ones."""
-        for record in self:
-            if record.state == "firmado" and not self.env.is_admin():
-                raise UserError(
-                    _("Signed contracts cannot be reverted to pending state.")
-                )
-        self.write({"state": "pendiente"})
 
     content = fields.Html(string="Contract Content")
 

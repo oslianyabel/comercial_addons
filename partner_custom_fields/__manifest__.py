@@ -6,11 +6,12 @@
     "description": """
         Adds classification and ministry fields to the partner form view.
     """,
-    "author": "Antigravity",
+    "author": "Osliani Figueiras Saucedo",
     "depends": ["base", "contacts"],
     "data": [
         "security/ir.model.access.csv",
         "views/res_partner_views.xml",
+        "views/res_company_views.xml",
     ],
     "installable": True,
     "application": False,

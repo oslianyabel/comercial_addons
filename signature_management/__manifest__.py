@@ -1,0 +1,28 @@
+{
+    "name": "Signature Management",
+    "version": "17.0.1.0.0",
+    "category": "Operations",
+    "summary": "Centralized digital signature management for contracts and invoices",
+    "author": "Osliani Figueiras Saucedo",
+    "depends": [
+        "base",
+        "contratos",
+        "contratos_especificos",
+        "account",
+        "partner_custom_fields",
+    ],
+    "data": [
+        "security/ir.model.access.csv",
+        "wizard/signature_selection_wizard_views.xml",
+        "report/signature_report_templates.xml",
+        "views/res_signature_views.xml",
+        "views/contrato_marco_views.xml",
+        "views/contrato_especifico_views.xml",
+        "views/account_move_views.xml",
+        "views/payment_form_views.xml",
+        "views/res_partner_views.xml",
+    ],
+    "installable": True,
+    "application": False,
+    "license": "LGPL-3",
+}

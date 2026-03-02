@@ -221,3 +221,60 @@ msgstr "Titular de la cuenta bancaria"
 #. module: partner_custom_fields
 msgid "Name of the bank account holder..."
 msgstr "Nombre del titular de la cuenta bancaria..."
+
+#. module: partner_custom_fields
+#: model:ir.model.fields,field_description:partner_custom_fields.field_res_company__contract_name
+msgid "Company Name in Contracts"
+msgstr "Nombre de empresa en contratos"
+
+#. module: partner_custom_fields
+#: model:ir.model.fields,field_description:partner_custom_fields.field_res_company__unit
+msgid "Unit"
+msgstr "Unidad"
+
+#. module: partner_custom_fields
+#: model:ir.model.fields,field_description:partner_custom_fields.field_res_company__organism_id
+msgid "Organism"
+msgstr "Organismo"
+
+#. module: partner_custom_fields
+#: model:ir.model.fields,field_description:partner_custom_fields.field_res_company__nit_code
+msgid "NIT Code"
+msgstr "Código NIT"
+
+#. module: partner_custom_fields
+#: model:ir.model.fields,field_description:partner_custom_fields.field_res_company__address_legal
+msgid "Legal Address"
+msgstr "Dirección Legal"
+
+#. module: partner_custom_fields
+#: model:ir.model.fields,field_description:partner_custom_fields.field_res_company__stamp_image
+msgid "Company Stamp"
+msgstr "Cuño de la empresa"
+
+#. module: partner_custom_fields
+msgid "Contracts Data"
+msgstr "Datos de contratos"
+
+#. module: partner_custom_fields
+msgid "Company Information"
+msgstr "Información de la empresa"
+
+#. module: partner_custom_fields
+msgid "Legal & Branding"
+msgstr "Legal y Branding"
+
+#. module: partner_custom_fields
+#: model:ir.model.fields,field_description:partner_custom_fields.field_res_partner__ch_number
+msgid "CH"
+msgstr "CH"
+
+#. module: partner_custom_fields
+#: model:ir.model.fields,field_description:partner_custom_fields.field_res_partner__license_number
+msgid "License"
+msgstr "Licencia"
+
+#. module: partner_custom_fields
+#: model:ir.model.fields,field_description:partner_custom_fields.field_res_partner__signature_id
+msgid "Signature"
+msgstr "Firma"

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_move_form_inherit_signature" model="ir.ui.view">
+        <field name="name">account.move.form.inherit.signature</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='payment_reference']" position="after">
+                <field name="contrato_especifico_id" readonly="1" invisible="not contrato_especifico_id"/>
+                <field name="payment_form_id" readonly="1" invisible="not payment_form_id"/>
+            </xpath>
+            <xpath expr="//group[@name='sale_info_group']" position="inside">
+                <field name="client_address" readonly="1" invisible="not client_address"/>
+                <field name="client_nit" readonly="1" invisible="not client_nit"/>
+                <field name="client_bank_account" readonly="1" invisible="not client_bank_account"/>
+            </xpath>
+            <xpath expr="//page[@name='other_info']" position="after">
+                <page string="Firmas de Auditoría" name="audit_signatures">
+                    <group>
+                        <group string="Operaciones">
+                            <label for="realizada_por_id" string="Realizada por"/>
+                            <div class="o_row">
+                                <field name="realizada_por_id" options="{'no_create': True}" readonly="1"/>
+                                <field name="realizada_fecha" readonly="1"/>
+                            </div>
+                            
+                            <label for="transportado_por_id" string="Transportado por"/>
+                            <div class="o_row">
+                                <field name="transportado_por_id" options="{'no_create': True}" readonly="1"/>
+                                <field name="transportado_fecha" readonly="1"/>
+                            </div>
+
+                            <label for="recibido_por_id" string="Recibido por"/>
+                            <div class="o_row">
+                                <field name="recibido_por_id" options="{'no_create': True}" readonly="1"/>
+                                <field name="recibido_fecha" readonly="1"/>
+                            </div>
+                        </group>
+                        <group string="Validación">
+                            <label for="entregada_por_id" string="Entregada por"/>
+                            <div class="o_row">
+                                <field name="entregada_por_id" options="{'no_create': True}" readonly="1"/>
+                                <field name="entregada_fecha" readonly="1"/>
+                            </div>
+
+                            <label for="contabilizada_por_id" string="Contabilizada por"/>
+                            <div class="o_row">
+                                <field name="contabilizada_por_id" options="{'no_create': True}" readonly="1"/>
+                                <field name="contabilizada_fecha" readonly="1"/>
+                            </div>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+    <record id="view_move_tree_contract_restricted" model="ir.ui.view">
+        <field name="name">account.move.tree.contract.restricted</field>
+        <field name="model">account.move</field>
+        <field name="priority">99</field>
+        <field name="arch" type="xml">
+            <tree create="0" edit="0" delete="1">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="invoice_date"/>
+                <field name="amount_total_signed" string="Total" sum="Total"/>
+                <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-success="state == 'posted'"/>
+            </tree>
+        </field>
+    </record>
+</odoo>

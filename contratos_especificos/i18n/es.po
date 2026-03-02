@@ -48,8 +48,8 @@ msgstr "Cliente"
 
 #. module: contratos_especificos
 #: model:ir.model.fields,field_description:contratos_especificos.field_contrato_especifico__contract_type
-msgid "Client Type"
-msgstr "Tipo de Cliente"
+msgid "Contract Type"
+msgstr "Tipo de Contrato"
 
 #. module: contratos_especificos
 #: model:ir.model.fields,field_description:contratos_especificos.field_contrato_especifico__template_id
@@ -102,14 +102,19 @@ msgid "Status"
 msgstr "Estado"
 
 #. module: contratos_especificos
-#: model:ir.model.fields,selection:contratos_especificos.field_contrato_especifico__state:pendiente
-msgid "Pending"
-msgstr "Pendiente"
+#: model:ir.model.fields,selection:contratos_especificos.field_contrato_especifico__state:borrador
+msgid "Draft"
+msgstr "Borrador"
 
 #. module: contratos_especificos
 #: model:ir.model.fields,selection:contratos_especificos.field_contrato_especifico__state:firmado
 msgid "Signed"
 msgstr "Firmado"
+
+#. module: contratos_especificos
+#: model:ir.model.fields,selection:contratos_especificos.field_contrato_especifico__state:cancelado
+msgid "Cancelled"
+msgstr "Cancelado"
 
 #. module: contratos_especificos
 #: model:ir.model.fields,field_description:contratos_especificos.field_contrato_especifico__content
@@ -123,18 +128,13 @@ msgstr "Generar Contenido"
 
 #. module: contratos_especificos
 #: model_terms:ir.ui.view,arch_db:contratos_especificos.view_contrato_especifico_form
-msgid "Sign Contract"
-msgstr "Firmar Contrato"
+msgid "Set to Draft"
+msgstr "Pasar a Borrador"
 
 #. module: contratos_especificos
 #: model_terms:ir.ui.view,arch_db:contratos_especificos.view_contrato_especifico_form
-msgid "Set to Pending"
-msgstr "Pasar a Pendiente"
-
-#. module: contratos_especificos
-#: model_terms:ir.ui.view,arch_db:contratos_especificos.view_contrato_especifico_form
-msgid "Contract Ref."
-msgstr "Ref. de Contrato"
+msgid "Número del contrato"
+msgstr "Número del contrato"
 
 #. module: contratos_especificos
 #: model_terms:ir.ui.view,arch_db:contratos_especificos.view_contrato_especifico_form
@@ -278,8 +278,8 @@ msgstr "Cliente"
 
 #. module: contratos_especificos
 #: model_terms:ir.ui.view,arch_db:contratos_especificos.view_contrato_especifico_search
-msgid "Client Type"
-msgstr "Tipo de Cliente"
+msgid "Contract Type"
+msgstr "Tipo de Contrato"
 
 #. module: contratos_especificos
 #: model:ir.model,name:contratos_especificos.model_contrato_especifico_line
@@ -289,7 +289,7 @@ msgstr "Línea de Servicio de Contrato Específico"
 #. module: contratos_especificos
 #: model:ir.model.fields,field_description:contratos_especificos.field_contrato_especifico__line_ids
 msgid "Service Lines"
-msgstr "Anexo No.1 (Servicios)"
+msgstr "Lineas de servicios"
 
 #. module: contratos_especificos
 #: model:ir.model.fields,field_description:contratos_especificos.field_contrato_especifico_line__product_id
@@ -334,3 +334,98 @@ msgstr "Facturado"
 #. module: contratos_especificos
 msgid "The contract cannot be generated because the following data is missing:\n\n- %s"
 msgstr "No se puede generar el contrato porque faltan los siguientes datos:\n\n- %s"
+#. module: contratos_especificos
+msgid "Please select a template with content before generating."
+msgstr "Por favor, seleccione una plantilla con contenido antes de generar."
+
+#. module: contratos_especificos
+msgid "Please generate the contract content before signing."
+msgstr "Por favor, genere el contenido del contrato antes de firmar."
+
+#. module: contratos_especificos
+msgid "Service/Product"
+msgstr "Servicio/Producto"
+
+#. module: contratos_especificos
+msgid "Qty"
+msgstr "Cant."
+
+#. module: contratos_especificos
+msgid "UoM"
+msgstr "UdM"
+
+#. module: contratos_especificos
+msgid "Unit Price (CUP)"
+msgstr "Precio Unitario (CUP)"
+
+#. module: contratos_especificos
+msgid "Amount"
+msgstr "Importe"
+
+#. module: contratos_especificos
+msgid "Deadline"
+msgstr "Límite"
+
+#. module: contratos_especificos
+msgid "The contract cannot be generated because the following data is missing:\n\n- %s"
+msgstr "No se puede generar el contrato porque faltan los siguientes datos:\n\n- %s"
+
+#. module: contratos_especificos
+msgid "Our Representative"
+msgstr "Nuestro Representante"
+
+#. module: contratos_especificos
+msgid "Master Contract"
+msgstr "Contrato Marco"
+#. module: contratos_especificos
+msgid "Please select a template with content before generating."
+msgstr "Por favor, seleccione una plantilla con contenido antes de generar."
+
+#. module: contratos_especificos
+msgid "Please generate the contract content before signing."
+msgstr "Por favor, genere el contenido del contrato antes de firmar."
+
+#. module: contratos_especificos
+msgid "Service/Product"
+msgstr "Servicio/Producto"
+
+#. module: contratos_especificos
+msgid "Qty"
+msgstr "Cant."
+
+#. module: contratos_especificos
+msgid "UoM"
+msgstr "UdM"
+
+#. module: contratos_especificos
+msgid "Unit Price (CUP)"
+msgstr "Precio Unitario (CUP)"
+
+#. module: contratos_especificos
+msgid "Amount"
+msgstr "Importe"
+
+#. module: contratos_especificos
+msgid "Deadline"
+msgstr "Límite"
+
+#. module: contratos_especificos
+msgid "The contract cannot be generated because the following data is missing:\n\n- %s"
+msgstr "No se puede generar el contrato porque faltan los siguientes datos:\n\n- %s"
+
+#. module: contratos_especificos
+msgid "Our Representative"
+msgstr "Nuestro Representante"
+
+#. module: contratos_especificos
+msgid "Master Contract"
+msgstr "Contrato Marco"
+
+#. module: contratos_especificos
+msgid "Contract Type"
+msgstr "Tipo de Contrato"
+
+#. module: contratos_especificos
+#: model_terms:ir.ui.view,arch_db:contratos_especificos.view_contrato_especifico_form
+msgid "Contract Type"
+msgstr "Tipo de Contrato"

@@ -137,7 +137,7 @@ class ContratoMarco(models.Model):
 
             for f in req_p:
                 if not getattr(p, f):
-                    missing.append(_("Cliente: %s") % p._fields[f].string)
+                    missing.append(_("Client: %s") % _(p._fields[f].string))
             if not comp_partner.titular:
                 missing.append(_("Company: Bank Account Holder"))
 

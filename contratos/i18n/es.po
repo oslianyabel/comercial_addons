@@ -68,8 +68,8 @@ msgstr "Fecha de suscripción del contrato"
 
 #. module: contratos
 #: model:ir.model.fields,field_description:contratos.field_contrato_marco__contract_type
-msgid "Client Type"
-msgstr "Tipo de Cliente"
+msgid "Contract Type"
+msgstr "Tipo de Contrato"
 
 #. module: contratos
 #: model:ir.model.fields,selection:contratos.field_contrato_marco__contract_type:empresa
@@ -108,14 +108,19 @@ msgid "Status"
 msgstr "Estado"
 
 #. module: contratos
-#: model:ir.model.fields,selection:contratos.field_contrato_marco__state:pendiente
-msgid "Pending"
-msgstr "Pendiente"
+#: model:ir.model.fields,selection:contratos.field_contrato_marco__state:borrador
+msgid "Draft"
+msgstr "Borrador"
 
 #. module: contratos
 #: model:ir.model.fields,selection:contratos.field_contrato_marco__state:firmado
 msgid "Signed"
 msgstr "Firmado"
+
+#. module: contratos
+#: model:ir.model.fields,selection:contratos.field_contrato_marco__state:cancelado
+msgid "Cancelled"
+msgstr "Cancelado"
 
 #. module: contratos
 #: model:ir.model.fields,field_description:contratos.field_contrato_marco__creation_date_auto
@@ -189,8 +194,8 @@ msgstr "Agrupar Por"
 
 #. module: contratos
 #: model_terms:ir.ui.view,arch_db:contratos.view_contrato_marco_search
-msgid "Client Type"
-msgstr "Tipo de Cliente"
+msgid "Contract Type"
+msgstr "Tipo de Contrato"
 
 #. module: contratos
 #: model:ir.actions.act_window,name:contratos.action_contrato_marco
@@ -241,8 +246,8 @@ msgstr "Plantilla de Contrato"
 
 #. module: contratos
 #: model:ir.model.fields,field_description:contratos.field_contrato_template__type
-msgid "Client Type"
-msgstr "Tipo de Cliente"
+msgid "Contract Type"
+msgstr "Tipo de Contrato"
 
 #. module: contratos
 #: model:ir.model.fields,field_description:contratos.field_contrato_template__content
@@ -345,13 +350,69 @@ msgid "TXT File"
 msgstr "Archivo TXT"
 
 #. module: contratos
-msgid "Cliente: %s"
+msgid "Client: %s"
 msgstr "Cliente: %s"
 
 #. module: contratos
-msgid "Company: Bank Account Holder"
-msgstr "Empresa: Titular de la Cuenta Bancaria"
+msgid "Operación no válida"
+msgstr "Operación no válida"
 
 #. module: contratos
-msgid "The contract cannot be generated because the following data is missing:\n\n- %s"
-msgstr "No se puede generar el contrato porque faltan los siguientes datos:\n\n- %s"
+msgid "NIT"
+msgstr "NIT"
+
+#. module: contratos
+msgid "REEUP"
+msgstr "REEUP"
+
+#. module: contratos
+msgid "CUP Account"
+msgstr "Cuenta CUP"
+
+#. module: contratos
+msgid "Abbreviated Name"
+msgstr "Nombre abreviado"
+
+#. module: contratos
+msgid "Organism"
+msgstr "Organismo"
+
+#. module: contratos
+msgid "Creation Resolution Number"
+msgstr "Número de resolución de creación"
+
+#. module: contratos
+msgid "Creation Resolution Date"
+msgstr "Fecha de resolución de creación"
+
+#. module: contratos
+msgid "Issued by (Creation)"
+msgstr "Emitida por (Creación)"
+
+#. module: contratos
+msgid "Bank Branch Number (CUP)"
+msgstr "Número de sucursal (CUP)"
+
+#. module: contratos
+msgid "Bank"
+msgstr "Banco"
+
+#. module: contratos
+msgid "Signer's Resolution Number"
+msgstr "Número de resolución del firmante"
+
+#. module: contratos
+msgid "Signer's Resolution Date"
+msgstr "Fecha de resolución del firmante"
+
+#. module: contratos
+msgid "Issued by (Signer)"
+msgstr "Emitida por (Firmante)"
+
+#. module: contratos
+msgid "Please select a template with content before generating."
+msgstr "Por favor, seleccione una plantilla con contenido antes de generar."
+
+#. module: contratos
+msgid "Please select a template with content before generating."
+msgstr "Por favor, seleccione una plantilla con contenido antes de generar."

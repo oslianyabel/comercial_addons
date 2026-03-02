@@ -11,7 +11,6 @@
     "data": [
         "security/ir.model.access.csv",
         "wizard/template_import_wizard_views.xml",
-        "wizard/template_import_wizard_views.xml",
         "views/contrato_views.xml",
         "views/contrato_template_views.xml",
         "report/contrato_reports.xml",
