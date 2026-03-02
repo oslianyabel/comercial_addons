@@ -21,6 +21,26 @@
                         <field name="name"/>
                         <field name="image" widget="image" class="oe_avatar"/>
                     </group>
+                    <notebook>
+                        <page string="Associated Contacts" name="contacts">
+                            <field name="partner_ids" readonly="1">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="phone"/>
+                                    <field name="email"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Associated Master Contracts" name="contracts">
+                            <field name="marco_ids" readonly="1">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="partner_id"/>
+                                    <field name="state" widget="badge"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>
