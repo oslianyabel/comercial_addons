@@ -31,9 +31,11 @@ class ContratoEspecificoLine(models.Model):
         store=True,
     )
     date_deadline_invoice = fields.Date(
-        string="Invoice Deadline Date",
+        string="Fecha Límite de Facturación",
         required=True,
     )
+    start_date = fields.Date(string="Fecha de Inicio")
+    end_date = fields.Date(string="Fecha Final")
     invoiced = fields.Boolean(
         string="Invoiced",
         default=False,

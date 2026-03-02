@@ -71,7 +71,6 @@ class ContratoEspecificoTemplate(models.Model):
         "day",
         "month",
         "year",
-        "service_lines_table",
     ]
 
     TYPE_EXTRA_VARIABLES = {
@@ -103,7 +102,6 @@ class ContratoEspecificoTemplate(models.Model):
         "day",
         "month",
         "year",
-        "service_lines_table",
     ]
 
     TYPE_REQUIRED_EXTRA = {

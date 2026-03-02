@@ -20,42 +20,45 @@
                         </h1>
                     </div>
                     <group>
-                        <group string="General Information">
+                        <group string="Información General">
                             <field name="marco_id"/>
                             <field name="company_id" readonly="1"/>
                             <field name="partner_id" readonly="1"/>
-                            <field name="template_id" string="Contract Type"/>
+                            <field name="template_id" string="Tipo de Contrato"/>
                         </group>
-                        <group name="dates" string="Dates">
-                            <field name="date"/>
-                            <field name="start_date" required="template_id"/>
-                            <field name="end_date"/>
+                        <group name="dates" string="Fechas">
+                            <field name="date" string="Fecha del Contrato"/>
+                            <field name="start_date" required="template_id" string="Fecha de Inicio"/>
+                            <field name="end_date" string="Fecha Final"/>
                         </group>
                     </group>
                     <group>
-                        <group string="Representation">
-                            <field name="our_representative_id" required="template_type_requires_rep"/>
-                            <field name="our_rep_decision_number" string="Agreement/Decision" autocomplete="off" required="template_type_requires_rep"/>
-                            <field name="our_rep_decision_date" required="template_type_requires_rep"/>
-                            <field name="project_leader" autocomplete="off" required="template_type_requires_leader" invisible="not template_type_requires_leader"/>
-                            <field name="application_name" autocomplete="off" required="template_type_requires_app" invisible="not template_type_requires_app"/>
+                        <group string="Representación">
+                            <field name="our_representative_id" required="template_type_requires_rep" string="Nuestro Representante"/>
+                            <field name="our_rep_decision_number" string="Acuerdo/Resolución" autocomplete="off" required="template_type_requires_rep"/>
+                            <field name="our_rep_decision_date" string="Fecha de Resolución" required="template_type_requires_rep"/>
+                            <field name="our_project_leader_id"/>
+                            <field name="project_leader" autocomplete="off" string="Líder del Proyecto del Cliente"/>
+                            <field name="application_name" autocomplete="off" string="Nombre de la Aplicación"/>
                             <field name="template_type_requires_rep" invisible="1"/>
                             <field name="template_type_requires_leader" invisible="1"/>
                             <field name="template_type_requires_app" invisible="1"/>
                         </group>
                     </group>
                     <notebook>
-                        <page string="Lineas de servicios" name="service_lines">
+                        <page string="Líneas de servicios" name="service_lines">
                             <field name="line_ids" readonly="state == 'firmado'">
                                 <tree editable="bottom">
-                                    <field name="product_id"/>
-                                    <field name="name"/>
-                                    <field name="quantity"/>
-                                    <field name="uom_id"/>
-                                    <field name="price_unit"/>
-                                    <field name="price_subtotal"/>
-                                    <field name="date_deadline_invoice"/>
-                                    <field name="invoiced" optional="hide"/>
+                                    <field name="product_id" string="Producto/Servicio"/>
+                                    <field name="name" string="Descripción"/>
+                                    <field name="start_date" optional="show"/>
+                                    <field name="end_date" optional="show"/>
+                                    <field name="quantity" string="Cant."/>
+                                    <field name="uom_id" string="UdM"/>
+                                    <field name="price_unit" string="Precio Unitario"/>
+                                    <field name="price_subtotal" string="Subtotal"/>
+                                    <field name="date_deadline_invoice" string="Límite Facturación"/>
+                                    <field name="invoiced" optional="hide" string="Facturado"/>
                                 </tree>
                             </field>
                         </page>

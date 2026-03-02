@@ -15,6 +15,13 @@
                 <xpath expr="//header/button[@name='action_draft']" position="attributes">
                     <attribute name="invisible">state != 'cancelado'</attribute>
                 </xpath>
+                <xpath expr="//header" position="inside">
+                    <button name="%(signature_management.action_report_contrato_especifico)d" 
+                            string="Print PDF" 
+                            type="action" 
+                            class="oe_highlight" 
+                            invisible="state != 'firmado'"/>
+                </xpath>
                 <xpath expr="//sheet" position="after">
                     <field name="invoice_count" invisible="1"/>
                 </xpath>
@@ -30,13 +37,6 @@
                         <field name="service_line_state" widget="badge" decoration-info="service_line_state == 'pending'" decoration-danger="service_line_state == 'delayed'" decoration-success="service_line_state == 'invoiced'"/>
                         <field name="provider_signature_id" options="{'no_create': True}"/>
                         <field name="customer_signature_id" options="{'no_create': True}"/>
-                    </group>
-                    <group string="Auditoría / Operaciones">
-                        <field name="realizada_por_id" options="{'no_create': True}"/>
-                        <field name="transportado_por_id" options="{'no_create': True}"/>
-                        <field name="recibido_por_id" options="{'no_create': True}"/>
-                        <field name="entregada_por_id" options="{'no_create': True}"/>
-                        <field name="contabilizada_por_id" options="{'no_create': True}"/>
                     </group>
                 </xpath>
                 <xpath expr="//field[@name='line_ids']/tree" position="inside">

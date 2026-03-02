@@ -46,8 +46,24 @@ class ContratoEspecifico(models.Model):
     )
     our_rep_decision_number = fields.Char(string="Our Rep. Decision Number")
     our_rep_decision_date = fields.Date(string="Our Rep. Decision Date")
-    project_leader = fields.Char(string="Project Leader")
-    application_name = fields.Char(string="Application Name")
+    our_project_leader_id = fields.Many2one(
+        "res.partner",
+        string="Líder del Proyecto Nuestro",
+        domain="[('is_company', '=', False), ('company_id', '=', company_id)]",
+    )
+    project_leader = fields.Char(string="Líder del Proyecto del Cliente")
+    application_name = fields.Char(string="Nombre de la Aplicación")
+
+    def write(self, vals):
+        """Prevent editing signed contracts."""
+        for record in self:
+            if record.state == "firmado" and not self.env.su:
+                # Allow changing state (e.g., to cancel or draft) but nothing else
+                if not (len(vals) == 1 and "state" in vals):
+                    raise UserError(
+                        _("No puede modificar un contrato que ya está firmado.")
+                    )
+        return super().write(vals)
 
     template_type_requires_rep = fields.Boolean(
         compute="_compute_template_type_flags",
@@ -266,8 +282,22 @@ class ContratoEspecifico(models.Model):
             record.write({"state": "borrador"})
 
     def action_cancel(self):
-        """Cancel the contract."""
+        """Cancel the contract and all associated invoices."""
         for record in self:
+            # Find all invoices linked to this contract's lines
+            lines = record.line_ids
+            invoices = self.env["account.move"].search(
+                [("service_line_id", "in", lines.ids)]
+            )
+            for inv in invoices:
+                if inv.state == "posted":
+                    inv.button_draft()
+                if inv.state != "cancel":
+                    inv.button_cancel()
+
+            # Reset the invoiced flag on lines
+            lines.with_context(is_uninvoice=True).write({"invoiced": False})
+
             record.write({"state": "cancelado"})
 
     def action_sign(self):

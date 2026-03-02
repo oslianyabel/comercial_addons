@@ -1,6 +1,6 @@
 # Odoo Extra Addons
 
-Este directorio contiene módulos personalizados desarrollados para mejorar la gestión comercial en Odoo 17.
+Este proyecto contiene módulos personalizados para mejorar la gestión comercial en Odoo 17.
 
 ## Módulos Disponibles
 
@@ -11,7 +11,14 @@ Este módulo facilita la gestión de **Contratos Marcos** para diferentes tipos 
 - **Flujo de Firma**: Permite marcar contratos como firmados, protegiéndolos contra modificaciones accidentales.
 - **Trazabilidad**: Registra quién creó cada contrato y a qué compañía pertenece.
 
-### 👥 Partner Custom Fields (`partner_custom_fields`)
+### � Specific Contracts (`contratos_especificos`)
+Módulo para la gestión de acuerdos detallados que dependen de un Contrato Marco.
+- **Vínculo Jerárquico**: Cada contrato específico está asociado obligatoriamente a un Contrato Marco firmado.
+- **Detalle de Servicios**: Permite definir líneas de servicios o productos con cantidades, precios y fechas de ejecución opcionales.
+- **Líderes de Proyecto**: Permite asignar un líder del proyecto tanto por la parte del prestador (nosotros) como por la del cliente.
+- **Inmutabilidad**: Una vez que el contrato es firmado, todos sus datos quedan bloqueados para garantizar la integridad de lo acordado.
+
+### �👥 Partner Custom Fields (`partner_custom_fields`)
 Añade campos especializados a los registros de Contactos y Compañías.
 - **Clasificación**: Permite categorizar a los socios comerciales según su tipo legal.
 - **Datos Estatales**: Incluye campos para el Ministerio, REEUP y NIT, esenciales para la gestión comercial y legal.
@@ -40,7 +47,7 @@ Para garantizar la integridad de los datos y el cumplimiento de las reglas de ne
 - **Flujo de Estados**: Se prohíbe el paso directo de **Firmado** a **Borrador**. Para revertir un contrato firmado, primero debe ser cancelado.
 - **Protección de Eliminación**: No se permite eliminar un **Contrato Marco** si existen **Contratos Específicos** vinculados a él.
 - **Eliminación en Cascada**: Al eliminar un **Contrato Específico**, el sistema elimina automáticamente todas las facturas asociadas para mantener la consistencia.
-- **Control de Acceso**: Solo los contactos definidos como "Contactos Autorizados" en el Contrato Marco (o administradores) tienen permiso para cambiar el estado de sus Contratos Específicos.
+- **Control de Acceso**: Solo los contactos definidos como "Contactos Autorizados" en el Contrato Marco (o administradores) tienen permiso para cambiar el estado del Contrato Marco y de sus Contratos Específicos.
 
 ### Facturación (`account.move`)
 - **Prerrequisito de Firma**: Solo se pueden generar facturas desde contratos que se encuentren en estado **Firmado**.

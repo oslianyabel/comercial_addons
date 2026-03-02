@@ -66,17 +66,7 @@ class ContratoEspecifico(models.Model):
         "signature.signature", string="Firma del Cliente"
     )
 
-    # Audit fields
-    realizada_por_id = fields.Many2one("signature.signature", string="Realizada por")
-    transportado_por_id = fields.Many2one(
-        "signature.signature", string="Transportado por"
-    )
-    recibido_por_id = fields.Many2one("signature.signature", string="Recibido por")
-    entregada_por_id = fields.Many2one("signature.signature", string="Entregada por")
-    contabilizada_por_id = fields.Many2one(
-        "signature.signature", string="Contabilizada por"
-    )
-
+    # Audit fields - REMOVED as per user request
     invoice_count = fields.Integer(compute="_compute_invoice_count")
 
     service_line_state = fields.Selection(
@@ -192,6 +182,18 @@ class ContratoEspecifico(models.Model):
                         inv.button_draft()
                 invoices.unlink()
         return super().unlink()
+
+    def _report_check_state(self):
+        """Helper method to check state during report rendering."""
+        self.ensure_one()
+        if self.state != "firmado":
+            raise UserError(
+                _(
+                    "No se puede imprimir el contrato '%s' porque no está en estado Firmado."
+                )
+                % self.name
+            )
+        return ""
 
     def action_view_invoices(self):
         self.ensure_one()
