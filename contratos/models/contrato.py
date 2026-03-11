@@ -56,6 +56,7 @@ class ContratoMarco(models.Model):
         [
             ("borrador", "Borrador"),
             ("firmado", "Firmado"),
+            ("entregado", "Entregado"),
             ("cancelado", "Cancelado"),
         ],
         string="Estado",
