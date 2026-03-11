@@ -16,6 +16,7 @@
                     <field name="id_card" placeholder="11 dígitos..." invisible="is_company"/>
                     <field name="classification" invisible="not is_company"/>
                     <field name="organism_id" invisible="not is_company"/>
+                    <field name="ueb_ids" widget="many2many_tags" invisible="not is_company"/>
                     
                     <!-- Sección de Resolución -->
                     <separator string="Resolución" invisible="classification != 'empresa'"/>
@@ -94,5 +95,49 @@
             action="action_res_partner_organism"
             parent="contacts.res_partner_menu_config"
             sequence="20"/>
+
+        <!-- Vistas y Menú de UEB -->
+        <record id="view_res_partner_ueb_tree" model="ir.ui.view">
+            <field name="name">res.partner.ueb.tree</field>
+            <field name="model">res.partner.ueb</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom" string="UEBs">
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="active" widget="boolean_toggle"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_res_partner_ueb_form" model="ir.ui.view">
+            <field name="name">res.partner.ueb.form</field>
+            <field name="model">res.partner.ueb</field>
+            <field name="arch" type="xml">
+                <form string="UEB">
+                    <sheet>
+                        <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="code"/>
+                                <field name="active" invisible="1"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_res_partner_ueb" model="ir.actions.act_window">
+            <field name="name">Unidades Empresariales de Base (UEB)</field>
+            <field name="res_model">res.partner.ueb</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_res_partner_ueb"
+            name="Nomenclador UEB"
+            action="action_res_partner_ueb"
+            parent="contacts.res_partner_menu_config"
+            sequence="30"/>
     </data>
 </odoo>

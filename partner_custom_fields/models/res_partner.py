@@ -17,6 +17,7 @@ class ResPartnerUEB(models.Model):
 
     name = fields.Char(string="Nombre", required=True)
     code = fields.Char(string="Código", required=True)
+    active = fields.Boolean(default=True)
 
 
 class ResPartner(models.Model):
@@ -36,6 +37,7 @@ class ResPartner(models.Model):
     short_name = fields.Char(string="Nombre Abreviado")
     titular = fields.Char(string="Titular de Cuenta Bancaria")
     id_card = fields.Char(string="Carnet de Identidad")
+    ueb_ids = fields.Many2many("res.partner.ueb", string="UEBs")
 
     # Representation Fields
     represented_by_id = fields.Many2one("res.partner", string="Representado por")
