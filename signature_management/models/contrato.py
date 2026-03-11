@@ -12,6 +12,14 @@ class ContratoMarco(models.Model):
         "signature.signature", string="Firma del Cliente"
     )
 
+    signatures_disabled = fields.Boolean(
+        compute="_compute_signatures_disabled", string="Firmas Deshabilitadas"
+    )
+
+    def _compute_signatures_disabled(self):
+        for record in self:
+            record.signatures_disabled = self.env.company.disable_signatures
+
     def action_draft(self):
         """Revert to draft state. Allowed from 'cancelado'."""
         for record in self:
@@ -31,7 +39,9 @@ class ContratoMarco(models.Model):
         for record in self:
             if record.state != "borrador":
                 raise UserError(_("Only draft contracts can be signed."))
-            if not record.provider_signature_id or not record.customer_signature_id:
+            if not record.signatures_disabled and (
+                not record.provider_signature_id or not record.customer_signature_id
+            ):
                 raise UserError(
                     _(
                         "Both Provider and Customer signatures must be set before signing."
@@ -65,6 +75,14 @@ class ContratoEspecifico(models.Model):
     customer_signature_id = fields.Many2one(
         "signature.signature", string="Firma del Cliente"
     )
+
+    signatures_disabled = fields.Boolean(
+        compute="_compute_signatures_disabled", string="Firmas Deshabilitadas"
+    )
+
+    def _compute_signatures_disabled(self):
+        for record in self:
+            record.signatures_disabled = self.env.company.disable_signatures
 
     # Audit fields - REMOVED as per user request
     invoice_count = fields.Integer(compute="_compute_invoice_count")
@@ -161,7 +179,9 @@ class ContratoEspecifico(models.Model):
         for record in self:
             if record.state != "borrador":
                 raise UserError(_("Only draft contracts can be signed."))
-            if not record.provider_signature_id or not record.customer_signature_id:
+            if not record.signatures_disabled and (
+                not record.provider_signature_id or not record.customer_signature_id
+            ):
                 raise UserError(
                     _(
                         "Both Provider and Customer signatures must be set before signing."

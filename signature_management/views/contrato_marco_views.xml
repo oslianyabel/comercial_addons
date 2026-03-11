@@ -10,14 +10,15 @@
                     <attribute name="invisible">state != 'borrador'</attribute>
                 </xpath>
                 <xpath expr="//header/button[@name='action_cancel']" position="attributes">
-                    <attribute name="invisible">state not in ['borrador', 'firmado']</attribute>
+                    <attribute name="invisible">state not in ['borrador', 'firmado', 'entregado']</attribute>
                 </xpath>
                 <xpath expr="//header/button[@name='action_draft']" position="attributes">
                     <attribute name="invisible">state != 'cancelado'</attribute>
                 </xpath>
                 <xpath expr="//group[@name='dates_and_signatures']" position="inside">
-                    <field name="provider_signature_id" options="{'no_create': True}"/>
-                    <field name="customer_signature_id" options="{'no_create': True}"/>
+                    <field name="signatures_disabled" invisible="1"/>
+                    <field name="provider_signature_id" options="{'no_create': True}" invisible="signatures_disabled"/>
+                    <field name="customer_signature_id" options="{'no_create': True}" invisible="signatures_disabled"/>
                 </xpath>
             </field>
         </record>

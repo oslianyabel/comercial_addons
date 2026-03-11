@@ -1,4 +1,4 @@
-from odoo import fields, models
+from odoo import api, fields, models
 
 
 class ResSignature(models.Model):
@@ -28,3 +28,19 @@ class ResSignature(models.Model):
                 ]
             )
             record.marco_ids = records
+
+
+class SignatureSettings(models.Model):
+    _name = "signature.settings"
+    _description = "Configuración de Firmas"
+
+    signatures_disabled = fields.Boolean(
+        string="Deshabilitar Firmas Digitales",
+        default=False,
+        help="Si se marca, las firmas digitales no serán requeridas para pasar a 'Firmado'.",
+    )
+
+    @api.model
+    def get_settings(self):
+        """Retrieve or create the singleton settings record."""
+        return self.search([], limit=1) or self.create({})

@@ -19,21 +19,25 @@
                 <tr>
                     <td style="width: 50%; text-align: center; vertical-align: top; border: none;">
                         <div style="border-bottom: 1px solid black; min-height: 80px; margin-bottom: 10px;">
-                            <t t-if="o.provider_signature_id.image">
+                            <t t-if="not o.signatures_disabled and o.provider_signature_id.image">
                                 <img t-att-src="image_data_uri(o.provider_signature_id.image)" style="max-height: 80px; max-width: 200px;"/>
                             </t>
                         </div>
                         <div style="font-weight: bold; text-transform: uppercase;">firma del prestador</div>
-                        <div t-field="o.provider_signature_id.name" style="font-size: 11px;"/>
+                        <t t-if="not o.signatures_disabled">
+                            <div t-field="o.provider_signature_id.name" style="font-size: 11px;"/>
+                        </t>
                     </td>
                     <td style="width: 50%; text-align: center; vertical-align: top; border: none;">
                         <div style="border-bottom: 1px solid black; min-height: 80px; margin-bottom: 10px;">
-                            <t t-if="o.customer_signature_id.image">
+                            <t t-if="not o.signatures_disabled and o.customer_signature_id.image">
                                 <img t-att-src="image_data_uri(o.customer_signature_id.image)" style="max-height: 80px; max-width: 200px;"/>
                             </t>
                         </div>
                         <div style="font-weight: bold; text-transform: uppercase;">firma del cliente</div>
-                        <div t-field="o.customer_signature_id.name" style="font-size: 11px;"/>
+                        <t t-if="not o.signatures_disabled">
+                            <div t-field="o.customer_signature_id.name" style="font-size: 11px;"/>
+                        </t>
                     </td>
                 </tr>
             </table>

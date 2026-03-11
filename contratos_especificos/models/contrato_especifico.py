@@ -1,6 +1,7 @@
 ﻿import re
 
 from markupsafe import Markup
+
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
@@ -55,13 +56,15 @@ class ContratoEspecifico(models.Model):
     application_name = fields.Char(string="Nombre de la Aplicación")
 
     def write(self, vals):
-        """Prevent editing signed contracts."""
+        """Prevent editing signed or delivered contracts."""
         for record in self:
-            if record.state == "firmado" and not self.env.su:
+            if record.state in ["firmado", "entregado"] and not self.env.su:
                 # Allow changing state (e.g., to cancel or draft) but nothing else
                 if not (len(vals) == 1 and "state" in vals):
                     raise UserError(
-                        _("No puede modificar un contrato que ya está firmado.")
+                        _(
+                            "No puede modificar un contrato que ya está firmado o entregado."
+                        )
                     )
         return super().write(vals)
 
@@ -89,6 +92,7 @@ class ContratoEspecifico(models.Model):
         [
             ("borrador", "Draft"),
             ("firmado", "Signed"),
+            ("entregado", "Entregado"),
             ("cancelado", "Cancelled"),
         ],
         string="Status",
@@ -300,11 +304,29 @@ class ContratoEspecifico(models.Model):
 
             record.write({"state": "cancelado"})
 
+    def action_entregar(self):
+        """Transition contract to delivered state."""
+        for record in self:
+            if record.state != "firmado":
+                raise UserError(_("Solo se pueden entregar contratos firmados."))
+            record.write({"state": "entregado"})
+
+    def action_revert_to_signed(self):
+        """Revert contract from delivered back to signed state."""
+        for record in self:
+            if record.state != "entregado":
+                raise UserError(
+                    _("Solo se puede retroceder a Firmado desde Entregado.")
+                )
+            record.write({"state": "firmado"})
+
     def action_sign(self):
         """Transition contract to signed state."""
         for record in self:
-            if record.state not in ["borrador", "cancelado"]:
-                raise UserError(_("Only draft or cancelled contracts can be signed."))
+            if record.state not in ["borrador", "cancelado", "entregado"]:
+                raise UserError(
+                    _("Only draft, cancelled, or delivered contracts can be signed.")
+                )
             if not record.content:
                 raise UserError(
                     _("Please generate the contract content before signing.")

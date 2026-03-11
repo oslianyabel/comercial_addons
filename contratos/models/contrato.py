@@ -125,6 +125,22 @@ class ContratoMarco(models.Model):
         for record in self:
             record.write({"state": "cancelado"})
 
+    def action_entregar(self):
+        """Transition contract to delivered state."""
+        for record in self:
+            if record.state != "firmado":
+                raise UserError(_("Solo se pueden entregar contratos firmados."))
+            record.write({"state": "entregado"})
+
+    def action_revert_to_signed(self):
+        """Revert contract from delivered back to signed state."""
+        for record in self:
+            if record.state != "entregado":
+                raise UserError(
+                    _("Solo se puede retroceder a Firmado desde Entregado.")
+                )
+            record.write({"state": "firmado"})
+
     def action_sign(self):
         """Transition contract to signed state with authorization check."""
         for record in self:

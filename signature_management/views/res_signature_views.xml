@@ -53,10 +53,21 @@
             <field name="view_mode">tree,form</field>
         </record>
 
-        <menuitem id="menu_res_signature"
+        <menuitem id="menu_res_signature_root"
                   name="Firmas"
                   parent="contacts.res_partner_menu_config"
-                  action="action_res_signature"
                   sequence="60"/>
+
+        <menuitem id="menu_res_signature"
+                  name="Firmas"
+                  parent="menu_res_signature_root"
+                  action="action_res_signature"
+                  sequence="10"/>
+
+        <menuitem id="menu_res_signature_settings"
+                  name="Ajustes"
+                  parent="menu_res_signature_root"
+                  action="action_signature_config_settings"
+                  sequence="20"/>
     </data>
 </odoo>

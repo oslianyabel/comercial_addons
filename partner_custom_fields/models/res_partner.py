@@ -11,6 +11,14 @@ class ResPartnerOrganism(models.Model):
     name = fields.Char(string="Nombre", required=True)
 
 
+class ResPartnerUEB(models.Model):
+    _name = "res.partner.ueb"
+    _description = "UEB"
+
+    name = fields.Char(string="Nombre", required=True)
+    code = fields.Char(string="Código", required=True)
+
+
 class ResPartner(models.Model):
     _inherit = "res.partner"
 

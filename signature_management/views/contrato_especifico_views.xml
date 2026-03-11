@@ -10,7 +10,7 @@
                     <attribute name="invisible">state != 'borrador'</attribute>
                 </xpath>
                 <xpath expr="//header/button[@name='action_cancel']" position="attributes">
-                    <attribute name="invisible">state not in ['borrador', 'firmado']</attribute>
+                    <attribute name="invisible">state not in ['borrador', 'firmado', 'entregado']</attribute>
                 </xpath>
                 <xpath expr="//header/button[@name='action_draft']" position="attributes">
                     <attribute name="invisible">state != 'cancelado'</attribute>
@@ -35,8 +35,9 @@
                 <xpath expr="//group[@name='dates']" position="after">
                     <group string="Firmas">
                         <field name="service_line_state" widget="badge" decoration-info="service_line_state == 'pending'" decoration-danger="service_line_state == 'delayed'" decoration-success="service_line_state == 'invoiced'"/>
-                        <field name="provider_signature_id" options="{'no_create': True}"/>
-                        <field name="customer_signature_id" options="{'no_create': True}"/>
+                        <field name="signatures_disabled" invisible="1"/>
+                        <field name="provider_signature_id" options="{'no_create': True}" invisible="signatures_disabled"/>
+                        <field name="customer_signature_id" options="{'no_create': True}" invisible="signatures_disabled"/>
                     </group>
                 </xpath>
                 <xpath expr="//field[@name='line_ids']/tree" position="inside">

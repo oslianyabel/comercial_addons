@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_signature" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.signature</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority" eval="100"/>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Firmas" string="Firmas" name="signature_management">
+                    <h2>Gestión de Firmas</h2>
+                    <block title="Configuración de Contratos" name="signature_config_block">
+                        <setting id="disable_signatures_setting" help="Oculta los campos de firmas en contratos y omite su impresión.">
+                            <field name="disable_signatures"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_signature_config_settings" model="ir.actions.act_window">
+        <field name="name">Ajustes</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+        <field name="context">{'module' : 'signature_management', 'bin_size': False}</field>
+    </record>
+</odoo>

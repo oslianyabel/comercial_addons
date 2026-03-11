@@ -15,6 +15,7 @@
         "security/ir.model.access.csv",
         "wizard/signature_selection_wizard_views.xml",
         "report/signature_report_templates.xml",
+        "views/res_config_settings_views.xml",
         "views/res_signature_views.xml",
         "views/contrato_marco_views.xml",
         "views/contrato_especifico_views.xml",
