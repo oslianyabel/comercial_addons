@@ -139,27 +139,12 @@ class ContratoEspecifico(models.Model):
     )
     forma_pago_id = fields.Many2one("account.payment.term", string="Forma de Pago")
 
-    # Phase 5: UEB selection filtered by partner's UEBs
-    cliente_ueb_ids = fields.Many2many(
-        "res.partner.ueb",
-        string="UEBs del Cliente",
+    # UEB service line sections (one table per UEB)
+    ueb_section_ids = fields.One2many(
+        "contrato.especifico.ueb.section",
+        "contrato_id",
+        string="Líneas de Servicio por UEB",
     )
-    # Helper field so the JS domain evaluator receives a proper ID list
-    partner_ueb_ids = fields.Many2many(
-        "res.partner.ueb",
-        string="UEBs disponibles del cliente",
-        compute="_compute_partner_ueb_ids",
-        store=False,
-    )
-
-    @api.depends("partner_id", "partner_id.ueb_ids")
-    def _compute_partner_ueb_ids(self):
-        for rec in self:
-            rec.partner_ueb_ids = (
-                rec.partner_id.ueb_ids
-                if rec.partner_id
-                else self.env["res.partner.ueb"]
-            )
 
     _sql_constraints = [
         (
@@ -274,11 +259,8 @@ class ContratoEspecifico(models.Model):
             content = content.strip()
             record.content = Markup(content)
 
-    def _render_service_lines_table(self):
-        """Render an HTML table for the service lines."""
-        if not self.line_ids:
-            return ""
-
+    def _render_lines_block(self, lines) -> str:
+        """Render an HTML table for a list of service line records."""
         table_style = (
             "width: 100%; border-collapse: collapse; margin-top: 5px; "
             "font-family: Arial, sans-serif; font-size: 11px;"
@@ -291,17 +273,17 @@ class ContratoEspecifico(models.Model):
         td_num_style = "border: 1px solid #000; padding: 4px; text-align: right;"
 
         headers = [
-            _("Service/Product"),
-            _("Description"),
-            _("Qty"),
-            _("UoM"),
-            _("Unit Price (CUP)"),
-            _("Amount"),
-            _("Deadline"),
+            _("Producto/Servicio"),
+            _("Descripción"),
+            _("Cant."),
+            _("UdM"),
+            _("Precio Unitario"),
+            _("Subtotal"),
+            _("Límite Facturación"),
         ]
 
         rows = []
-        for line in self.line_ids:
+        for line in lines:
             deadline = (
                 line.date_deadline_invoice.strftime("%d/%m/%Y")
                 if line.date_deadline_invoice
@@ -325,6 +307,25 @@ class ContratoEspecifico(models.Model):
         html += "</tbody></table>"
         return html
 
+    def _render_service_lines_table(self) -> str:
+        """Render HTML tables for all service lines (general + per-UEB sections)."""
+        parts = []
+
+        if self.line_ids:
+            parts.append(self._render_lines_block(self.line_ids))
+
+        section_title_style = (
+            "font-family: Arial, sans-serif; font-size: 12px; font-weight: bold; "
+            "margin-top: 12px; margin-bottom: 4px;"
+        )
+        for section in self.ueb_section_ids:
+            if section.line_ids:
+                ueb_name = section.ueb_id.name or ""
+                parts.append(f'<p style="{section_title_style}">{ueb_name}</p>')
+                parts.append(self._render_lines_block(section.line_ids))
+
+        return "".join(parts)
+
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
@@ -340,7 +341,7 @@ class ContratoEspecifico(models.Model):
     def action_cancel(self):
         """Cancel the contract and all associated invoices."""
         for record in self:
-            # Find all invoices linked to this contract's lines
+            # General service lines
             lines = record.line_ids
             invoices = self.env["account.move"].search(
                 [("service_line_id", "in", lines.ids)]
@@ -350,11 +351,34 @@ class ContratoEspecifico(models.Model):
                     inv.button_draft()
                 if inv.state != "cancel":
                     inv.button_cancel()
-
-            # Reset the invoiced flag on lines
             lines.with_context(is_uninvoice=True).write({"invoiced": False})
 
+            # UEB section lines
+            ueb_lines = record.ueb_section_ids.mapped("line_ids")
+            if ueb_lines:
+                ueb_invoices = self.env["account.move"].search(
+                    [("ueb_service_line_id", "in", ueb_lines.ids)]
+                )
+                for inv in ueb_invoices:
+                    if inv.state == "posted":
+                        inv.button_draft()
+                    if inv.state != "cancel":
+                        inv.button_cancel()
+                ueb_lines.with_context(is_uninvoice=True).write({"invoiced": False})
+
             record.write({"state": "cancelado"})
+
+    def action_add_ueb_section(self) -> dict:
+        """Open wizard to add a new UEB service line table to the contract."""
+        self.ensure_one()
+        return {
+            "name": _("Agregar tabla de líneas de servicio por UEB"),
+            "type": "ir.actions.act_window",
+            "res_model": "contrato.especifico.add.ueb.wizard",
+            "view_mode": "form",
+            "target": "new",
+            "context": {"default_contrato_id": self.id},
+        }
 
     def action_entregar(self):
         """Transition contract to signed state (final active state)."""

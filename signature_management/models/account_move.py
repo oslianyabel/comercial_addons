@@ -8,6 +8,9 @@ class AccountMove(models.Model):
         "contrato.especifico", string="Specific Contract"
     )
     service_line_id = fields.Many2one("contrato.especifico.line", string="Service Line")
+    ueb_service_line_id = fields.Many2one(
+        "contrato.especifico.ueb.line", string="UEB Service Line"
+    )
     payment_form_id = fields.Many2one("signature.payment.form", string="Forma de pago")
 
     client_address = fields.Char(string="Client Address")
@@ -34,16 +37,21 @@ class AccountMove(models.Model):
         """Reset the 'invoiced' flag on the related service line when the invoice is deleted."""
         # Collect service lines and contracts before deletion
         service_lines = self.mapped("service_line_id")
+        ueb_service_lines = self.mapped("ueb_service_line_id")
         contracts = service_lines.mapped("contrato_id")
 
         res = super().unlink()
 
         if service_lines:
-            # Use sudo() to bypass potential permission issues during bulk deletion
             service_lines.sudo().with_context(is_uninvoice=True).write(
                 {"invoiced": False}
             )
-            # Explicitly trigger recompute of the stored service_line_state on the contracts
             if contracts:
                 contracts.sudo()._compute_service_line_state()
+
+        if ueb_service_lines:
+            ueb_service_lines.sudo().with_context(is_uninvoice=True).write(
+                {"invoiced": False}
+            )
+
         return res

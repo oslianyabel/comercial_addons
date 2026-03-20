@@ -160,8 +160,8 @@ class ContratoEspecificoLine(models.Model):
                 "client_address": f"{partner.street or ''} {partner.city or ''}".strip(),
                 "client_nit": getattr(partner, "tax_id", None) or partner.vat or "",
                 "client_bank_account": getattr(partner, "bank_account_cup", None) or "",
-                # Realizada por: se mapea desde res.users → res.partner
-                "realizada_por_id": contract.realizada_por_id.partner_id.id
+                # realizada_por_id is now res.partner (changed from res.users)
+                "realizada_por_id": contract.realizada_por_id.id
                 if contract.realizada_por_id
                 else False,
             }

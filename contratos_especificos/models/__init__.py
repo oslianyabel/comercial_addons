@@ -1,5 +1,8 @@
-﻿from . import contrato_especifico_template
-from . import contrato_especifico_line
-from . import contrato_especifico
-from . import contrato_especifico_import_wizard
-from . import contrato_marco
+﻿from . import (
+    contrato_especifico,
+    contrato_especifico_import_wizard,
+    contrato_especifico_line,
+    contrato_especifico_template,
+    contrato_especifico_ueb_section,
+    contrato_marco,
+)

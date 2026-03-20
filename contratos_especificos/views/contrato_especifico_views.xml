@@ -26,10 +26,6 @@
                             <field name="marco_id"/>
                             <field name="company_id" readonly="1"/>
                             <field name="partner_id" readonly="1"/>
-                            <field name="partner_ueb_ids" invisible="1"/>
-                            <field name="cliente_ueb_ids" widget="many2many_tags"
-                                   domain="[('id', 'in', partner_ueb_ids)]"
-                                   options="{'no_create': True}"/>
                             <field name="template_id" string="Tipo de Contrato"/>
                         </group>
                         <group name="dates" string="Fechas">
@@ -77,6 +73,48 @@
                                     <field name="invoiced" optional="hide" string="Facturado"/>
                                     <button name="action_facturar" type="object" string="Facturar" class="btn-primary" invisible="invoiced"/>
                                 </tree>
+                            </field>
+                        </page>
+                        <page string="Líneas de Servicio por UEB" name="ueb_sections">
+                            <div class="mb-2">
+                                <button name="action_add_ueb_section" type="object"
+                                        string="+ Agregar UEB" class="btn btn-primary"
+                                        invisible="state == 'firmado'"/>
+                            </div>
+                            <field name="ueb_section_ids" create="0" delete="0" readonly="state == 'firmado'">
+                                <tree create="0" delete="0" decoration-muted="line_count == 0">
+                                    <field name="ueb_id" string="UEB"/>
+                                    <field name="line_count" string="Nº Líneas"/>
+                                    <field name="total_amount" string="Total" widget="monetary"/>
+                                </tree>
+                                <form>
+                                    <sheet>
+                                        <div class="oe_title">
+                                            <h2>
+                                                <field name="ueb_id" readonly="1"/>
+                                            </h2>
+                                        </div>
+                                        <field name="contract_state" invisible="1"/>
+                                        <field name="line_ids" readonly="contract_state == 'firmado'">
+                                            <tree editable="bottom">
+                                                <field name="product_id" string="Producto/Servicio"/>
+                                                <field name="name" string="Descripción"/>
+                                                <field name="start_date" optional="show"/>
+                                                <field name="end_date" optional="show"/>
+                                                <field name="quantity" string="Cant."/>
+                                                <field name="uom_id" string="UdM"/>
+                                                <field name="price_unit" string="Precio Unitario"/>
+                                                <field name="price_subtotal" string="Subtotal"/>
+                                                <field name="date_deadline_invoice" string="Límite Facturación"/>
+                                                <field name="invoiced" optional="hide" string="Facturado"/>
+                                                <button name="action_facturar" type="object" string="Facturar"
+                                                        class="btn-primary" invisible="invoiced"/>
+                                                <button name="action_uninvoice" type="object" string="Desmarcar"
+                                                        class="btn-warning" invisible="not invoiced"/>
+                                            </tree>
+                                        </field>
+                                    </sheet>
+                                </form>
                             </field>
                         </page>
                         <page string="Contract Content">
