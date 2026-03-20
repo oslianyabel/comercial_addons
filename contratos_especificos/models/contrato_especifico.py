@@ -55,16 +55,20 @@ class ContratoEspecifico(models.Model):
     project_leader = fields.Char(string="Líder del Proyecto del Cliente")
     application_name = fields.Char(string="Nombre de la Aplicación")
 
+    # Fields updated automatically by the ORM (computed stored or system fields)
+    _SYSTEM_WRITE_ALLOWED = frozenset(["state", "service_line_state", "invoice_count"])
+
     def write(self, vals):
-        """Prevent editing signed or delivered contracts."""
-        for record in self:
-            if record.state in ["firmado", "entregado"] and not self.env.su:
-                # Allow changing state (e.g., to cancel or draft) but nothing else
-                if not (len(vals) == 1 and "state" in vals):
+        """Prevent editing signed contracts.
+
+        Allows state transitions and ORM-managed computed stored fields.
+        Delivered ('entregado') contracts remain editable.
+        """
+        if not self.env.su and not vals.keys() <= self._SYSTEM_WRITE_ALLOWED:
+            for record in self:
+                if record.state == "firmado":
                     raise UserError(
-                        _(
-                            "No puede modificar un contrato que ya está firmado o entregado."
-                        )
+                        _("No puede modificar un contrato que ya está firmado.")
                     )
         return super().write(vals)
 
@@ -91,8 +95,8 @@ class ContratoEspecifico(models.Model):
     state = fields.Selection(
         [
             ("borrador", "Draft"),
-            ("firmado", "Signed"),
             ("entregado", "Entregado"),
+            ("firmado", "Signed"),
             ("cancelado", "Cancelled"),
         ],
         string="Status",
@@ -107,6 +111,38 @@ class ContratoEspecifico(models.Model):
         "contrato_id",
         string="Service Lines",
     )
+
+    # Billing Data Fields (Phase 4)
+    realizada_por_id = fields.Many2one(
+        "res.users", string="Realizada por", default=lambda self: self.env.user
+    )
+    transportado_por = fields.Char(string="Transportado por")
+    recibido_por = fields.Char(string="Recibido por")
+    entregada_por = fields.Char(string="Entregada por")
+    contabilizada_por = fields.Char(string="Contabilizada por")
+    forma_pago_id = fields.Many2one("account.payment.term", string="Forma de Pago")
+
+    # Phase 5: UEB selection filtered by partner's UEBs
+    cliente_ueb_ids = fields.Many2many(
+        "res.partner.ueb",
+        string="UEBs del Cliente",
+    )
+    # Helper field so the JS domain evaluator receives a proper ID list
+    partner_ueb_ids = fields.Many2many(
+        "res.partner.ueb",
+        string="UEBs disponibles del cliente",
+        compute="_compute_partner_ueb_ids",
+        store=False,
+    )
+
+    @api.depends("partner_id", "partner_id.ueb_ids")
+    def _compute_partner_ueb_ids(self):
+        for rec in self:
+            rec.partner_ueb_ids = (
+                rec.partner_id.ueb_ids
+                if rec.partner_id
+                else self.env["res.partner.ueb"]
+            )
 
     _sql_constraints = [
         (
@@ -305,30 +341,32 @@ class ContratoEspecifico(models.Model):
             record.write({"state": "cancelado"})
 
     def action_entregar(self):
-        """Transition contract to delivered state."""
+        """Transition contract to signed state (final active state)."""
         for record in self:
-            if record.state != "firmado":
-                raise UserError(_("Solo se pueden entregar contratos firmados."))
-            record.write({"state": "entregado"})
+            if record.state != "entregado":
+                raise UserError(_("Solo se pueden firmar contratos entregados."))
+            record.write({"state": "firmado"})
 
-    def action_revert_to_signed(self):
-        """Revert contract from delivered back to signed state."""
+    def action_draft_from_entregado(self):
+        """Revert contract from delivered back to draft."""
         for record in self:
             if record.state != "entregado":
                 raise UserError(
-                    _("Solo se puede retroceder a Firmado desde Entregado.")
+                    _("Solo se puede retroceder a Borrador desde Entregado.")
                 )
-            record.write({"state": "firmado"})
+            record.write({"state": "borrador"})
 
     def action_sign(self):
-        """Transition contract to signed state."""
+        """Transition contract to delivered state."""
         for record in self:
-            if record.state not in ["borrador", "cancelado", "entregado"]:
+            if record.state not in ["borrador", "cancelado", "firmado"]:
                 raise UserError(
-                    _("Only draft, cancelled, or delivered contracts can be signed.")
+                    _(
+                        "Only draft, cancelled, or signed contracts can be set to delivered."
+                    )
                 )
             if not record.content:
                 raise UserError(
-                    _("Please generate the contract content before signing.")
+                    _("Please generate the contract content before delivering.")
                 )
-            record.write({"state": "firmado"})
+            record.write({"state": "entregado"})

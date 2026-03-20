@@ -7,12 +7,12 @@
             <form>
                 <header>
                     <button name="action_generate_content" string="Generate Content" type="object" class="oe_highlight" invisible="state in ('firmado', 'entregado')"/>
-                    <button name="action_sign" string="Sign Contract" type="object" class="oe_highlight" invisible="state in ('firmado', 'entregado')" confirm="Are you sure you want to sign this contract?"/>
-                    <button name="action_revert_to_signed" string="Retroceder a Firmado" type="object" invisible="state != 'entregado'"/>
-                    <button name="action_entregar" string="Entregar" type="object" class="oe_highlight" invisible="state != 'firmado'"/>
-                    <button name="action_cancel" string="Cancel" type="object" invisible="state not in ('borrador', 'firmado', 'entregado')"/>
-                    <button name="action_draft" string="Set to Draft" type="object" invisible="state == 'borrador'"/>
-                    <field name="state" widget="statusbar" statusbar_visible="borrador,firmado,entregado,cancelado"/>
+                    <button name="action_sign" string="Entregar" type="object" class="oe_highlight" invisible="state in ('firmado', 'entregado')" confirm="¿Está seguro de que desea entregar este contrato?"/>
+                    <button name="action_draft_from_entregado" string="Retroceder a Borrador" type="object" invisible="state != 'entregado'"/>
+                    <button name="action_entregar" string="Firmar" type="object" class="oe_highlight" invisible="state != 'entregado'" confirm="¿Está seguro de que desea firmar este contrato? Esta acción no se puede deshacer."/>
+                    <button name="action_cancel" string="Cancel" type="object" invisible="state not in ('borrador', 'entregado', 'firmado')"/>
+                    <button name="action_draft" string="Set to Draft" type="object" invisible="state not in ('cancelado',)"/>
+                    <field name="state" widget="statusbar" statusbar_visible="borrador,entregado,firmado,cancelado"/>
                 </header>
                 <sheet>
                     <div class="oe_title">
@@ -26,6 +26,10 @@
                             <field name="marco_id"/>
                             <field name="company_id" readonly="1"/>
                             <field name="partner_id" readonly="1"/>
+                            <field name="partner_ueb_ids" invisible="1"/>
+                            <field name="cliente_ueb_ids" widget="many2many_tags"
+                                   domain="[('id', 'in', partner_ueb_ids)]"
+                                   options="{'no_create': True}"/>
                             <field name="template_id" string="Tipo de Contrato"/>
                         </group>
                         <group name="dates" string="Fechas">
@@ -47,6 +51,16 @@
                             <field name="template_type_requires_app" invisible="1"/>
                         </group>
                     </group>
+                    <group>
+                        <group string="Datos de Facturación">
+                            <field name="forma_pago_id" options="{'no_create': True}"/>
+                            <field name="realizada_por_id" options="{'no_create': True}"/>
+                            <field name="transportado_por"/>
+                            <field name="recibido_por"/>
+                            <field name="entregada_por"/>
+                            <field name="contabilizada_por"/>
+                        </group>
+                    </group>
                     <notebook>
                         <page string="Líneas de servicios" name="service_lines">
                             <field name="line_ids" readonly="state == 'firmado'">
@@ -61,6 +75,7 @@
                                     <field name="price_subtotal" string="Subtotal"/>
                                     <field name="date_deadline_invoice" string="Límite Facturación"/>
                                     <field name="invoiced" optional="hide" string="Facturado"/>
+                                    <button name="action_facturar" type="object" string="Facturar" class="btn-primary" invisible="invoiced"/>
                                 </tree>
                             </field>
                         </page>

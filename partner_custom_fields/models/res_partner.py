@@ -18,6 +18,21 @@ class ResPartnerUEB(models.Model):
     name = fields.Char(string="Nombre", required=True)
     code = fields.Char(string="Código", required=True)
     active = fields.Boolean(default=True)
+    partner_ids = fields.Many2many(
+        "res.partner",
+        relation="res_partner_res_partner_ueb_rel",
+        column1="res_partner_ueb_id",
+        column2="res_partner_id",
+        string="Contactos",
+    )
+    partner_count = fields.Integer(
+        string="Nº de contactos",
+        compute="_compute_partner_count",
+    )
+
+    def _compute_partner_count(self):
+        for rec in self:
+            rec.partner_count = len(rec.partner_ids)
 
 
 class ResPartner(models.Model):

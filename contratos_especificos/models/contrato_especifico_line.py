@@ -111,3 +111,68 @@ class ContratoEspecificoLine(models.Model):
 
             # Bypass the manual write check by using super().write or context
             line.with_context(is_uninvoice=True).write({"invoiced": False})
+
+    def action_facturar(self):
+        """Generar la factura desde la línea del contrato sin wizard usando los campos en contrato_especifico."""
+        for line in self:
+            if line.invoiced:
+                raise UserError(_("Esta línea ya ha sido facturada."))
+
+            contract = line.contrato_id
+
+            # Validación: El contrato debe estar firmado para facturarse
+            if contract.state != "firmado":
+                raise UserError(
+                    _(
+                        "Solo puede facturar las líneas de servicio de un contrato que se encuentre Firmado."
+                    )
+                )
+
+            if not contract.forma_pago_id:
+                raise UserError(
+                    _(
+                        "Debe configurar la Forma de Pago en los Datos de Facturación del contrato antes de facturar."
+                    )
+                )
+
+            partner = contract.partner_id
+
+            invoice_vals = {
+                "move_type": "out_invoice",
+                "partner_id": partner.id,
+                "invoice_date": fields.Date.today(),
+                "contrato_especifico_id": contract.id,
+                "service_line_id": line.id,
+                "invoice_payment_term_id": contract.forma_pago_id.id,
+                "invoice_line_ids": [
+                    (
+                        0,
+                        0,
+                        {
+                            "product_id": line.product_id.id,
+                            "name": line.name,
+                            "quantity": line.quantity,
+                            "product_uom_id": line.uom_id.id,
+                            "price_unit": line.price_unit,
+                        },
+                    )
+                ],
+                "client_address": f"{partner.street or ''} {partner.city or ''}".strip(),
+                "client_nit": getattr(partner, "tax_id", None) or partner.vat or "",
+                "client_bank_account": getattr(partner, "bank_account_cup", None) or "",
+                # Realizada por: se mapea desde res.users → res.partner
+                "realizada_por_id": contract.realizada_por_id.partner_id.id
+                if contract.realizada_por_id
+                else False,
+            }
+
+            move = self.env["account.move"].create(invoice_vals)
+            line.with_context(is_uninvoice=True).write({"invoiced": True})
+
+            return {
+                "name": _("Factura"),
+                "view_mode": "form",
+                "res_model": "account.move",
+                "res_id": move.id,
+                "type": "ir.actions.act_window",
+            }

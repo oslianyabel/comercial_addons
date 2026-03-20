@@ -101,9 +101,10 @@
             <field name="name">res.partner.ueb.tree</field>
             <field name="model">res.partner.ueb</field>
             <field name="arch" type="xml">
-                <tree editable="bottom" string="UEBs">
+                <tree string="UEBs">
                     <field name="name"/>
                     <field name="code"/>
+                    <field name="partner_count" string="Nº de contactos" readonly="1"/>
                     <field name="active" widget="boolean_toggle"/>
                 </tree>
             </field>
@@ -123,6 +124,17 @@
                                 <field name="active" invisible="1"/>
                             </group>
                         </group>
+                        <notebook>
+                            <page string="Contactos" name="partners">
+                                <field name="partner_ids" widget="many2many" options="{'no_create': True}">
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="email"/>
+                                        <field name="phone"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
                     </sheet>
                 </form>
             </field>

@@ -42,11 +42,6 @@
                 </xpath>
                 <xpath expr="//field[@name='line_ids']/tree" position="inside">
                     <button name="action_uninvoice" type="object" string="Uninvoice" icon="fa-undo" invisible="not invoiced" confirm="This will delete the associated invoice. Are you sure?"/>
-                    <button name="%(signature_management.action_signature_selection_wizard)d" 
-                            string="Facturar servicio" 
-                            type="action" 
-                            class="oe_highlight"
-                            invisible="invoiced or parent.state != 'firmado'"/>
                 </xpath>
             </field>
         </record>

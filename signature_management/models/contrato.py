@@ -28,16 +28,16 @@ class ContratoMarco(models.Model):
         return super().action_draft()
 
     def action_cancel(self):
-        """Cancel the contract. Allowed from 'borrador', 'firmado', or 'entregado'."""
+        """Cancel the contract. Allowed from 'borrador', 'entregado', or 'firmado'."""
         for record in self:
-            if record.state not in ["borrador", "firmado", "entregado"]:
+            if record.state not in ["borrador", "entregado", "firmado"]:
                 raise UserError(
-                    _("Only draft, signed, or delivered contracts can be cancelled.")
+                    _("Only draft, delivered, or signed contracts can be cancelled.")
                 )
         return super().action_cancel()
 
     def action_sign(self):
-        """Transition contract to signed state. Requires both signatures."""
+        """Transition contract to delivered state. Requires both signatures."""
         for record in self:
             if record.state != "borrador":
                 raise UserError(_("Only draft contracts can be signed."))
@@ -171,9 +171,9 @@ class ContratoEspecifico(models.Model):
         """Check permissions and flow for cancellation."""
         self._check_state_change_permission()
         for record in self:
-            if record.state not in ["borrador", "firmado", "entregado"]:
+            if record.state not in ["borrador", "entregado", "firmado"]:
                 raise UserError(
-                    _("Only draft, signed, or delivered contracts can be cancelled.")
+                    _("Only draft, delivered, or signed contracts can be cancelled.")
                 )
         return super().action_cancel()
 

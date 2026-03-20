@@ -55,8 +55,8 @@ class ContratoMarco(models.Model):
     state = fields.Selection(
         [
             ("borrador", "Borrador"),
-            ("firmado", "Firmado"),
             ("entregado", "Entregado"),
+            ("firmado", "Firmado"),
             ("cancelado", "Cancelado"),
         ],
         string="Estado",
@@ -110,7 +110,7 @@ class ContratoMarco(models.Model):
             record.modification_date_auto = record.write_date
 
     def write(self, vals):
-        """Prevent editing signed contracts."""
+        """Prevent editing signed contracts. Delivered contracts remain editable."""
         if any(r.state == "firmado" for r in self) and not self.env.su:
             if not (len(vals) == 1 and "state" in vals):
                 raise UserError(_("No puede editar un contrato firmado."))
@@ -127,32 +127,32 @@ class ContratoMarco(models.Model):
             record.write({"state": "cancelado"})
 
     def action_entregar(self):
-        """Transition contract to delivered state."""
+        """Transition contract to signed state (final active state)."""
         for record in self:
-            if record.state != "firmado":
-                raise UserError(_("Solo se pueden entregar contratos firmados."))
-            record.write({"state": "entregado"})
+            if record.state != "entregado":
+                raise UserError(_("Solo se pueden firmar contratos entregados."))
+            record.write({"state": "firmado"})
 
-    def action_revert_to_signed(self):
-        """Revert contract from delivered back to signed state."""
+    def action_draft_from_entregado(self):
+        """Revert contract from delivered back to draft."""
         for record in self:
             if record.state != "entregado":
                 raise UserError(
-                    _("Solo se puede retroceder a Firmado desde Entregado.")
+                    _("Solo se puede retroceder a Borrador desde Entregado.")
                 )
-            record.write({"state": "firmado"})
+            record.write({"state": "borrador"})
 
     def action_sign(self):
-        """Transition contract to signed state with authorization check."""
+        """Transition contract to delivered state with authorization check."""
         for record in self:
             if record.state not in ["borrador", "cancelado"]:
                 raise UserError(
-                    _("Solo se pueden firmar contratos en borrador o cancelados.")
+                    _("Solo se pueden entregar contratos en borrador o cancelados.")
                 )
 
             if not record.content:
                 raise UserError(
-                    _("Por favor, genere el contenido del contrato antes de firmar.")
+                    _("Por favor, genere el contenido del contrato antes de entregar.")
                 )
 
             # Authorization Check
@@ -162,12 +162,12 @@ class ContratoMarco(models.Model):
                 and not self.env.is_admin()
             ):
                 raise UserError(
-                    _("Solo los contactos autorizados pueden firmar este contrato.")
+                    _("Solo los contactos autorizados pueden entregar este contrato.")
                 )
 
             record.write(
                 {
-                    "state": "firmado",
+                    "state": "entregado",
                     "signed_by_id": user_partner.id,
                     "signing_date": fields.Datetime.now(),
                 }
