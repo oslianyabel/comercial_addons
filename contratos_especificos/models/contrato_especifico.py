@@ -52,7 +52,10 @@ class ContratoEspecifico(models.Model):
         string="Líder del Proyecto Nuestro",
         domain="[('is_company', '=', False), ('company_id', '=', company_id)]",
     )
-    project_leader = fields.Char(string="Líder del Proyecto del Cliente")
+    project_leader_id = fields.Many2one(
+        "res.partner",
+        string="Líder del Proyecto del Cliente",
+    )
     application_name = fields.Char(string="Nombre de la Aplicación")
 
     # Fields updated automatically by the ORM (computed stored or system fields)
@@ -114,12 +117,26 @@ class ContratoEspecifico(models.Model):
 
     # Billing Data Fields (Phase 4)
     realizada_por_id = fields.Many2one(
-        "res.users", string="Realizada por", default=lambda self: self.env.user
+        "res.partner",
+        string="Realizada por",
+        default=lambda self: self.env.user.partner_id,
     )
-    transportado_por = fields.Char(string="Transportado por")
-    recibido_por = fields.Char(string="Recibido por")
-    entregada_por = fields.Char(string="Entregada por")
-    contabilizada_por = fields.Char(string="Contabilizada por")
+    transportado_por_id = fields.Many2one(
+        "res.partner",
+        string="Transportado por",
+    )
+    recibido_por_id = fields.Many2one(
+        "res.partner",
+        string="Recibido por",
+    )
+    entregada_por_id = fields.Many2one(
+        "res.partner",
+        string="Entregada por",
+    )
+    contabilizada_por_id = fields.Many2one(
+        "res.partner",
+        string="Contabilizada por",
+    )
     forma_pago_id = fields.Many2one("account.payment.term", string="Forma de Pago")
 
     # Phase 5: UEB selection filtered by partner's UEBs
@@ -224,9 +241,10 @@ class ContratoEspecifico(models.Model):
                 "our_rep_function": highlight(our_r.function if our_r else ""),
                 "our_rep_decision_number": highlight(record.our_rep_decision_number),
                 "partner_name": highlight(p.name),
-                "partner_via": (highlight(marco.oeb) if marco.oeb else ""),
                 "partner_short_name": highlight(p.short_name),
-                "project_leader": highlight(record.project_leader),
+                "project_leader": highlight(
+                    record.project_leader_id.name if record.project_leader_id else ""
+                ),
                 "application_name": highlight(record.application_name),
                 "start_date": fmt_date(record.start_date),
                 "day": highlight(record.date.day if record.date else ""),
@@ -236,24 +254,22 @@ class ContratoEspecifico(models.Model):
             }
 
             for var_name, value in vals.items():
-                if var_name == "partner_via" and not marco.oeb:
-                    continue
                 content = content.replace("{{" + var_name + "}}", value)
 
-            if not marco.oeb:
-                content = re.sub(
-                    r"\s*a\s+trav[ee]s\s+de\s+(<strong[^>]*>)?"
-                    r"\s*\{\{partner_via\}\}\s*(</strong>)?",
-                    "",
-                    content,
-                    flags=re.IGNORECASE,
-                )
-                content = re.sub(
-                    r"(<strong[^>]*>)?\s*\{\{partner_via\}\}"
-                    r"\s*(</strong>)?",
-                    "",
-                    content,
-                )
+            # Clean up any {{partner_via}} placeholders (field removed from model)
+            content = re.sub(
+                r"\s*a\s+trav[ee]s\s+de\s+(<strong[^>]*>)?"
+                r"\s*\{\{partner_via\}\}\s*(</strong>)?",
+                "",
+                content,
+                flags=re.IGNORECASE,
+            )
+            content = re.sub(
+                r"(<strong[^>]*>)?\s*\{\{partner_via\}\}"
+                r"\s*(</strong>)?",
+                "",
+                content,
+            )
 
             content = content.strip()
             record.content = Markup(content)

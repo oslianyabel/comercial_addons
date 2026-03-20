@@ -24,6 +24,7 @@ class ResPartnerUEB(models.Model):
         column1="res_partner_ueb_id",
         column2="res_partner_id",
         string="Contactos",
+        domain="[('is_company', '=', True)]",
     )
     partner_count = fields.Integer(
         string="Nº de contactos",

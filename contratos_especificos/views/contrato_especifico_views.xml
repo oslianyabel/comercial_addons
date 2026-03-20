@@ -44,7 +44,7 @@
                             <field name="our_rep_decision_number" string="Acuerdo/Resolución" autocomplete="off" required="template_type_requires_rep"/>
                             <field name="our_rep_decision_date" string="Fecha de Resolución" required="template_type_requires_rep"/>
                             <field name="our_project_leader_id"/>
-                            <field name="project_leader" autocomplete="off" string="Líder del Proyecto del Cliente"/>
+                            <field name="project_leader_id" options="{'no_create': True}" string="Líder del Proyecto del Cliente"/>
                             <field name="application_name" autocomplete="off" string="Nombre de la Aplicación"/>
                             <field name="template_type_requires_rep" invisible="1"/>
                             <field name="template_type_requires_leader" invisible="1"/>
@@ -55,10 +55,10 @@
                         <group string="Datos de Facturación">
                             <field name="forma_pago_id" options="{'no_create': True}"/>
                             <field name="realizada_por_id" options="{'no_create': True}"/>
-                            <field name="transportado_por"/>
-                            <field name="recibido_por"/>
-                            <field name="entregada_por"/>
-                            <field name="contabilizada_por"/>
+                            <field name="transportado_por_id" options="{'no_create': True}"/>
+                            <field name="recibido_por_id" options="{'no_create': True}"/>
+                            <field name="entregada_por_id" options="{'no_create': True}"/>
+                            <field name="contabilizada_por_id" options="{'no_create': True}"/>
                         </group>
                     </group>
                     <notebook>

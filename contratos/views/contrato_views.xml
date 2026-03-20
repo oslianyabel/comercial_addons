@@ -32,7 +32,6 @@
                             <field name="contract_type"/>
                             <field name="file_number" string="File Ref." autocomplete="off"/>
                             <field name="hco"/>
-                            <field name="oeb"/>
                         </group>
                         <group name="dates_and_signatures" string="Dates and Signatures">
                             <field name="date"/>
