@@ -81,8 +81,8 @@
                                         string="+ Agregar UEB" class="btn btn-primary"
                                         invisible="state == 'firmado'"/>
                             </div>
-                            <field name="ueb_section_ids" create="0" delete="0" readonly="state == 'firmado'">
-                                <tree create="0" delete="0" decoration-muted="line_count == 0">
+                            <field name="ueb_section_ids" create="0" readonly="state == 'firmado'">
+                                <tree create="0" decoration-muted="line_count == 0">
                                     <field name="ueb_id" string="UEB"/>
                                     <field name="line_count" string="Nº Líneas"/>
                                     <field name="total_amount" string="Total" widget="monetary"/>
