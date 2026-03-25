@@ -3,6 +3,7 @@ import re
 from html import unescape
 
 from markupsafe import Markup
+
 from odoo import _, models
 from odoo.exceptions import UserError
 
@@ -172,6 +173,7 @@ class ContratoMarco(models.Model):
                 "our_rep_decision_date": fmt_date(record.our_rep_decision_date),
                 "partner_name": highlight(p.name),
                 "partner_via": highlight(record.oeb) if record.oeb else "",
+                "partner_oeb": highlight(record.oeb) if record.oeb else "",
                 "partner_short_name": highlight(p.short_name),
                 "partner_organism": highlight(p.organism_id.name),
                 "partner_resolution_number": highlight(p.resolution_number),

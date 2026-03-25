@@ -51,6 +51,7 @@ class ContratoMarco(models.Model):
         string="Fecha de Vigencia", required=True, default=fields.Date.context_today
     )
     hco = fields.Boolean(string="HCO")
+    oeb = fields.Char(string="OEB (Organismo de Base)")
     state = fields.Selection(
         [
             ("borrador", "Borrador"),
