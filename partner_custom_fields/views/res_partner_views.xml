@@ -16,7 +16,7 @@
                     <field name="id_card" placeholder="11 dígitos..." invisible="is_company"/>
                     <field name="classification" invisible="not is_company"/>
                     <field name="organism_id" invisible="not is_company"/>
-                    <field name="ueb_ids" widget="many2many_tags" invisible="not is_company"/>
+                    <field name="ueb_id" invisible="not is_company"/>
                     
                     <!-- Sección de Resolución -->
                     <separator string="Resolución" invisible="classification != 'empresa'"/>
@@ -126,7 +126,7 @@
                         </group>
                         <notebook>
                             <page string="Contactos" name="partners">
-                                <field name="partner_ids" widget="many2many" domain="[('is_company', '=', True)]" options="{'no_create': True}">
+                                <field name="partner_ids" widget="many2many" domain="[('is_company', '=', True)]" options="{'no_create': True, 'no_quick_create': True}">
                                     <tree>
                                         <field name="name"/>
                                         <field name="email"/>

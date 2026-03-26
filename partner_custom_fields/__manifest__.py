@@ -1,6 +1,6 @@
 {
     "name": "Partner Custom Fields",
-    "version": "17.0.1.7.1",
+    "version": "17.0.1.8.0",
     "category": "Base",
     "summary": "Add custom fields to partners and companies",
     "description": """

@@ -20,9 +20,8 @@ class ResPartnerUEB(models.Model):
     active = fields.Boolean(default=True)
     partner_ids = fields.Many2many(
         "res.partner",
-        relation="res_partner_res_partner_ueb_rel",
-        column1="res_partner_ueb_id",
-        column2="res_partner_id",
+        compute="_compute_partner_ids",
+        inverse="_inverse_partner_ids",
         string="Contactos",
         domain="[('is_company', '=', True)]",
     )
@@ -31,9 +30,22 @@ class ResPartnerUEB(models.Model):
         compute="_compute_partner_count",
     )
 
+    def _compute_partner_ids(self):
+        for rec in self:
+            rec.partner_ids = self.env["res.partner"].search([("ueb_id", "=", rec.id)])
+
+    def _inverse_partner_ids(self):
+        for rec in self:
+            old_partners = self.env["res.partner"].search([("ueb_id", "=", rec.id)])
+            removed = old_partners - rec.partner_ids
+            removed.write({"ueb_id": False})
+            rec.partner_ids.write({"ueb_id": rec.id})
+
     def _compute_partner_count(self):
         for rec in self:
-            rec.partner_count = len(rec.partner_ids)
+            rec.partner_count = self.env["res.partner"].search_count(
+                [("ueb_id", "=", rec.id)]
+            )
 
 
 class ResPartner(models.Model):
@@ -53,7 +65,7 @@ class ResPartner(models.Model):
     short_name = fields.Char(string="Nombre Abreviado")
     titular = fields.Char(string="Titular de Cuenta Bancaria")
     id_card = fields.Char(string="Carnet de Identidad")
-    ueb_ids = fields.Many2many("res.partner.ueb", string="UEBs")
+    ueb_id = fields.Many2one("res.partner.ueb", string="UEB")
 
     # Representation Fields
     represented_by_id = fields.Many2one("res.partner", string="Representado por")

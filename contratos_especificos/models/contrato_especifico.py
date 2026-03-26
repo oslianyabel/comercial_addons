@@ -410,3 +410,89 @@ class ContratoEspecifico(models.Model):
                     _("Please generate the contract content before delivering.")
                 )
             record.write({"state": "entregado"})
+
+    def action_facturar_todo(self) -> dict:
+        """Invoice all uninvoiced service lines (general + UEB) of this contract."""
+        self.ensure_one()
+
+        if self.state != "firmado":
+            raise UserError(
+                _("Solo puede facturar un contrato que se encuentre Firmado.")
+            )
+
+        if not self.forma_pago_id:
+            raise UserError(
+                _(
+                    "Debe configurar la Forma de Pago en los Datos de Facturación "
+                    "del contrato antes de facturar."
+                )
+            )
+
+        uninvoiced_lines = self.line_ids.filtered(lambda ln: not ln.invoiced)
+        uninvoiced_ueb_lines = self.ueb_section_ids.mapped("line_ids").filtered(
+            lambda ln: not ln.invoiced
+        )
+
+        if not uninvoiced_lines and not uninvoiced_ueb_lines:
+            raise UserError(_("Todas las líneas de servicio ya han sido facturadas."))
+
+        partner = self.partner_id
+        base_vals: dict = {
+            "move_type": "out_invoice",
+            "partner_id": partner.id,
+            "invoice_date": fields.Date.today(),
+            "contrato_especifico_id": self.id,
+            "invoice_payment_term_id": self.forma_pago_id.id,
+            "client_address": f"{partner.street or ''} {partner.city or ''}".strip(),
+            "client_nit": getattr(partner, "tax_id", None) or partner.vat or "",
+            "client_bank_account": getattr(partner, "bank_account_cup", None) or "",
+            "realizada_por_id": self.realizada_por_id.id
+            if self.realizada_por_id
+            else False,
+        }
+
+        for line in uninvoiced_lines:
+            self.env["account.move"].create(
+                {
+                    **base_vals,
+                    "service_line_id": line.id,
+                    "invoice_line_ids": [
+                        (
+                            0,
+                            0,
+                            {
+                                "product_id": line.product_id.id,
+                                "name": line.name,
+                                "quantity": line.quantity,
+                                "product_uom_id": line.uom_id.id,
+                                "price_unit": line.price_unit,
+                            },
+                        )
+                    ],
+                }
+            )
+            line.with_context(is_uninvoice=True).write({"invoiced": True})
+
+        for line in uninvoiced_ueb_lines:
+            self.env["account.move"].create(
+                {
+                    **base_vals,
+                    "ueb_service_line_id": line.id,
+                    "invoice_line_ids": [
+                        (
+                            0,
+                            0,
+                            {
+                                "product_id": line.product_id.id,
+                                "name": line.name,
+                                "quantity": line.quantity,
+                                "product_uom_id": line.uom_id.id,
+                                "price_unit": line.price_unit,
+                            },
+                        )
+                    ],
+                }
+            )
+            line.with_context(is_uninvoice=True).write({"invoiced": True})
+
+        return self.action_view_invoices()
