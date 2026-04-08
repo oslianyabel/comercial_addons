@@ -66,6 +66,16 @@ class ResPartner(models.Model):
     titular = fields.Char(string="Titular de Cuenta Bancaria")
     id_card = fields.Char(string="Carnet de Identidad")
     ueb_id = fields.Many2one("res.partner.ueb", string="UEB")
+    ueb_ids = fields.Many2many(
+        "res.partner.ueb",
+        compute="_compute_ueb_ids",
+        string="UEBs",
+    )
+
+    @api.depends("ueb_id")
+    def _compute_ueb_ids(self) -> None:
+        for rec in self:
+            rec.ueb_ids = rec.ueb_id if rec.ueb_id else self.env["res.partner.ueb"]
 
     # Representation Fields
     represented_by_id = fields.Many2one("res.partner", string="Representado por")
