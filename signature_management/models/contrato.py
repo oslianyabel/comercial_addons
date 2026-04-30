@@ -139,6 +139,8 @@ class ContratoEspecifico(models.Model):
 
     def _check_state_change_permission(self):
         """Verify if the current user is an authorized contact in the Master Contract."""
+        if self.env.context.get("from_master_cancel"):
+            return
         for record in self:
             user_partner = self.env.user.partner_id
             if (

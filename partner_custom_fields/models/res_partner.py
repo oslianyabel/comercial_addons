@@ -1,7 +1,8 @@
 import re
 
-from odoo import api, fields, models
+from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
+from odoo.osv import expression
 
 
 class ResPartnerOrganism(models.Model):
@@ -61,6 +62,8 @@ class ResPartner(models.Model):
         string="Clasificación",
     )
 
+    vat = fields.Char(string="NIT")
+
     organism_id = fields.Many2one("res.partner.organism", string="Organismo")
     short_name = fields.Char(string="Nombre Abreviado")
     titular = fields.Char(string="Titular de Cuenta Bancaria")
@@ -76,6 +79,8 @@ class ResPartner(models.Model):
     def _compute_ueb_ids(self) -> None:
         for rec in self:
             rec.ueb_ids = rec.ueb_id if rec.ueb_id else self.env["res.partner.ueb"]
+
+    position = fields.Char(string="Position")
 
     # Representation Fields
     represented_by_id = fields.Many2one("res.partner", string="Representado por")
@@ -98,6 +103,7 @@ class ResPartner(models.Model):
     register_sheet = fields.Char(string="Hoja")
 
     reeup = fields.Char(string="REEUP")
+    customer_number = fields.Char(string="Número de Cliente")
     tax_id = fields.Char(string="NIT")
     bank_account_cup = fields.Char(string="Cuenta CUP")
     bank_account_mlc = fields.Char(string="Cuenta MLC")
@@ -133,6 +139,67 @@ class ResPartner(models.Model):
                     raise ValidationError(
                         "Para MiPymes, el REEUP y el NIT deben ser iguales."
                     )
+
+    @api.constrains("is_company")
+    def _check_is_company_not_linked_to_contrato(self):
+        for record in self:
+            if not record.is_company:
+                contrato = self.env["contrato.marco"].search(
+                    [("partner_id", "=", record.id)], limit=1
+                )
+                if contrato:
+                    raise ValidationError(
+                        _(
+                            "No puede cambiar el tipo de contacto de '%s' porque está asociado al "
+                            "contrato marco '%s'. Elimine el contrato marco antes de realizar este cambio."
+                        )
+                        % (record.name, contrato.name)
+                    )
+
+    @api.constrains("reeup", "is_company")
+    def _check_unique_company_reeup(self):
+        for record in self:
+            if not record.is_company or not record.reeup:
+                continue
+
+            duplicated_count = self.search_count(
+                [
+                    ("id", "!=", record.id),
+                    ("is_company", "=", True),
+                    ("reeup", "=", record.reeup),
+                ]
+            )
+            if duplicated_count:
+                raise ValidationError(
+                    _("El REEUP debe ser único entre los contactos de tipo compañía.")
+                )
+
+    @api.model
+    def _name_search(
+        self,
+        name="",
+        args=None,
+        operator="ilike",
+        limit=100,
+        name_get_uid=None,
+        order=None,
+    ):
+        domain = args or []
+        if name:
+            search_domain = expression.OR(
+                [
+                    [("name", operator, name)],
+                    [("reeup", operator, name)],
+                    [("customer_number", operator, name)],
+                ]
+            )
+            domain = expression.AND([domain, search_domain])
+        return self._search(
+            domain,
+            limit=limit,
+            access_rights_uid=name_get_uid,
+            order=order,
+        )
 
     @api.constrains("id_card")
     def _check_id_card_format(self):

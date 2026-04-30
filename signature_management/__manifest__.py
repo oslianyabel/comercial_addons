@@ -10,7 +10,10 @@
         "contratos_especificos",
         "account",
         "partner_custom_fields",
+        "telegram_notifier",
     ],
+    "post_init_hook": "post_init_hook",
+    "uninstall_hook": "uninstall_hook",
     "data": [
         "security/ir.model.access.csv",
         "report/signature_report_templates.xml",

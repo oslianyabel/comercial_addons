@@ -27,7 +27,7 @@ class ContratoMarco(models.Model):
                 # 2. Fallback to Filesystem logic
                 template_name = ""
                 if record.contract_type == "mipyme":
-                    template_name = "contrato marco Mipyme"
+                    template_name = "contrato marco Mipyme.txt"
                 elif record.contract_type == "tcp":
                     template_name = "contrato marco TCP.txt"
                 elif record.contract_type == "empresa":
@@ -84,6 +84,8 @@ class ContratoMarco(models.Model):
             missing = []
             if not record.our_representative_id:
                 missing.append(_("Nuestro Representante"))
+            elif not record.our_representative_id.position:
+                missing.append(_("Nuestro Representante: Cargo"))
             if not record.our_rep_decision_number:
                 missing.append(_("Nuestro Rep. Número de Resolución"))
             if not record.our_rep_decision_date:
@@ -169,6 +171,7 @@ class ContratoMarco(models.Model):
                 "contract_number": highlight(record.name),
                 "our_email": highlight(comp_partner.email),
                 "our_representative": highlight(our_r.name),
+                "our_rep_position": highlight(our_r.position),
                 "our_rep_decision_number": highlight(record.our_rep_decision_number),
                 "our_rep_decision_date": fmt_date(record.our_rep_decision_date),
                 "partner_name": highlight(p.name),

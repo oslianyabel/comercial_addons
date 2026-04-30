@@ -19,33 +19,34 @@
                     <div class="oe_title">
                         <label for="name" string="Número del contrato"/>
                         <h1>
-                            <field name="name" placeholder="e.g. CE-001" autocomplete="off"/>
+                            <field name="name" readonly="1" autocomplete="off"/>
                         </h1>
                     </div>
                     <group>
                         <group string="Información General">
-                            <field name="marco_id"/>
+                            <field name="marco_id" context="{'display_partner_name': True}"/>
                             <field name="company_id" readonly="1"/>
                             <field name="partner_id" readonly="1"/>
                             <field name="template_id" string="Tipo de Contrato"/>
                         </group>
                         <group name="dates" string="Fechas">
-                            <field name="date" string="Fecha del Contrato"/>
-                            <field name="start_date" required="template_id" string="Fecha de Inicio"/>
-                            <field name="end_date" string="Fecha Final"/>
+                            <field name="date" string="Fecha de Suscripción"/>
+                            <field name="start_date" required="template_id" string="Fecha de Entrada en Vigor"/>
+                            <field name="validity_years" string="Vigencia (años)"/>
+                            <field name="end_date" readonly="1" string="Fecha de Finalización"/>
                         </group>
                     </group>
                     <group>
                         <group string="Representación">
-                            <field name="our_representative_id" required="template_type_requires_rep" string="Nuestro Representante"/>
-                            <field name="our_rep_decision_number" string="Acuerdo/Resolución" autocomplete="off" required="template_type_requires_rep"/>
-                            <field name="our_rep_decision_date" string="Fecha de Resolución" required="template_type_requires_rep"/>
+                            <field name="our_representative_id" required="template_type_requires_rep" string="Nuestro Representante" readonly="1"/>
+                            <field name="our_rep_decision_number" string="Acuerdo/Resolución" readonly="1"/>
+                            <field name="our_rep_decision_date" string="Fecha de Resolución" readonly="1"/>
                             <field name="our_project_leader_id"/>
                             <field name="project_leader_id" options="{'no_create': True}" string="Líder del Proyecto del Cliente"/>
-                            <field name="application_name" autocomplete="off" string="Nombre de la Aplicación"/>
+                            <field name="application_name" required="template_type_requires_application_name" invisible="not template_type_requires_application_name" string="Nombre de la Aplicación"/>
                             <field name="template_type_requires_rep" invisible="1"/>
                             <field name="template_type_requires_leader" invisible="1"/>
-                            <field name="template_type_requires_app" invisible="1"/>
+                            <field name="template_type_requires_application_name" invisible="1"/>
                         </group>
                     </group>
                     <group>
@@ -60,19 +61,23 @@
                     </group>
                     <notebook>
                         <page string="Líneas de servicios" name="service_lines">
-                            <field name="line_ids" readonly="state == 'firmado'">
+                            <field name="line_ids" readonly="state == 'cancelado'">
                                 <tree editable="bottom">
-                                    <field name="product_id" string="Producto/Servicio"/>
-                                    <field name="name" string="Descripción"/>
+                                    <field name="invoice_id" invisible="1"/>
+                                    <field name="product_id" string="Producto/Servicio" readonly="parent.state == 'firmado'"/>
+                                    <field name="name" string="Descripción" readonly="parent.state == 'firmado'"/>
                                     <field name="start_date" optional="show"/>
                                     <field name="end_date" optional="show"/>
-                                    <field name="quantity" string="Cant."/>
-                                    <field name="uom_id" string="UdM"/>
-                                    <field name="price_unit" string="Precio Unitario"/>
+                                    <field name="quantity" string="Cant." readonly="parent.state == 'firmado'"/>
+                                    <field name="uom_id" string="UdM" readonly="parent.state == 'firmado'"/>
+                                    <field name="price_unit" string="Precio Unitario" readonly="parent.state == 'firmado'"/>
                                     <field name="price_subtotal" string="Subtotal"/>
-                                    <field name="date_deadline_invoice" string="Límite Facturación"/>
+                                    <field name="date_deadline_invoice" string="Límite Facturación" readonly="parent.state == 'firmado'"/>
+                                    <field name="invoice_state" optional="show" string="Estado de Factura"/>
                                     <field name="invoiced" optional="hide" string="Facturado"/>
-                                    <button name="action_facturar" type="object" string="Facturar" class="btn-primary" invisible="invoiced"/>
+                                    <button name="action_facturar" type="object" string="Facturar" class="btn-primary" invisible="invoiced or parent.state != 'firmado'"/>
+                                    <button name="action_view_invoice" type="object" string="Ver Factura" class="btn-secondary" invisible="not invoice_id"/>
+                                    <button name="action_uninvoice" type="object" string="Cancel" class="btn-warning" invisible="not invoiced" confirm="Esta accion cancelará la factura asociada. Estas seguro?"/>
                                 </tree>
                             </field>
                         </page>
@@ -96,22 +101,26 @@
                                             </h2>
                                         </div>
                                         <field name="contract_state" invisible="1"/>
-                                        <field name="line_ids" readonly="contract_state == 'firmado'">
+                                        <field name="line_ids" readonly="contract_state == 'cancelado'">
                                             <tree editable="bottom">
-                                                <field name="product_id" string="Producto/Servicio"/>
-                                                <field name="name" string="Descripción"/>
+                                                <field name="invoice_id" invisible="1"/>
+                                                <field name="product_id" string="Producto/Servicio" readonly="parent.contract_state == 'firmado'"/>
+                                                <field name="name" string="Descripción" readonly="parent.contract_state == 'firmado'"/>
                                                 <field name="start_date" optional="show"/>
                                                 <field name="end_date" optional="show"/>
-                                                <field name="quantity" string="Cant."/>
-                                                <field name="uom_id" string="UdM"/>
-                                                <field name="price_unit" string="Precio Unitario"/>
+                                                <field name="quantity" string="Cant." readonly="parent.contract_state == 'firmado'"/>
+                                                <field name="uom_id" string="UdM" readonly="parent.contract_state == 'firmado'"/>
+                                                <field name="price_unit" string="Precio Unitario" readonly="parent.contract_state == 'firmado'"/>
                                                 <field name="price_subtotal" string="Subtotal"/>
-                                                <field name="date_deadline_invoice" string="Límite Facturación"/>
+                                                <field name="date_deadline_invoice" string="Límite Facturación" readonly="parent.contract_state == 'firmado'"/>
+                                                <field name="invoice_state" optional="show" string="Estado de Factura"/>
                                                 <field name="invoiced" optional="hide" string="Facturado"/>
                                                 <button name="action_facturar" type="object" string="Facturar"
-                                                        class="btn-primary" invisible="invoiced"/>
-                                                <button name="action_uninvoice" type="object" string="Desmarcar"
-                                                        class="btn-warning" invisible="not invoiced"/>
+                                                    class="btn-primary" invisible="invoiced or parent.contract_state != 'firmado'"/>
+                                                <button name="action_view_invoice" type="object" string="Ver Factura"
+                                                    class="btn-secondary" invisible="not invoice_id"/>
+                                                <button name="action_uninvoice" type="object" string="Cancel"
+                                                        class="btn-warning" invisible="not invoiced" confirm="Esta accion cancelará la factura asociada. Estas seguro?"/>
                                             </tree>
                                         </field>
                                     </sheet>
@@ -138,7 +147,7 @@
                 <field name="marco_id" readonly="1"/>
                 <field name="partner_id" readonly="1"/>
                 <field name="template_id" string="Contract Type" readonly="1"/>
-                <field name="date" readonly="1" optional="hide"/>
+                <field name="date" string="Fecha de Suscripción" readonly="1" optional="hide"/>
                 <field name="start_date" optional="show"/>
                 <field name="end_date" optional="show"/>
                 <field name="state" widget="badge" decoration-info="state == 'borrador'" decoration-success="state == 'firmado'" decoration-warning="state == 'entregado'" decoration-muted="state == 'cancelado'"/>
@@ -151,7 +160,7 @@
         <field name="model">contrato.especifico</field>
         <field name="arch" type="xml">
             <search>
-                <field name="name"/>
+                <field name="name" filter_domain="['|', ('name', 'ilike', self), ('partner_id.name', 'ilike', self)]"/>
                 <field name="partner_id"/>
                 <field name="marco_id"/>
 

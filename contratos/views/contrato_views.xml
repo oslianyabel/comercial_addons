@@ -10,15 +10,23 @@
                     <button name="action_sign" string="Entregar" type="object" class="oe_highlight" invisible="state in ('firmado', 'entregado')" confirm="¿Está seguro de que desea entregar este contrato?"/>
                     <button name="action_draft_from_entregado" string="Retroceder a Borrador" type="object" invisible="state != 'entregado'"/>
                     <button name="action_entregar" string="Firmar" type="object" class="oe_highlight" invisible="state != 'entregado'" confirm="¿Está seguro de que desea firmar este contrato? Esta acción no se puede deshacer."/>
-                    <button name="action_cancel" string="Cancel" type="object" invisible="state not in ('borrador', 'entregado', 'firmado')"/>
+                    <button name="action_crear_suplemento" string="Crear Suplemento" type="object"
+                            invisible="state != 'firmado'"/>
+                    <button name="action_cancel" string="Cancel" type="object" invisible="state not in ('borrador', 'entregado', 'firmado')" confirm="Esta acción cancelará también todos los contratos específicos asociados que no estén cancelados. ¿Desea continuar?"/>
                     <button name="action_draft" string="Set to Draft" type="object" invisible="state != 'cancelado'"/>
                     <field name="state" widget="statusbar" statusbar_visible="borrador,entregado,firmado,cancelado"/>
                 </header>
                 <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_suplementos" type="object"
+                                class="oe_stat_button" icon="fa-file-text-o">
+                            <field name="suplemento_count" widget="statinfo" string="Suplementos"/>
+                        </button>
+                    </div>
                     <div class="oe_title">
                         <label for="name" string="Contract Ref."/>
                         <h1>
-                            <field name="name" placeholder="e.g. 001/2026" autocomplete="off"/>
+                            <field name="name" readonly="1" autocomplete="off"/>
                         </h1>
                         <label for="contract_name" string="Contract Title"/>
                         <h2>
@@ -28,24 +36,21 @@
                     <group>
                         <group string="General Information">
                             <field name="company_id"/>
-                            <field name="partner_id"/>
-                            <field name="contract_type"/>
-                            <field name="file_number" string="File Ref." autocomplete="off"/>
-                            <field name="hco"/>
+                            <field name="partner_id" options="{'no_create': True, 'no_quick_create': True, 'no_create_edit': True}"/>
+                            <field name="contract_type" readonly="1"/>
                             <field name="oeb" autocomplete="off"/>
                         </group>
                         <group name="dates_and_signatures" string="Dates and Signatures">
-                            <field name="date"/>
-                            <field name="start_date"/>
-                            <field name="end_date"/>
-                            <field name="validity_date"/>
+                            <field name="start_date" string="Fecha de Firma"/>
+                            <field name="validity_years" string="Tiempo de Validez"/>
+                            <field name="end_date" readonly="1" string="Fecha de Finalización"/>
                             <field name="signing_date" invisible="state == 'borrador'"/>
                         </group>
                     </group>
                     <group>
                         <group string="Representation">
-                            <field name="representative_id"/>
-                            <field name="our_representative_id"/>
+                            <field name="representative_id" options="{'no_create': True, 'no_quick_create': True, 'no_create_edit': True}"/>
+                            <field name="our_representative_id" options="{'no_create': True, 'no_quick_create': True, 'no_create_edit': True}"/>
                             <field name="authorized_contact_ids" widget="many2many_tags"/>
                             <field name="our_rep_decision_number" string="Agreement/Decision" autocomplete="off"/>
                             <field name="our_rep_decision_date"/>
@@ -79,11 +84,11 @@
                 <field name="contract_type" readonly="1"/>
                 <field name="contract_name"/>
                 <field name="partner_id" readonly="1"/>
-                <field name="our_representative_id"/>
+                <field name="our_representative_id" options="{'no_create': True, 'no_quick_create': True, 'no_create_edit': True}"/>
                 <field name="created_by_id" widget="many2one_avatar_user" optional="show"/>
                 <field name="signed_by_id" optional="show"/>
-                <field name="date" readonly="1" optional="hide"/>
                 <field name="signing_date" optional="show"/>
+                <field name="validity_years" optional="show"/>
                 <field name="end_date" readonly="1"/>
                 <field name="state" widget="badge" decoration-info="state == 'borrador'" decoration-success="state == 'firmado'" decoration-warning="state == 'entregado'" decoration-muted="state == 'cancelado'"/>
             </tree>
@@ -98,9 +103,7 @@
                 <field name="name"/>
                 <field name="contract_name"/>
                 <field name="partner_id"/>
-                <field name="file_number"/>
                 
-                <filter string="HCO" name="hco" domain="[('hco', '=', True)]"/>
                 <separator/>
                 <filter string="Draft" name="state_borrador" domain="[('state', '=', 'borrador')]"/>
                 <filter string="Signed" name="state_firmado" domain="[('state', '=', 'firmado')]"/>
@@ -114,7 +117,6 @@
                     <filter string="Customer" name="group_partner" context="{'group_by': 'partner_id'}"/>
                     <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
                     <filter string="Contract Type" name="group_type" context="{'group_by': 'contract_type'}"/>
-                    <filter string="HCO" name="group_hco" context="{'group_by': 'hco'}"/>
                 </group>
             </search>
         </field>

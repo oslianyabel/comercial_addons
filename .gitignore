@@ -2,3 +2,4 @@ context/
 __pycache__/
 audit*
 check_po*
+.env

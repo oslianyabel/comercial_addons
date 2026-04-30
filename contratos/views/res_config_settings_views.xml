@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_contratos" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.contratos</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority" eval="30"/>
+        <field name="inherit_id" ref="base_setup.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Contratos" string="Contratos" name="contratos" groups="base.group_system">
+                    <block title="Contratos Marcos">
+                        <setting string="Tiempo de Validez por Defecto" help="Se aplica solo a contratos marcos nuevos.">
+                            <field name="master_contract_validity_years"/>
+                            <div class="text-muted">
+                                Define la cantidad de años que se usarán por defecto al crear un contrato marco nuevo.
+                            </div>
+                        </setting>
+                    </block>
+                    <block title="Contratos Específicos">
+                        <setting string="Tiempo de Validez por Defecto" help="Se aplica solo a contratos específicos nuevos.">
+                            <field name="specific_contract_validity_years"/>
+                            <div class="text-muted">
+                                Define la cantidad de años que se usarán por defecto al crear un contrato específico nuevo.
+                            </div>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_contratos_settings" model="ir.actions.act_window">
+        <field name="name">Contratos Marcos</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+        <field name="context">{'module': 'contratos', 'bin_size': False}</field>
+    </record>
+
+    <menuitem id="menu_contratos_settings"
+        name="Contratos Marcos"
+        parent="base_setup.menu_config"
+        action="action_contratos_settings"
+        groups="base.group_system"
+        sequence="90"/>
+</odoo>

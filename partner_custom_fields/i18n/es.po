@@ -142,6 +142,13 @@ msgid "REEUP"
 msgstr "REEUP"
 
 #. module: partner_custom_fields
+#: model:ir.model.fields,field_description:base.field_res_partner__vat
+#: model:ir.model.fields,field_description:base.field_res_company__vat
+#: model:ir.model.fields,field_description:base.field_res_users__vat
+msgid "Tax ID"
+msgstr "NIT"
+
+#. module: partner_custom_fields
 #: model:ir.model.fields,field_description:partner_custom_fields.field_res_partner__tax_id
 msgid "NIT"
 msgstr "NIT"
@@ -185,6 +192,11 @@ msgstr "Sucursal TCP (MLC)"
 #: model:ir.model.fields,field_description:partner_custom_fields.field_res_partner__bank_id_ref
 msgid "Banco"
 msgstr "Banco"
+
+#. module: partner_custom_fields
+#: model:ir.model.fields,field_description:partner_custom_fields.field_res_partner__position
+msgid "Position"
+msgstr "Cargo"
 
 #. module: partner_custom_fields
 #: model:ir.model.fields,field_description:partner_custom_fields.field_res_company__contract_name

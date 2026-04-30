@@ -24,4 +24,29 @@
             </t>
         </t>
     </template>
+
+    <record id="action_report_contrato_suplemento" model="ir.actions.report">
+        <field name="name">Imprimir Suplemento</field>
+        <field name="model">contrato.suplemento</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">contratos.report_contrato_suplemento_template</field>
+        <field name="report_file">contratos.report_contrato_suplemento_template</field>
+        <field name="print_report_name">'Suplemento - %s' % (object.name)</field>
+        <field name="binding_model_id" ref="model_contrato_suplemento"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_contrato_suplemento_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <div style="text-align: justify; font-size: 12px;">
+                            <t t-out="o.content"/>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
 </odoo>

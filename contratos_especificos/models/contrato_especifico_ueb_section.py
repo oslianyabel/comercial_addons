@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
@@ -94,11 +96,42 @@ class ContratoEspecificoUebLine(models.Model):
     start_date = fields.Date(string="Fecha de Inicio")
     end_date = fields.Date(string="Fecha Final")
     invoiced = fields.Boolean(string="Facturado", default=False, readonly=True)
+    invoice_id = fields.Many2one(
+        "account.move",
+        string="Factura",
+        compute="_compute_invoice_data",
+    )
+    invoice_state = fields.Selection(
+        [
+            ("draft", "Borrador"),
+            ("posted", "Publicado"),
+            ("cancel", "Cancelado"),
+        ],
+        string="Estado de Factura",
+        compute="_compute_invoice_data",
+    )
 
     @api.depends("quantity", "price_unit")
     def _compute_price_subtotal(self):
         for line in self:
             line.price_subtotal = line.quantity * line.price_unit
+
+    def _compute_invoice_data(self):
+        for line in self:
+            invoice = self.env["account.move"].search(
+                [("ueb_service_line_id", "=", line.id)], limit=1
+            )
+            line.invoice_id = invoice
+            line.invoice_state = invoice.state if invoice else False
+
+    @staticmethod
+    def _get_end_date_from_start(start_date):
+        return start_date + timedelta(days=30) if start_date else False
+
+    @api.onchange("start_date")
+    def _onchange_start_date(self):
+        for line in self:
+            line.end_date = line._get_end_date_from_start(line.start_date)
 
     @api.onchange("product_id")
     def _onchange_product_id(self):
@@ -113,7 +146,7 @@ class ContratoEspecificoUebLine(models.Model):
     def _check_signed_contract(self, vals: dict | None = None) -> None:
         if self._context.get("is_uninvoice"):
             return
-        administrative_fields = {"invoiced"}
+        administrative_fields = {"invoiced", "start_date", "end_date"}
         if vals and all(field in administrative_fields for field in vals.keys()):
             return
         for line in self:
@@ -161,68 +194,93 @@ class ContratoEspecificoUebLine(models.Model):
                 inv.unlink()
             line.with_context(is_uninvoice=True).write({"invoiced": False})
 
+    def action_view_invoice(self) -> dict:
+        self.ensure_one()
+        if not self.invoice_id:
+            raise UserError(_("No existe una factura asociada a esta línea."))
+        return {
+            "name": _("Factura"),
+            "view_mode": "form",
+            "res_model": "account.move",
+            "res_id": self.invoice_id.id,
+            "type": "ir.actions.act_window",
+        }
+
+    def _apply_default_invoice_dates(self) -> None:
+        today = fields.Date.today()
+        values = {}
+        if not self.start_date:
+            values["start_date"] = today
+        if not self.end_date:
+            base_start_date = values.get("start_date") or self.start_date or today
+            values["end_date"] = self._get_end_date_from_start(base_start_date)
+        if values:
+            self.with_context(is_uninvoice=True).write(values)
+
     def action_facturar(self) -> dict:
         """Generate an invoice from this UEB section service line."""
-        for line in self:
-            if line.invoiced:
-                raise UserError(_("Esta línea ya ha sido facturada."))
+        self.ensure_one()
+        line = self
+        if line.invoiced:
+            raise UserError(_("Esta línea ya ha sido facturada."))
 
-            contract = line._get_contract()
+        contract = line._get_contract()
 
-            if contract.state != "firmado":
-                raise UserError(
-                    _(
-                        "Solo puede facturar las líneas de servicio de un contrato "
-                        "que se encuentre Firmado."
-                    )
+        if contract.state != "firmado":
+            raise UserError(
+                _(
+                    "Solo puede facturar las líneas de servicio de un contrato "
+                    "que se encuentre Firmado."
                 )
-            if not contract.forma_pago_id:
-                raise UserError(
-                    _(
-                        "Debe configurar la Forma de Pago en los Datos de Facturación "
-                        "del contrato antes de facturar."
-                    )
+            )
+        if not contract.forma_pago_id:
+            raise UserError(
+                _(
+                    "Debe configurar la Forma de Pago en los Datos de Facturación "
+                    "del contrato antes de facturar."
                 )
+            )
 
-            partner = contract.partner_id
-            invoice_vals = {
-                "move_type": "out_invoice",
-                "partner_id": partner.id,
-                "invoice_date": fields.Date.today(),
-                "contrato_especifico_id": contract.id,
-                "ueb_service_line_id": line.id,
-                "invoice_payment_term_id": contract.forma_pago_id.id,
-                "invoice_line_ids": [
-                    (
-                        0,
-                        0,
-                        {
-                            "product_id": line.product_id.id,
-                            "name": line.name,
-                            "quantity": line.quantity,
-                            "product_uom_id": line.uom_id.id,
-                            "price_unit": line.price_unit,
-                        },
-                    )
-                ],
-                "client_address": f"{partner.street or ''} {partner.city or ''}".strip(),
-                "client_nit": getattr(partner, "tax_id", None) or partner.vat or "",
-                "client_bank_account": getattr(partner, "bank_account_cup", None) or "",
-                "realizada_por_id": contract.realizada_por_id.id
-                if contract.realizada_por_id
-                else False,
-            }
+        partner = contract.partner_id
+        line._apply_default_invoice_dates()
+        invoice_vals = {
+            "move_type": "out_invoice",
+            "partner_id": partner.id,
+            "invoice_date": fields.Date.today(),
+            "contrato_especifico_id": contract.id,
+            "ueb_service_line_id": line.id,
+            "invoice_payment_term_id": contract.forma_pago_id.id,
+            "invoice_line_ids": [
+                (
+                    0,
+                    0,
+                    {
+                        "product_id": line.product_id.id,
+                        "name": line.name,
+                        "quantity": line.quantity,
+                        "product_uom_id": line.uom_id.id,
+                        "price_unit": line.price_unit,
+                    },
+                )
+            ],
+            "client_address": f"{partner.street or ''} {partner.city or ''}".strip(),
+            "client_nit": getattr(partner, "tax_id", None) or partner.vat or "",
+            "client_bank_account": getattr(partner, "bank_account_cup", None) or "",
+            "realizada_por_id": contract.realizada_por_id.id
+            if contract.realizada_por_id
+            else False,
+        }
 
-            move = self.env["account.move"].create(invoice_vals)
-            line.with_context(is_uninvoice=True).write({"invoiced": True})
+        move = self.env["account.move"].create(invoice_vals)
+        line.with_context(is_uninvoice=True).write({"invoiced": True})
 
-            return {
-                "name": _("Factura"),
-                "view_mode": "form",
-                "res_model": "account.move",
-                "res_id": move.id,
-                "type": "ir.actions.act_window",
-            }
+        return {
+            "name": _("Factura"),
+            "view_mode": "form",
+            "res_model": "account.move",
+            "res_id": move.id,
+            "type": "ir.actions.act_window",
+        }
 
 
 class ContratoEspecificoAddUebWizard(models.TransientModel):

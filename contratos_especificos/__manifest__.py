@@ -13,9 +13,13 @@
         "uom",
         "contratos",
         "partner_custom_fields",
+        "telegram_notifier",
     ],
+    "post_init_hook": "post_init_hook",
+    "uninstall_hook": "uninstall_hook",
     "data": [
         "security/ir.model.access.csv",
+        "data/sequence_data.xml",
         "data/specific_template_data.xml",
         "views/contrato_especifico_import_wizard_views.xml",
         "views/contrato_especifico_template_views.xml",

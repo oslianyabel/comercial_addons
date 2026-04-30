@@ -7,7 +7,9 @@
         Adds classification and ministry fields to the partner form view.
     """,
     "author": "Osliani Figueiras Saucedo",
-    "depends": ["base", "contacts"],
+    "depends": ["base", "contacts", "telegram_notifier"],
+    "post_init_hook": "post_init_hook",
+    "uninstall_hook": "uninstall_hook",
     "data": [
         "security/ir.model.access.csv",
         "views/res_partner_views.xml",

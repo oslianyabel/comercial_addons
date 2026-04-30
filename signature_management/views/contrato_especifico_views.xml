@@ -40,9 +40,6 @@
                         <field name="customer_signature_id" options="{'no_create': True}" invisible="signatures_disabled"/>
                     </group>
                 </xpath>
-                <xpath expr="//field[@name='line_ids']/tree" position="inside">
-                    <button name="action_uninvoice" type="object" string="Uninvoice" icon="fa-undo" invisible="not invoiced" confirm="This will delete the associated invoice. Are you sure?"/>
-                </xpath>
             </field>
         </record>
         <record id="view_contrato_especifico_tree_inherit_signature" model="ir.ui.view">

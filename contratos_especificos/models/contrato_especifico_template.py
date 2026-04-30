@@ -68,6 +68,7 @@ class ContratoEspecificoTemplate(models.Model):
         "partner_via",
         "partner_short_name",
         "start_date",
+        "validity_years",
         "day",
         "month",
         "year",
@@ -114,11 +115,8 @@ class ContratoEspecificoTemplate(models.Model):
             "our_representative",
             "our_rep_function",
             "our_rep_decision_number",
-            "application_name",
         ],
-        "soporte_desarrollo": [
-            "application_name",
-        ],
+        "soporte_desarrollo": [],
         "versat_iniciales": [
             "project_leader",
         ],

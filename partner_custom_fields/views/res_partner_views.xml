@@ -42,8 +42,15 @@
                     <field name="appointment_date" invisible="classification != 'mipyme'"/>
                     <separator invisible="classification != 'mipyme'"/>
 
+                    <separator string="Datos de Firma" invisible="is_company"/>
+                    <field name="position" invisible="is_company"/>
+                    <field name="current_resolution_number" invisible="is_company"/>
+                    <field name="current_creation_date" invisible="is_company"/>
+                    <separator invisible="is_company"/>
+
                     <field name="reeup" invisible="not is_company"/>
-                    <field name="tax_id" invisible="not is_company"/>
+                    <field name="customer_number" invisible="not is_company"/>
+                    <field name="tax_id" invisible="is_company"/>
                     
                     <field name="bank_id_ref" invisible="not is_company"/>
                     <field name="titular" invisible="not is_company"/>
@@ -137,6 +144,17 @@
                         </notebook>
                     </sheet>
                 </form>
+            </field>
+        </record>
+
+        <record id="view_partner_search_inherit_custom" model="ir.ui.view">
+            <field name="name">res.partner.search.inherit.custom</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_res_partner_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//search/field[@name='name']" position="replace">
+                    <field name="name" filter_domain="['|', '|', ('name', 'ilike', self), ('reeup', 'ilike', self), ('customer_number', 'ilike', self)]"/>
+                </xpath>
             </field>
         </record>
 

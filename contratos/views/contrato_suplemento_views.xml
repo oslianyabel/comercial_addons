@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_contrato_suplemento_form" model="ir.ui.view">
+        <field name="name">contrato.suplemento.form</field>
+        <field name="model">contrato.suplemento</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_sign" string="Entregar" type="object"
+                            class="oe_highlight"
+                            invisible="state in ('entregado', 'firmado')"
+                            confirm="¿Está seguro de que desea entregar este suplemento?"/>
+                    <button name="action_draft_from_entregado" string="Retroceder a Borrador"
+                            type="object" invisible="state != 'entregado'"/>
+                    <button name="action_entregar" string="Firmar" type="object"
+                            class="oe_highlight" invisible="state != 'entregado'"
+                            confirm="¿Está seguro de que desea firmar este suplemento? Esta acción no se puede deshacer."/>
+                    <button name="action_cancel" string="Cancelar" type="object"
+                            invisible="state not in ('borrador', 'entregado', 'firmado')"
+                            confirm="¿Está seguro de que desea cancelar este suplemento?"/>
+                    <button name="action_draft" string="Establecer como Borrador"
+                            type="object" invisible="state != 'cancelado'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="borrador,entregado,firmado,cancelado"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name" string="Número de Suplemento"/>
+                        <h1>
+                            <field name="name" readonly="1" autocomplete="off"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Información General">
+                            <field name="marco_id"
+                                   options="{'no_create': True, 'no_quick_create': True, 'no_create_edit': True}"/>
+                            <field name="company_id" readonly="1"/>
+                            <field name="partner_id" readonly="1"/>
+                        </group>
+                        <group string="Trazabilidad">
+                            <field name="created_by_id" widget="many2one_avatar_user"/>
+                            <field name="signed_by_id" invisible="state == 'borrador'"/>
+                            <field name="signing_date" invisible="state == 'borrador'"/>
+                            <field name="creation_date_auto"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="description" placeholder="Describa las modificaciones realizadas en este suplemento..."/>
+                    </group>
+                    <notebook>
+                        <page string="Datos del Suplemento" name="datos">
+                            <group>
+                                <group string="Fecha de Firma">
+                                    <field name="start_date"/>
+                                    <field name="start_date_modified" widget="boolean_toggle"
+                                           string="Fecha modificada" readonly="1"/>
+                                </group>
+                                <group string="Tiempo de Validez">
+                                    <field name="validity_years"/>
+                                    <field name="validity_years_modified" widget="boolean_toggle"
+                                           string="Validez modificada" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Contenido del Contrato" name="contenido">
+                            <group>
+                                <field name="content_modified" widget="boolean_toggle"
+                                       string="Contenido modificado" readonly="1"/>
+                            </group>
+                            <div style="max-width: 800px; margin: 0 auto; border: 1px solid #dee2e6; padding: 40px; background: white; min-height: 1000px; overflow-wrap: break-word; font-family: 'Times New Roman', Times, serif;">
+                                <field name="content" widget="html" options="{'style-inline': true}"/>
+                            </div>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_contrato_suplemento_tree" model="ir.ui.view">
+        <field name="name">contrato.suplemento.tree</field>
+        <field name="model">contrato.suplemento</field>
+        <field name="arch" type="xml">
+            <tree decoration-info="state == 'borrador'"
+                  decoration-success="state == 'firmado'"
+                  decoration-warning="state == 'entregado'"
+                  decoration-muted="state == 'cancelado'">
+                <field name="name" readonly="1"/>
+                <field name="marco_id" readonly="1"/>
+                <field name="partner_id" readonly="1"/>
+                <field name="description"/>
+                <field name="start_date_modified" string="Fecha Mod." optional="show"
+                       widget="boolean_toggle" readonly="1"/>
+                <field name="validity_years_modified" string="Validez Mod." optional="show"
+                       widget="boolean_toggle" readonly="1"/>
+                <field name="content_modified" string="Contenido Mod." optional="show"
+                       widget="boolean_toggle" readonly="1"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'borrador'"
+                       decoration-success="state == 'firmado'"
+                       decoration-warning="state == 'entregado'"
+                       decoration-muted="state == 'cancelado'"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_contrato_suplemento_search" model="ir.ui.view">
+        <field name="name">contrato.suplemento.search</field>
+        <field name="model">contrato.suplemento</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="marco_id"/>
+                <field name="partner_id"/>
+                <separator/>
+                <filter string="Borrador" name="state_borrador" domain="[('state', '=', 'borrador')]"/>
+                <filter string="Entregado" name="state_entregado" domain="[('state', '=', 'entregado')]"/>
+                <filter string="Firmado" name="state_firmado" domain="[('state', '=', 'firmado')]"/>
+                <filter string="Cancelado" name="state_cancelado" domain="[('state', '=', 'cancelado')]"/>
+                <separator/>
+                <filter string="Fecha Modificada" name="filter_start_date_modified"
+                        domain="[('start_date_modified', '=', True)]"/>
+                <filter string="Validez Modificada" name="filter_validity_years_modified"
+                        domain="[('validity_years_modified', '=', True)]"/>
+                <filter string="Contenido Modificado" name="filter_content_modified"
+                        domain="[('content_modified', '=', True)]"/>
+                <group expand="0" string="Agrupar por">
+                    <filter string="Contrato Marco" name="group_marco"
+                            context="{'group_by': 'marco_id'}"/>
+                    <filter string="Cliente" name="group_partner"
+                            context="{'group_by': 'partner_id'}"/>
+                    <filter string="Estado" name="group_state"
+                            context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_contrato_suplemento" model="ir.actions.act_window">
+        <field name="name">Suplementos</field>
+        <field name="res_model">contrato.suplemento</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_contrato_suplemento_search"/>
+    </record>
+
+    <menuitem id="menu_contrato_suplemento" name="Suplementos"
+              parent="contratos.menu_contrato_root"
+              action="action_contrato_suplemento"
+              sequence="30"/>
+</odoo>

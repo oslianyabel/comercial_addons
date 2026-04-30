@@ -1,9 +1,12 @@
 ﻿import re
+from datetime import date as pydate
+from html import unescape
 
 from markupsafe import Markup
 
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
+from odoo.osv import expression
 
 
 class ContratoEspecifico(models.Model):
@@ -11,7 +14,7 @@ class ContratoEspecifico(models.Model):
     _description = "Specific Contract"
     _order = "name desc"
 
-    name = fields.Char(string="Contract Number", required=True)
+    name = fields.Char(string="Contract Number", required=True, default="/")
     marco_id = fields.Many2one(
         "contrato.marco",
         string="Master Contract",
@@ -43,10 +46,19 @@ class ContratoEspecifico(models.Model):
     our_representative_id = fields.Many2one(
         "res.partner",
         string="Our Representative",
-        domain="[('is_company', '=', False), ('company_id', '=', company_id)]",
+        related="marco_id.our_representative_id",
+        readonly=True,
     )
-    our_rep_decision_number = fields.Char(string="Our Rep. Decision Number")
-    our_rep_decision_date = fields.Date(string="Our Rep. Decision Date")
+    our_rep_decision_number = fields.Char(
+        string="Our Rep. Decision Number",
+        related="our_representative_id.current_resolution_number",
+        readonly=True,
+    )
+    our_rep_decision_date = fields.Date(
+        string="Our Rep. Decision Date",
+        related="our_representative_id.current_creation_date",
+        readonly=True,
+    )
     our_project_leader_id = fields.Many2one(
         "res.partner",
         string="Líder del Proyecto Nuestro",
@@ -56,10 +68,11 @@ class ContratoEspecifico(models.Model):
         "res.partner",
         string="Líder del Proyecto del Cliente",
     )
-    application_name = fields.Char(string="Nombre de la Aplicación")
 
     # Fields updated automatically by the ORM (computed stored or system fields)
-    _SYSTEM_WRITE_ALLOWED = frozenset(["state", "service_line_state", "invoice_count"])
+    _SYSTEM_WRITE_ALLOWED = frozenset(
+        ["state", "service_line_state", "invoice_count", "end_date"]
+    )
 
     def write(self, vals):
         """Prevent editing signed contracts.
@@ -75,6 +88,32 @@ class ContratoEspecifico(models.Model):
                     )
         return super().write(vals)
 
+    @api.model
+    def _name_search(
+        self,
+        name="",
+        args=None,
+        operator="ilike",
+        limit=100,
+        name_get_uid=None,
+        order=None,
+    ):
+        domain = args or []
+        if name:
+            search_domain = expression.OR(
+                [
+                    [("name", operator, name)],
+                    [("partner_id.name", operator, name)],
+                ]
+            )
+            domain = expression.AND([domain, search_domain])
+        return self._search(
+            domain,
+            limit=limit,
+            access_rights_uid=name_get_uid,
+            order=order,
+        )
+
     template_type_requires_rep = fields.Boolean(
         compute="_compute_template_type_flags",
         store=False,
@@ -83,17 +122,26 @@ class ContratoEspecifico(models.Model):
         compute="_compute_template_type_flags",
         store=False,
     )
-    template_type_requires_app = fields.Boolean(
+    template_type_requires_application_name = fields.Boolean(
         compute="_compute_template_type_flags",
         store=False,
     )
+    application_name = fields.Char(string="Application Name")
 
     date = fields.Date(
-        string="Contract Subscription Date",
+        string="Subscription Date",
         default=fields.Date.context_today,
     )
-    start_date = fields.Date(string="Start Date")
-    end_date = fields.Date(string="End Date")
+    validity_years = fields.Integer(
+        string="Vigencia (años)",
+        default=lambda self: self._default_validity_years(),
+    )
+    start_date = fields.Date(string="Effective Date")
+    end_date = fields.Date(
+        string="End Date",
+        compute="_compute_end_date",
+        store=True,
+    )
 
     state = fields.Selection(
         [
@@ -155,6 +203,39 @@ class ContratoEspecifico(models.Model):
         )
     ]
 
+    @api.model
+    def _default_validity_years(self) -> int:
+        param = (
+            self.env["ir.config_parameter"]
+            .sudo()
+            .get_param("contratos.specific_contract_validity_years", default="1")
+        )
+        try:
+            return int(param)
+        except (TypeError, ValueError):
+            return 1
+
+    @api.depends("start_date", "validity_years")
+    def _compute_end_date(self):
+        for record in self:
+            if record.start_date and record.validity_years:
+                record.end_date = self._add_years(
+                    record.start_date, record.validity_years
+                )
+            else:
+                record.end_date = False
+
+    @staticmethod
+    def _add_years(value, years):
+        if not value or not years:
+            return value
+        try:
+            return value.replace(year=value.year + years)
+        except ValueError:
+            if value.month == 2 and value.day == 29:
+                return pydate(value.year + years, 2, 28)
+            raise
+
     @api.depends("template_id", "template_id.type")
     def _compute_template_type_flags(self):
         for record in self:
@@ -164,17 +245,10 @@ class ContratoEspecifico(models.Model):
                 "productos_soporte",
             )
             record.template_type_requires_leader = t == "versat_iniciales"
-            record.template_type_requires_app = t in (
+            record.template_type_requires_application_name = t in (
                 "productos_soporte",
                 "soporte_desarrollo",
             )
-
-    @api.onchange("marco_id")
-    def _onchange_marco_id(self):
-        if self.marco_id:
-            self.our_representative_id = self.marco_id.our_representative_id
-            self.our_rep_decision_number = self.marco_id.our_rep_decision_number
-            self.our_rep_decision_date = self.marco_id.our_rep_decision_date
 
     def action_generate_content(self):
         for record in self:
@@ -195,6 +269,11 @@ class ContratoEspecifico(models.Model):
                 missing.append(_("Our Representative"))
             if not marco:
                 missing.append(_("Master Contract"))
+            if (
+                record.template_type_requires_application_name
+                and not record.application_name
+            ):
+                missing.append(_("Application Name"))
 
             if missing:
                 raise UserError(
@@ -221,7 +300,7 @@ class ContratoEspecifico(models.Model):
             vals = {
                 "specific_number": highlight(record.name),
                 "marco_number": highlight(marco.name),
-                "marco_date": fmt_date(marco.date),
+                "marco_date": fmt_date(marco.start_date),
                 "our_representative": highlight(our_r.name if our_r else ""),
                 "our_rep_function": highlight(our_r.function if our_r else ""),
                 "our_rep_decision_number": highlight(record.our_rep_decision_number),
@@ -230,8 +309,9 @@ class ContratoEspecifico(models.Model):
                 "project_leader": highlight(
                     record.project_leader_id.name if record.project_leader_id else ""
                 ),
-                "application_name": highlight(record.application_name),
+                "application_name": highlight(record.application_name or ""),
                 "start_date": fmt_date(record.start_date),
+                "validity_years": highlight(record.validity_years or ""),
                 "day": highlight(record.date.day if record.date else ""),
                 "month": highlight(record.date.strftime("%B") if record.date else ""),
                 "year": highlight(record.date.year if record.date else ""),
@@ -331,6 +411,14 @@ class ContratoEspecifico(models.Model):
         for vals in vals_list:
             if not vals.get("state"):
                 vals["state"] = "borrador"
+            if not vals.get("name") or vals.get("name") == "/":
+                vals["name"] = (
+                    self.env["ir.sequence"].next_by_code(
+                        "contrato.especifico.sequence",
+                        sequence_date=fields.Date.context_today(self),
+                    )
+                    or "/"
+                )
         return super().create(vals_list)
 
     def action_draft(self):
@@ -405,11 +493,22 @@ class ContratoEspecifico(models.Model):
                         "Only draft, cancelled, or signed contracts can be set to delivered."
                     )
                 )
-            if not record.content:
+            if not record._has_generated_content():
                 raise UserError(
                     _("Please generate the contract content before delivering.")
                 )
             record.write({"state": "entregado"})
+
+    def _has_generated_content(self) -> bool:
+        self.ensure_one()
+        if not self.content:
+            return False
+
+        plain_content = unescape(str(self.content or ""))
+        plain_content = re.sub(r"<[^>]+>", " ", plain_content)
+        plain_content = plain_content.replace("&nbsp;", " ")
+        plain_content = re.sub(r"\s+", " ", plain_content).strip()
+        return bool(plain_content)
 
     def action_facturar_todo(self) -> dict:
         """Invoice all uninvoiced service lines (general + UEB) of this contract."""
@@ -452,6 +551,7 @@ class ContratoEspecifico(models.Model):
         }
 
         for line in uninvoiced_lines:
+            line._apply_default_invoice_dates()
             self.env["account.move"].create(
                 {
                     **base_vals,
@@ -474,6 +574,7 @@ class ContratoEspecifico(models.Model):
             line.with_context(is_uninvoice=True).write({"invoiced": True})
 
         for line in uninvoiced_ueb_lines:
+            line._apply_default_invoice_dates()
             self.env["account.move"].create(
                 {
                     **base_vals,

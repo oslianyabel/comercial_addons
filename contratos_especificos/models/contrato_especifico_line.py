@@ -1,5 +1,8 @@
-﻿from odoo import _, api, fields, models
+﻿from datetime import timedelta
+
+from odoo import _, api, fields, models
 from odoo.exceptions import UserError
+from odoo.osv import expression
 
 
 class ContratoEspecificoLine(models.Model):
@@ -41,11 +44,42 @@ class ContratoEspecificoLine(models.Model):
         default=False,
         readonly=True,
     )
+    invoice_id = fields.Many2one(
+        "account.move",
+        string="Factura",
+        compute="_compute_invoice_data",
+    )
+    invoice_state = fields.Selection(
+        [
+            ("draft", "Borrador"),
+            ("posted", "Publicado"),
+            ("cancel", "Cancelado"),
+        ],
+        string="Estado de Factura",
+        compute="_compute_invoice_data",
+    )
 
     @api.depends("quantity", "price_unit")
     def _compute_price_subtotal(self):
         for line in self:
             line.price_subtotal = line.quantity * line.price_unit
+
+    def _compute_invoice_data(self):
+        for line in self:
+            invoice = self.env["account.move"].search(
+                [("service_line_id", "=", line.id)], limit=1
+            )
+            line.invoice_id = invoice
+            line.invoice_state = invoice.state if invoice else False
+
+    @staticmethod
+    def _get_end_date_from_start(start_date):
+        return start_date + timedelta(days=30) if start_date else False
+
+    @api.onchange("start_date")
+    def _onchange_start_date(self):
+        for line in self:
+            line.end_date = line._get_end_date_from_start(line.start_date)
 
     @api.onchange("product_id")
     def _onchange_product_id(self):
@@ -59,7 +93,7 @@ class ContratoEspecificoLine(models.Model):
         if self._context.get("is_uninvoice"):
             return
 
-        administrative_fields = {"invoiced"}
+        administrative_fields = {"invoiced", "start_date", "end_date"}
 
         # If vals is provided, check if we are ONLY updating administrative fields
         if vals and all(field in administrative_fields for field in vals.keys()):
@@ -112,6 +146,29 @@ class ContratoEspecificoLine(models.Model):
             # Bypass the manual write check by using super().write or context
             line.with_context(is_uninvoice=True).write({"invoiced": False})
 
+    def action_view_invoice(self):
+        self.ensure_one()
+        if not self.invoice_id:
+            raise UserError(_("No existe una factura asociada a esta línea."))
+        return {
+            "name": _("Factura"),
+            "view_mode": "form",
+            "res_model": "account.move",
+            "res_id": self.invoice_id.id,
+            "type": "ir.actions.act_window",
+        }
+
+    def _apply_default_invoice_dates(self):
+        today = fields.Date.today()
+        values = {}
+        if not self.start_date:
+            values["start_date"] = today
+        if not self.end_date:
+            base_start_date = values.get("start_date") or self.start_date or today
+            values["end_date"] = self._get_end_date_from_start(base_start_date)
+        if values:
+            self.with_context(is_uninvoice=True).write(values)
+
     def action_facturar(self):
         """Generar la factura desde la línea del contrato sin wizard usando los campos en contrato_especifico."""
         for line in self:
@@ -136,6 +193,7 @@ class ContratoEspecificoLine(models.Model):
                 )
 
             partner = contract.partner_id
+            line._apply_default_invoice_dates()
 
             invoice_vals = {
                 "move_type": "out_invoice",
@@ -176,3 +234,30 @@ class ContratoEspecificoLine(models.Model):
                 "res_id": move.id,
                 "type": "ir.actions.act_window",
             }
+
+    @api.model
+    def _name_search(
+        self,
+        name="",
+        args=None,
+        operator="ilike",
+        limit=100,
+        name_get_uid=None,
+        order=None,
+    ):
+        domain = args or []
+        if name:
+            search_domain = expression.OR(
+                [
+                    [("name", operator, name)],
+                    [("contrato_id.partner_id.name", operator, name)],
+                    [("contrato_id.name", operator, name)],
+                ]
+            )
+            domain = expression.AND([domain, search_domain])
+        return self._search(
+            domain,
+            limit=limit,
+            access_rights_uid=name_get_uid,
+            order=order,
+        )

@@ -47,6 +47,7 @@ class ContratoTemplate(models.Model):
             "contract_number",
             "our_email",
             "our_representative",
+            "our_rep_position",
             "our_rep_decision_number",
             "our_rep_decision_date",
             "partner_name",
@@ -127,7 +128,7 @@ class ContratoTemplate(models.Model):
         """Helper to get and format the current filesystem content for comparison."""
         base_path = self._get_base_path()
         templates = {
-            "mipyme": "contrato marco Mipyme",
+            "mipyme": "contrato marco Mipyme.txt",
             "tcp": "contrato marco TCP.txt",
             "empresa": "contrato marco empresas.txt",
         }
@@ -349,7 +350,7 @@ class ContratoTemplate(models.Model):
         """Utility to force import/overwrite all templates from the known filesystem path."""
         base_path = self._get_base_path()
         templates = {
-            "mipyme": "contrato marco Mipyme",
+            "mipyme": "contrato marco Mipyme.txt",
             "tcp": "contrato marco TCP.txt",
             "empresa": "contrato marco empresas.txt",
         }
@@ -390,7 +391,7 @@ class ContratoTemplate(models.Model):
         """Force overwrite this template with the content from the filesystem."""
         base_path = self._get_base_path()
         templates = {
-            "mipyme": "contrato marco Mipyme",
+            "mipyme": "contrato marco Mipyme.txt",
             "tcp": "contrato marco TCP.txt",
             "empresa": "contrato marco empresas.txt",
         }
@@ -440,7 +441,7 @@ class ContratoTemplate(models.Model):
 
         base_path = self._get_base_path()
         templates_map = {
-            "mipyme": "contrato marco Mipyme",
+            "mipyme": "contrato marco Mipyme.txt",
             "tcp": "contrato marco TCP.txt",
             "empresa": "contrato marco empresas.txt",
         }
