@@ -24,9 +24,16 @@
         "views/contrato_especifico_import_wizard_views.xml",
         "views/contrato_especifico_template_views.xml",
         "views/contrato_especifico_ueb_section_views.xml",
+        "views/contrato_especifico_suplemento_views.xml",
         "views/contrato_especifico_views.xml",
+        "report/contrato_especifico_reports.xml",
     ],
     "installable": True,
     "application": False,
     "license": "LGPL-3",
+    "assets": {
+        "web.assets_backend": [
+            "contratos_especificos/static/src/suplemento_redirect_service.js",
+        ],
+    },
 }

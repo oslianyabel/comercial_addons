@@ -33,7 +33,8 @@
                     <group>
                         <group string="Información General">
                             <field name="marco_id"
-                                   options="{'no_create': True, 'no_quick_create': True, 'no_create_edit': True}"/>
+                                   options="{'no_create': True, 'no_quick_create': True, 'no_create_edit': True}"
+                                   readonly="1"/>
                             <field name="company_id" readonly="1"/>
                             <field name="partner_id" readonly="1"/>
                         </group>

@@ -6,3 +6,7 @@ access_contrato_especifico_line,contrato.especifico.line.all,model_contrato_espe
 access_contrato_especifico_ueb_section,contrato.especifico.ueb.section.all,model_contrato_especifico_ueb_section,,1,1,1,1
 access_contrato_especifico_ueb_line,contrato.especifico.ueb.line.all,model_contrato_especifico_ueb_line,,1,1,1,1
 access_contrato_especifico_add_ueb_wizard,contrato.especifico.add.ueb.wizard.all,model_contrato_especifico_add_ueb_wizard,,1,1,1,1
+access_contrato_especifico_suplemento,contrato.especifico.suplemento.all,model_contrato_especifico_suplemento,,1,1,1,1
+access_contrato_especifico_suplemento_line,contrato.especifico.suplemento.line.all,model_contrato_especifico_suplemento_line,,1,1,1,1
+access_contrato_especifico_suplemento_ueb_section,contrato.especifico.suplemento.ueb.section.all,model_contrato_especifico_suplemento_ueb_section,,1,1,1,1
+access_contrato_especifico_suplemento_ueb_line,contrato.especifico.suplemento.ueb.line.all,model_contrato_especifico_suplemento_ueb_line,,1,1,1,1

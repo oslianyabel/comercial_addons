@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         REPORTE: Contrato Específico
+    ═══════════════════════════════════════════════════════════════ -->
+    <record id="action_report_contrato_especifico" model="ir.actions.report">
+        <field name="name">Imprimir Contrato Específico</field>
+        <field name="model">contrato.especifico</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">contratos_especificos.report_contrato_especifico_template</field>
+        <field name="report_file">contratos_especificos.report_contrato_especifico_template</field>
+        <field name="print_report_name">'Contrato Específico - %s' % (object.name)</field>
+        <field name="binding_model_id" ref="model_contrato_especifico"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_contrato_especifico_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <div style="text-align: justify; font-size: 12px;">
+                            <t t-out="o.content"/>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         REPORTE: Suplemento de Contrato Específico
+    ═══════════════════════════════════════════════════════════════ -->
+    <record id="action_report_contrato_especifico_suplemento" model="ir.actions.report">
+        <field name="name">Imprimir Suplemento</field>
+        <field name="model">contrato.especifico.suplemento</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">contratos_especificos.report_contrato_especifico_suplemento_template</field>
+        <field name="report_file">contratos_especificos.report_contrato_especifico_suplemento_template</field>
+        <field name="print_report_name">'%s' % (object.name)</field>
+        <field name="binding_model_id" ref="model_contrato_especifico_suplemento"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_contrato_especifico_suplemento_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <!-- Encabezado de metadatos -->
+                        <table style="width:100%; margin-bottom: 12px; font-size: 11px; border-collapse: collapse;">
+                            <tr>
+                                <td style="width:50%; padding: 4px;">
+                                    <strong>Suplemento:</strong>
+                                    <span t-out="o.name"/>
+                                </td>
+                                <td style="width:50%; padding: 4px; text-align: right;">
+                                    <strong>Versión:</strong>
+                                    <span t-out="o.sequence_number"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 4px;">
+                                    <strong>Contrato Original:</strong>
+                                    <span t-out="o.contrato_id.name"/>
+                                </td>
+                                <td style="padding: 4px; text-align: right;">
+                                    <strong>Fecha de Modificación:</strong>
+                                    <span t-out="o.modification_date and o.modification_date.strftime('%d/%m/%Y %H:%M') or ''"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="padding: 4px;">
+                                    <strong>Modificado por:</strong>
+                                    <span t-out="o.modified_by_id.name or ''"/>
+                                </td>
+                            </tr>
+                            <t t-if="o.modificaciones">
+                                <tr>
+                                    <td colspan="2" style="padding: 4px; border-top: 1px solid #ccc;">
+                                        <strong>Modificaciones:</strong><br/>
+                                        <span t-out="o.modificaciones"/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </table>
+                        <hr style="border: 1px solid #000; margin-bottom: 16px;"/>
+                        <!-- Contenido del contrato -->
+                        <div style="text-align: justify; font-size: 12px;">
+                            <t t-out="o.content"/>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

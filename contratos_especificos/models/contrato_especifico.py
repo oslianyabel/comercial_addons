@@ -1,12 +1,15 @@
-﻿import re
+﻿import logging
+import re
 from datetime import date as pydate
 from html import unescape
 
 from markupsafe import Markup
 
 from odoo import _, api, fields, models
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
 from odoo.osv import expression
+
+_logger = logging.getLogger(__name__)
 
 
 class ContratoEspecifico(models.Model):
@@ -18,8 +21,12 @@ class ContratoEspecifico(models.Model):
     marco_id = fields.Many2one(
         "contrato.marco",
         string="Master Contract",
-        required=True,
         domain=[("state", "=", "firmado")],
+    )
+    suplemento_id = fields.Many2one(
+        "contrato.suplemento",
+        string="Suplemento",
+        domain="[('state', '=', 'firmado'), ('marco_id', '=', marco_id)]",
     )
     company_id = fields.Many2one(
         "res.company",
@@ -74,19 +81,245 @@ class ContratoEspecifico(models.Model):
         ["state", "service_line_state", "invoice_count", "end_date"]
     )
 
-    def write(self, vals):
-        """Prevent editing signed contracts.
+    suplemento_especifico_ids = fields.One2many(
+        "contrato.especifico.suplemento",
+        "contrato_id",
+        string="Suplementos",
+    )
+    suplemento_especifico_count = fields.Integer(
+        string="Nº Suplementos",
+        compute="_compute_suplemento_especifico_count",
+    )
 
-        Allows state transitions and ORM-managed computed stored fields.
-        Delivered ('entregado') contracts remain editable.
+    @api.depends("suplemento_especifico_ids")
+    def _compute_suplemento_especifico_count(self) -> None:
+        for record in self:
+            record.suplemento_especifico_count = len(record.suplemento_especifico_ids)
+
+    def write(self, vals):
+        """Intercepts writes on signed contracts to create suplementos automatically.
+
+        - Signed contracts: creates a suplemento with the new values; original stays unchanged.
+        - Non-signed contracts: normal write.
+        - ORM-managed system fields (state, end_date, …) always go through.
         """
-        if not self.env.su and not vals.keys() <= self._SYSTEM_WRITE_ALLOWED:
-            for record in self:
-                if record.state == "firmado":
-                    raise UserError(
-                        _("No puede modificar un contrato que ya está firmado.")
-                    )
+        if not self.env.su:
+            blocked_keys = vals.keys() - self._SYSTEM_WRITE_ALLOWED
+            if blocked_keys:
+                firmado_records = self.filtered(lambda r: r.state == "firmado")
+                if firmado_records:
+                    for record in firmado_records:
+                        record._create_suplemento_from_vals(vals)
+                    non_firmado = self - firmado_records
+                    if non_firmado:
+                        super(ContratoEspecifico, non_firmado).write(vals)
+                    return True
         return super().write(vals)
+
+    def _create_suplemento_from_vals(self, vals: dict) -> None:
+        """Creates a new suplemento from the current firmado contract applying the provided vals.
+
+        Does NOT modify the original contract.
+        """
+        self.ensure_one()
+
+        sequence_number = len(self.suplemento_especifico_ids) + 1
+
+        # Build the new state: current values + incoming changes
+        sup_vals: dict = {
+            "contrato_id": self.id,
+            "sequence_number": sequence_number,
+            "modified_by_id": self.env.user.id,
+            "modification_date": fields.Datetime.now(),
+            "marco_id": self.marco_id.id if self.marco_id else False,
+            "suplemento_marco_id": self.suplemento_id.id
+            if self.suplemento_id
+            else False,
+            "template_id": self.template_id.id if self.template_id else False,
+            "our_project_leader_id": (
+                self.our_project_leader_id.id if self.our_project_leader_id else False
+            ),
+            "project_leader_id": (
+                self.project_leader_id.id if self.project_leader_id else False
+            ),
+            "application_name": self.application_name,
+            "date": self.date,
+            "validity_years": self.validity_years,
+            "start_date": self.start_date,
+            "content": self.content,
+            "forma_pago_id": self.forma_pago_id.id if self.forma_pago_id else False,
+            "realizada_por_id": (
+                self.realizada_por_id.id if self.realizada_por_id else False
+            ),
+            "transportado_por_id": (
+                self.transportado_por_id.id if self.transportado_por_id else False
+            ),
+            "recibido_por_id": (
+                self.recibido_por_id.id if self.recibido_por_id else False
+            ),
+            "entregada_por_id": (
+                self.entregada_por_id.id if self.entregada_por_id else False
+            ),
+            "contabilizada_por_id": (
+                self.contabilizada_por_id.id if self.contabilizada_por_id else False
+            ),
+        }
+
+        # Apply incoming changes (Many2one fields arrive as IDs in vals)
+        scalar_fields = {
+            k: v for k, v in vals.items() if k not in ("line_ids", "ueb_section_ids")
+        }
+        sup_vals.update(scalar_fields)
+
+        # Build modificaciones (comma-separated list of changed field labels)
+        sup_vals["modificaciones"] = self._build_modificaciones(vals)
+
+        sup = self.env["contrato.especifico.suplemento"].create(sup_vals)
+
+        # Copy service lines (apply ORM commands if present)
+        line_commands = vals.get("line_ids")
+        lines_data = self._resolve_line_snapshot(self.line_ids, line_commands)
+        SupLine = self.env["contrato.especifico.suplemento.line"]
+        for data in lines_data:
+            SupLine.create({"suplemento_id": sup.id, **data})
+
+        # Copy UEB sections
+        ueb_commands = vals.get("ueb_section_ids")
+        for section in self.ueb_section_ids:
+            new_section = self.env["contrato.especifico.suplemento.ueb.section"].create(
+                {
+                    "suplemento_id": sup.id,
+                    "ueb_id": section.ueb_id.id,
+                    "sequence": section.sequence,
+                }
+            )
+            SupUebLine = self.env["contrato.especifico.suplemento.ueb.line"]
+            # Resolve UEB line changes from commands targeting this section
+            ueb_section_commands = self._extract_ueb_section_commands(
+                ueb_commands, section.id
+            )
+            ueb_lines_data = self._resolve_line_snapshot(
+                section.line_ids, ueb_section_commands
+            )
+            for data in ueb_lines_data:
+                data.pop("date_deadline_invoice", None)
+                SupUebLine.create({"section_id": new_section.id, **data})
+
+        _logger.info(
+            "Suplemento %s creado automáticamente sobre contrato %s por %s.",
+            sup.name,
+            self.name,
+            self.env.user.name,
+        )
+
+        # Redirigir al usuario al suplemento recién creado
+        self.env["bus.bus"]._sendone(
+            self.env.user.partner_id,
+            "contrato_especifico_suplemento_creado",
+            {
+                "suplemento_id": sup.id,
+                "suplemento_name": sup.name,
+            },
+        )
+
+    def _build_modificaciones(self, vals: dict) -> str:
+        """Returns a comma-separated list of human-readable labels for the changed fields."""
+        LABELS: dict[str, str] = {
+            "template_id": "Tipo de Contrato",
+            "our_project_leader_id": "Líder del Proyecto Nuestro",
+            "project_leader_id": "Líder del Proyecto del Cliente",
+            "application_name": "Nombre de la Aplicación",
+            "date": "Fecha de Suscripción",
+            "validity_years": "Vigencia (años)",
+            "start_date": "Fecha de Entrada en Vigor",
+            "content": "Contenido del Contrato",
+            "forma_pago_id": "Forma de Pago",
+            "realizada_por_id": "Realizada por",
+            "transportado_por_id": "Transportado por",
+            "recibido_por_id": "Recibido por",
+            "entregada_por_id": "Entregada por",
+            "contabilizada_por_id": "Contabilizada por",
+            "line_ids": "Líneas de Servicio",
+            "ueb_section_ids": "Secciones UEB",
+        }
+
+        changed: list[str] = [label for key, label in LABELS.items() if key in vals]
+        return ", ".join(changed) if changed else ""
+
+    @staticmethod
+    def _resolve_line_snapshot(current_lines, commands) -> list[dict]:
+        """Applies ORM commands against current lines and returns a list of field dicts."""
+        COPYABLE = [
+            "product_id",
+            "name",
+            "quantity",
+            "uom_id",
+            "price_unit",
+            "date_deadline_invoice",
+            "start_date",
+            "end_date",
+        ]
+
+        def _line_to_dict(line) -> dict:
+            return {
+                "product_id": line.product_id.id if line.product_id else False,
+                "name": line.name,
+                "quantity": line.quantity,
+                "uom_id": line.uom_id.id if line.uom_id else False,
+                "price_unit": line.price_unit,
+                "date_deadline_invoice": getattr(line, "date_deadline_invoice", False),
+                "start_date": getattr(line, "start_date", False),
+                "end_date": getattr(line, "end_date", False),
+            }
+
+        lines_by_id: dict[int, dict] = {
+            line.id: _line_to_dict(line) for line in current_lines
+        }
+        result_ids: list[int] = list(lines_by_id.keys())
+        extra: list[dict] = []
+
+        if not commands:
+            return list(lines_by_id.values())
+
+        for cmd in commands:
+            code = cmd[0]
+            if code == 0:  # CREATE
+                data = {k: v for k, v in cmd[2].items() if k in COPYABLE}
+                extra.append(data)
+            elif code == 1:  # UPDATE
+                if cmd[1] in lines_by_id:
+                    lines_by_id[cmd[1]].update(
+                        {k: v for k, v in cmd[2].items() if k in COPYABLE}
+                    )
+            elif code in (2, 3):  # DELETE / UNLINK
+                result_ids = [i for i in result_ids if i != cmd[1]]
+            elif code == 5:  # CLEAR
+                result_ids = []
+            elif code == 6:  # SET
+                result_ids = [i for i in cmd[2] if i in lines_by_id]
+
+        return [lines_by_id[i] for i in result_ids if i in lines_by_id] + extra
+
+    @staticmethod
+    def _extract_ueb_section_commands(ueb_commands, section_id: int) -> list | None:
+        """Extracts line commands for a specific UEB section from ueb_section_ids commands."""
+        if not ueb_commands:
+            return None
+        for cmd in ueb_commands:
+            if cmd[0] == 1 and cmd[1] == section_id and "line_ids" in cmd[2]:
+                return cmd[2]["line_ids"]
+        return None
+
+    def action_open_suplementos_especificos(self) -> dict:
+        self.ensure_one()
+        return {
+            "name": _("Suplementos de %s") % self.name,
+            "type": "ir.actions.act_window",
+            "res_model": "contrato.especifico.suplemento",
+            "view_mode": "tree,form",
+            "domain": [("contrato_id", "=", self.id)],
+            "context": {"default_contrato_id": self.id},
+        }
 
     @api.model
     def _name_search(
@@ -203,6 +436,36 @@ class ContratoEspecifico(models.Model):
         )
     ]
 
+    @api.onchange("suplemento_id")
+    def _onchange_suplemento_id(self) -> None:
+        if self.suplemento_id:
+            self.marco_id = self.suplemento_id.marco_id
+
+    @api.onchange("marco_id")
+    def _onchange_marco_id(self) -> None:
+        """Limpia suplemento_id si ya no pertenece al marco seleccionado."""
+        if self.suplemento_id and self.suplemento_id.marco_id != self.marco_id:
+            self.suplemento_id = False
+
+    @api.constrains("marco_id", "suplemento_id")
+    def _check_marco_or_suplemento(self) -> None:
+        for record in self:
+            if not record.marco_id and not record.suplemento_id:
+                raise ValidationError(
+                    _("Debe seleccionar un Contrato Marco o un Suplemento firmado.")
+                )
+            if (
+                record.suplemento_id
+                and record.marco_id
+                and record.marco_id != record.suplemento_id.marco_id
+            ):
+                raise ValidationError(
+                    _(
+                        "El Contrato Marco debe corresponder al marco del "
+                        "Suplemento seleccionado."
+                    )
+                )
+
     @api.model
     def _default_validity_years(self) -> int:
         param = (
@@ -300,7 +563,11 @@ class ContratoEspecifico(models.Model):
             vals = {
                 "specific_number": highlight(record.name),
                 "marco_number": highlight(marco.name),
-                "marco_date": fmt_date(marco.start_date),
+                "marco_date": fmt_date(
+                    record.suplemento_id.start_date
+                    if record.suplemento_id
+                    else marco.start_date
+                ),
                 "our_representative": highlight(our_r.name if our_r else ""),
                 "our_rep_function": highlight(our_r.function if our_r else ""),
                 "our_rep_decision_number": highlight(record.our_rep_decision_number),

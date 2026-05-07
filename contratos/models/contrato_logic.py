@@ -197,9 +197,9 @@ class ContratoMarco(models.Model):
                 "partner_current_resolution": highlight(p.current_resolution_number),
                 "partner_current_date": fmt_date(p.current_creation_date),
                 "partner_current_issued_by": highlight(p.current_issued_by),
-                "day": highlight(record.date.day),
-                "month": highlight(record.date.strftime("%B")),
-                "year": highlight(record.date.year),
+                "day": highlight(record.start_date.day),
+                "month": highlight(record.start_date.strftime("%B")),
+                "year": highlight(record.start_date.year),
             }
 
             if record.contract_type == "mipyme":
