@@ -32,6 +32,11 @@ class ContratoEspecificoSupplementoLine(models.Model):
     date_deadline_invoice = fields.Date(string="Fecha Límite de Facturación")
     start_date = fields.Date(string="Fecha de Inicio")
     end_date = fields.Date(string="Fecha Final")
+    original_invoiced = fields.Boolean(
+        string="Fue Facturada",
+        default=False,
+        help="Indica que la línea original ya estaba facturada al crear este suplemento.",
+    )
 
     @api.depends("quantity", "price_unit")
     def _compute_price_subtotal(self) -> None:

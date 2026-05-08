@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_contrato_especifico_cancel_wizard_form" model="ir.ui.view">
+        <field name="name">contrato.especifico.cancel.wizard.form</field>
+        <field name="model">contrato.especifico.cancel.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Confirmar Cancelación">
+                <group>
+                    <field name="contrato_id" invisible="1"/>
+                    <div colspan="2" class="alert alert-warning" role="alert">
+                        <strong>Atención:</strong> Esta acción cancelará el contrato específico
+                        y anulará todas las facturas asociadas pendientes.
+                    </div>
+                    <field name="motivo"
+                           string="Motivo de Cancelación"
+                           placeholder="Describa el motivo de la cancelación..."
+                           required="1"/>
+                </group>
+                <footer>
+                    <button string="Confirmar Cancelación"
+                            type="object"
+                            name="action_confirm"
+                            class="btn-danger"/>
+                    <button string="Volver" special="cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

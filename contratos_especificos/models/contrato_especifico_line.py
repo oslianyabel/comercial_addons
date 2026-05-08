@@ -8,7 +8,18 @@ from odoo.osv import expression
 class ContratoEspecificoLine(models.Model):
     _name = "contrato.especifico.line"
     _description = "Specific Contract Service Line"
+    _order = "sequence, is_invoice_line, id"
 
+    sequence = fields.Integer(string="Sequence", default=10)
+    parent_line_id = fields.Many2one(
+        "contrato.especifico.line",
+        string="Parent Line",
+        ondelete="set null",
+    )
+    is_invoice_line = fields.Boolean(
+        string="Is Invoice Line",
+        default=False,
+    )
     contrato_id = fields.Many2one(
         "contrato.especifico",
         string="Specific Contract",
@@ -36,6 +47,7 @@ class ContratoEspecificoLine(models.Model):
     date_deadline_invoice = fields.Date(
         string="Fecha Límite de Facturación",
         required=True,
+        default=lambda self: fields.Date.today() + timedelta(days=30),
     )
     start_date = fields.Date(string="Fecha de Inicio")
     end_date = fields.Date(string="Fecha Final")
@@ -89,17 +101,27 @@ class ContratoEspecificoLine(models.Model):
             self.price_unit = self.product_id.lst_price
 
     def _check_signed_contract(self, vals=None):
-        """Block modifications on signed contracts, unless only updating administrative fields like 'invoiced'."""
+        """Block modifications on signed contracts, unless only updating administrative fields."""
         if self._context.get("is_uninvoice"):
             return
 
-        administrative_fields = {"invoiced", "start_date", "end_date"}
+        administrative_fields = {
+            "invoiced",
+            "start_date",
+            "end_date",
+            "is_invoice_line",
+            "sequence",
+            "parent_line_id",
+        }
 
         # If vals is provided, check if we are ONLY updating administrative fields
         if vals and all(field in administrative_fields for field in vals.keys()):
             return
 
         for line in self:
+            # Invoice lines (partial billing history) are always allowed on signed contracts
+            if line.is_invoice_line:
+                continue
             if line.contrato_id and line.contrato_id.state == "firmado":
                 raise UserError(
                     _(
@@ -110,15 +132,53 @@ class ContratoEspecificoLine(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
+            is_invoice_line = vals.get("is_invoice_line", False)
+            # Invoice lines (partial billing history) are always allowed on signed contracts
+            if is_invoice_line:
+                continue
             if vals.get("contrato_id"):
                 contract = self.env["contrato.especifico"].browse(vals["contrato_id"])
                 if contract.state == "firmado":
                     raise UserError(
                         _("You cannot add lines to a contract that is already signed.")
                     )
-        return super().create(vals_list)
+        records = super().create(vals_list)
+        # Assign sequence after creation for lines without explicit sequence
+        for record in records:
+            if not record.parent_line_id and not record.is_invoice_line:
+                sibling_sequences = (
+                    self.env["contrato.especifico.line"]
+                    .search(
+                        [
+                            ("contrato_id", "=", record.contrato_id.id),
+                            ("id", "!=", record.id),
+                            ("is_invoice_line", "=", False),
+                        ]
+                    )
+                    .mapped("sequence")
+                )
+                max_seq = max(sibling_sequences, default=0)
+                if record.sequence == 10 and max_seq >= 10:
+                    record.with_context(is_uninvoice=True).write(
+                        {"sequence": max_seq + 10}
+                    )
+            elif record.parent_line_id:
+                record.with_context(is_uninvoice=True).write(
+                    {"sequence": record.parent_line_id.sequence}
+                )
+        return records
 
     def write(self, vals):
+        if not self._context.get("is_uninvoice"):
+            if "quantity" in vals or "price_unit" in vals:
+                for line in self:
+                    if line.invoiced:
+                        raise UserError(
+                            _(
+                                "No puede modificar la cantidad ni el precio de una línea ya facturada. "
+                                "Modifíquelos desde la vista de la factura."
+                            )
+                        )
         self._check_signed_contract(vals)
         return super().write(vals)
 
@@ -127,24 +187,31 @@ class ContratoEspecificoLine(models.Model):
         return super().unlink()
 
     def action_uninvoice(self):
-        """Reset the invoiced flag and delete associated invoices."""
+        """Cancel the associated invoice. For invoice lines (partial history), only cancel the invoice.
+        For regular lines, delete the invoice and reset the invoiced flag."""
         for line in self:
             if not line.invoiced:
                 continue
-            # Find and delete associated invoices
+
             invoices = self.env["account.move"].search(
                 [("service_line_id", "=", line.id)]
             )
-            # Only allow deleting draft or cancelled invoices for safety,
-            # but user requested it should delete it.
-            # In Odoo, deleting posted invoices usually requires resetting to draft first.
-            for inv in invoices:
-                if inv.state == "posted":
-                    inv.button_draft()
-                inv.unlink()
 
-            # Bypass the manual write check by using super().write or context
-            line.with_context(is_uninvoice=True).write({"invoiced": False})
+            if line.is_invoice_line:
+                # Invoice lines: only cancel the invoice, preserve the history line
+                for inv in invoices:
+                    if inv.state == "posted":
+                        inv.button_draft()
+                    if inv.state != "cancel":
+                        inv.button_cancel()
+                line.with_context(is_uninvoice=True).write({"invoiced": False})
+            else:
+                # Regular lines: delete the invoice and reset the flag
+                for inv in invoices:
+                    if inv.state == "posted":
+                        inv.button_draft()
+                    inv.unlink()
+                line.with_context(is_uninvoice=True).write({"invoiced": False})
 
     def action_view_invoice(self):
         self.ensure_one()
@@ -170,70 +237,45 @@ class ContratoEspecificoLine(models.Model):
             self.with_context(is_uninvoice=True).write(values)
 
     def action_facturar(self):
-        """Generar la factura desde la línea del contrato sin wizard usando los campos en contrato_especifico."""
-        for line in self:
-            if line.invoiced:
-                raise UserError(_("Esta línea ya ha sido facturada."))
+        """Abrir el wizard de facturación para especificar cantidad y precio a facturar."""
+        self.ensure_one()
 
-            contract = line.contrato_id
+        if self.invoiced:
+            raise UserError(_("Esta línea ya ha sido facturada."))
 
-            # Validación: El contrato debe estar firmado para facturarse
-            if contract.state != "firmado":
-                raise UserError(
-                    _(
-                        "Solo puede facturar las líneas de servicio de un contrato que se encuentre Firmado."
-                    )
+        contract = self.contrato_id
+
+        if contract.state != "firmado":
+            raise UserError(
+                _(
+                    "Solo puede facturar las líneas de servicio de un contrato que se encuentre Firmado."
                 )
+            )
 
-            if not contract.forma_pago_id:
-                raise UserError(
-                    _(
-                        "Debe configurar la Forma de Pago en los Datos de Facturación del contrato antes de facturar."
-                    )
+        if not contract.forma_pago_id:
+            raise UserError(
+                _(
+                    "Debe configurar la Forma de Pago en los Datos de Facturación del contrato antes de facturar."
                 )
+            )
 
-            partner = contract.partner_id
-            line._apply_default_invoice_dates()
-
-            invoice_vals = {
-                "move_type": "out_invoice",
-                "partner_id": partner.id,
-                "invoice_date": fields.Date.today(),
-                "contrato_especifico_id": contract.id,
-                "service_line_id": line.id,
-                "invoice_payment_term_id": contract.forma_pago_id.id,
-                "invoice_line_ids": [
-                    (
-                        0,
-                        0,
-                        {
-                            "product_id": line.product_id.id,
-                            "name": line.name,
-                            "quantity": line.quantity,
-                            "product_uom_id": line.uom_id.id,
-                            "price_unit": line.price_unit,
-                        },
-                    )
-                ],
-                "client_address": f"{partner.street or ''} {partner.city or ''}".strip(),
-                "client_nit": getattr(partner, "tax_id", None) or partner.vat or "",
-                "client_bank_account": getattr(partner, "bank_account_cup", None) or "",
-                # realizada_por_id is now res.partner (changed from res.users)
-                "realizada_por_id": contract.realizada_por_id.id
-                if contract.realizada_por_id
-                else False,
+        wizard = self.env["contrato.especifico.facturar.wizard"].create(
+            {
+                "line_id": self.id,
+                "max_quantity": self.quantity,
+                "max_price": self.price_unit,
+                "quantity": self.quantity,
+                "price_unit": self.price_unit,
             }
-
-            move = self.env["account.move"].create(invoice_vals)
-            line.with_context(is_uninvoice=True).write({"invoiced": True})
-
-            return {
-                "name": _("Factura"),
-                "view_mode": "form",
-                "res_model": "account.move",
-                "res_id": move.id,
-                "type": "ir.actions.act_window",
-            }
+        )
+        return {
+            "name": _("Facturar Línea de Servicio"),
+            "type": "ir.actions.act_window",
+            "res_model": "contrato.especifico.facturar.wizard",
+            "res_id": wizard.id,
+            "view_mode": "form",
+            "target": "new",
+        }
 
     @api.model
     def _name_search(

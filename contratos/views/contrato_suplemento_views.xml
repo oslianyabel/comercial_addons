@@ -49,20 +49,6 @@
                         <field name="description" placeholder="Describa las modificaciones realizadas en este suplemento..."/>
                     </group>
                     <notebook>
-                        <page string="Datos del Suplemento" name="datos">
-                            <group>
-                                <group string="Fecha de Firma">
-                                    <field name="start_date"/>
-                                    <field name="start_date_modified" widget="boolean_toggle"
-                                           string="Fecha modificada" readonly="1"/>
-                                </group>
-                                <group string="Tiempo de Validez">
-                                    <field name="validity_years"/>
-                                    <field name="validity_years_modified" widget="boolean_toggle"
-                                           string="Validez modificada" readonly="1"/>
-                                </group>
-                            </group>
-                        </page>
                         <page string="Contenido del Contrato" name="contenido">
                             <group>
                                 <field name="content_modified" widget="boolean_toggle"
@@ -90,10 +76,6 @@
                 <field name="marco_id" readonly="1"/>
                 <field name="partner_id" readonly="1"/>
                 <field name="description"/>
-                <field name="start_date_modified" string="Fecha Mod." optional="show"
-                       widget="boolean_toggle" readonly="1"/>
-                <field name="validity_years_modified" string="Validez Mod." optional="show"
-                       widget="boolean_toggle" readonly="1"/>
                 <field name="content_modified" string="Contenido Mod." optional="show"
                        widget="boolean_toggle" readonly="1"/>
                 <field name="state" widget="badge"
@@ -119,10 +101,6 @@
                 <filter string="Firmado" name="state_firmado" domain="[('state', '=', 'firmado')]"/>
                 <filter string="Cancelado" name="state_cancelado" domain="[('state', '=', 'cancelado')]"/>
                 <separator/>
-                <filter string="Fecha Modificada" name="filter_start_date_modified"
-                        domain="[('start_date_modified', '=', True)]"/>
-                <filter string="Validez Modificada" name="filter_validity_years_modified"
-                        domain="[('validity_years_modified', '=', True)]"/>
                 <filter string="Contenido Modificado" name="filter_content_modified"
                         domain="[('content_modified', '=', True)]"/>
                 <group expand="0" string="Agrupar por">
@@ -144,8 +122,8 @@
         <field name="search_view_id" ref="view_contrato_suplemento_search"/>
     </record>
 
-    <menuitem id="menu_contrato_suplemento" name="Suplementos"
-              parent="contratos.menu_contrato_root"
+    <menuitem id="menu_contrato_suplemento" name="Suplementos de Contratos Marcos"
+              parent="contratos.menu_suplementos_group"
               action="action_contrato_suplemento"
-              sequence="30"/>
+              sequence="10"/>
 </odoo>

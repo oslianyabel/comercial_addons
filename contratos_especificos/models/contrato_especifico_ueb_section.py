@@ -62,7 +62,18 @@ class ContratoEspecificoUebSection(models.Model):
 class ContratoEspecificoUebLine(models.Model):
     _name = "contrato.especifico.ueb.line"
     _description = "Service Line for UEB Section"
+    _order = "sequence, is_invoice_line, id"
 
+    sequence = fields.Integer(string="Sequence", default=10)
+    parent_line_id = fields.Many2one(
+        "contrato.especifico.ueb.line",
+        string="Parent Line",
+        ondelete="set null",
+    )
+    is_invoice_line = fields.Boolean(
+        string="Is Invoice Line",
+        default=False,
+    )
     section_id = fields.Many2one(
         "contrato.especifico.ueb.section",
         string="Sección UEB",
@@ -92,6 +103,7 @@ class ContratoEspecificoUebLine(models.Model):
     date_deadline_invoice = fields.Date(
         string="Fecha Límite de Facturación",
         required=True,
+        default=lambda self: fields.Date.today() + timedelta(days=30),
     )
     start_date = fields.Date(string="Fecha de Inicio")
     end_date = fields.Date(string="Fecha Final")
@@ -146,10 +158,19 @@ class ContratoEspecificoUebLine(models.Model):
     def _check_signed_contract(self, vals: dict | None = None) -> None:
         if self._context.get("is_uninvoice"):
             return
-        administrative_fields = {"invoiced", "start_date", "end_date"}
+        administrative_fields = {
+            "invoiced",
+            "start_date",
+            "end_date",
+            "is_invoice_line",
+            "sequence",
+            "parent_line_id",
+        }
         if vals and all(field in administrative_fields for field in vals.keys()):
             return
         for line in self:
+            if line.is_invoice_line:
+                continue
             contract = line._get_contract()
             if contract and contract.state == "firmado":
                 raise UserError(
@@ -162,6 +183,9 @@ class ContratoEspecificoUebLine(models.Model):
     @api.model_create_multi
     def create(self, vals_list: list[dict]) -> "ContratoEspecificoUebLine":
         for vals in vals_list:
+            is_invoice_line = vals.get("is_invoice_line", False)
+            if is_invoice_line:
+                continue
             if vals.get("section_id"):
                 section = self.env["contrato.especifico.ueb.section"].browse(
                     vals["section_id"]
@@ -170,9 +194,42 @@ class ContratoEspecificoUebLine(models.Model):
                     raise UserError(
                         _("No puede añadir líneas a un contrato ya firmado.")
                     )
-        return super().create(vals_list)
+        records = super().create(vals_list)
+        for record in records:
+            if not record.parent_line_id and not record.is_invoice_line:
+                sibling_sequences = (
+                    self.env["contrato.especifico.ueb.line"]
+                    .search(
+                        [
+                            ("section_id", "=", record.section_id.id),
+                            ("id", "!=", record.id),
+                            ("is_invoice_line", "=", False),
+                        ]
+                    )
+                    .mapped("sequence")
+                )
+                max_seq = max(sibling_sequences, default=0)
+                if record.sequence == 10 and max_seq >= 10:
+                    record.with_context(is_uninvoice=True).write(
+                        {"sequence": max_seq + 10}
+                    )
+            elif record.parent_line_id:
+                record.with_context(is_uninvoice=True).write(
+                    {"sequence": record.parent_line_id.sequence}
+                )
+        return records
 
     def write(self, vals: dict) -> bool:
+        if not self._context.get("is_uninvoice"):
+            if "quantity" in vals or "price_unit" in vals:
+                for line in self:
+                    if line.invoiced:
+                        raise UserError(
+                            _(
+                                "No puede modificar la cantidad ni el precio de una línea ya facturada. "
+                                "Modifíquelos desde la vista de la factura."
+                            )
+                        )
         self._check_signed_contract(vals)
         return super().write(vals)
 
@@ -181,18 +238,27 @@ class ContratoEspecificoUebLine(models.Model):
         return super().unlink()
 
     def action_uninvoice(self) -> None:
-        """Reset the invoiced flag and delete associated invoices."""
+        """Cancel the associated invoice. For invoice lines (partial history), only cancel the invoice.
+        For regular lines, delete the invoice and reset the invoiced flag."""
         for line in self:
             if not line.invoiced:
                 continue
             invoices = self.env["account.move"].search(
                 [("ueb_service_line_id", "=", line.id)]
             )
-            for inv in invoices:
-                if inv.state == "posted":
-                    inv.button_draft()
-                inv.unlink()
-            line.with_context(is_uninvoice=True).write({"invoiced": False})
+            if line.is_invoice_line:
+                for inv in invoices:
+                    if inv.state == "posted":
+                        inv.button_draft()
+                    if inv.state != "cancel":
+                        inv.button_cancel()
+                line.with_context(is_uninvoice=True).write({"invoiced": False})
+            else:
+                for inv in invoices:
+                    if inv.state == "posted":
+                        inv.button_draft()
+                    inv.unlink()
+                line.with_context(is_uninvoice=True).write({"invoiced": False})
 
     def action_view_invoice(self) -> dict:
         self.ensure_one()
@@ -218,13 +284,13 @@ class ContratoEspecificoUebLine(models.Model):
             self.with_context(is_uninvoice=True).write(values)
 
     def action_facturar(self) -> dict:
-        """Generate an invoice from this UEB section service line."""
+        """Abrir el wizard de facturación para especificar cantidad y precio a facturar."""
         self.ensure_one()
-        line = self
-        if line.invoiced:
+
+        if self.invoiced:
             raise UserError(_("Esta línea ya ha sido facturada."))
 
-        contract = line._get_contract()
+        contract = self._get_contract()
 
         if contract.state != "firmado":
             raise UserError(
@@ -241,45 +307,22 @@ class ContratoEspecificoUebLine(models.Model):
                 )
             )
 
-        partner = contract.partner_id
-        line._apply_default_invoice_dates()
-        invoice_vals = {
-            "move_type": "out_invoice",
-            "partner_id": partner.id,
-            "invoice_date": fields.Date.today(),
-            "contrato_especifico_id": contract.id,
-            "ueb_service_line_id": line.id,
-            "invoice_payment_term_id": contract.forma_pago_id.id,
-            "invoice_line_ids": [
-                (
-                    0,
-                    0,
-                    {
-                        "product_id": line.product_id.id,
-                        "name": line.name,
-                        "quantity": line.quantity,
-                        "product_uom_id": line.uom_id.id,
-                        "price_unit": line.price_unit,
-                    },
-                )
-            ],
-            "client_address": f"{partner.street or ''} {partner.city or ''}".strip(),
-            "client_nit": getattr(partner, "tax_id", None) or partner.vat or "",
-            "client_bank_account": getattr(partner, "bank_account_cup", None) or "",
-            "realizada_por_id": contract.realizada_por_id.id
-            if contract.realizada_por_id
-            else False,
-        }
-
-        move = self.env["account.move"].create(invoice_vals)
-        line.with_context(is_uninvoice=True).write({"invoiced": True})
-
+        wizard = self.env["contrato.especifico.facturar.wizard"].create(
+            {
+                "ueb_line_id": self.id,
+                "max_quantity": self.quantity,
+                "max_price": self.price_unit,
+                "quantity": self.quantity,
+                "price_unit": self.price_unit,
+            }
+        )
         return {
-            "name": _("Factura"),
-            "view_mode": "form",
-            "res_model": "account.move",
-            "res_id": move.id,
+            "name": _("Facturar Línea de Servicio"),
             "type": "ir.actions.act_window",
+            "res_model": "contrato.especifico.facturar.wizard",
+            "res_id": wizard.id,
+            "view_mode": "form",
+            "target": "new",
         }
 
 

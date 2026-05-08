@@ -68,6 +68,11 @@ class ContratoEspecificoSupplementoUebLine(models.Model):
         compute="_compute_price_subtotal",
         store=True,
     )
+    original_invoiced = fields.Boolean(
+        string="Fue Facturada",
+        default=False,
+        help="Indica que la línea original ya estaba facturada al crear este suplemento.",
+    )
 
     @api.depends("quantity", "price_unit")
     def _compute_price_subtotal(self) -> None:

@@ -73,6 +73,11 @@ class ContratoMarco(models.Model):
         required=True,
         copy=False,
     )
+    motivo_cancelacion = fields.Text(
+        string="Motivo de Cancelación",
+        copy=False,
+        readonly=True,
+    )
 
     authorized_contact_ids = fields.Many2many(
         "res.partner",
@@ -305,7 +310,19 @@ class ContratoMarco(models.Model):
             record.write({"state": "borrador"})
 
     def action_cancel(self):
-        """Cancel the contract."""
+        """Open cancellation wizard."""
+        self.ensure_one()
+        return {
+            "name": _("Confirmar Cancelación"),
+            "type": "ir.actions.act_window",
+            "res_model": "contrato.marco.cancel.wizard",
+            "view_mode": "form",
+            "target": "new",
+            "context": {"default_contrato_id": self.id},
+        }
+
+    def action_cancel_confirmed(self, motivo: str) -> None:
+        """Cancel the contract with the given reason and cascade to specific contracts."""
         for record in self:
             specific_contracts = self.env["contrato.especifico"].search(
                 [
@@ -314,8 +331,10 @@ class ContratoMarco(models.Model):
                 ]
             )
             if specific_contracts:
-                specific_contracts.with_context(from_master_cancel=True).action_cancel()
+                master_motivo = _("Cancelado por contrato marco: %s") % motivo
+                specific_contracts.action_cancel_confirmed(master_motivo)
             record.write({"state": "cancelado"})
+            record.write({"motivo_cancelacion": motivo})
 
     def action_entregar(self):
         """Transition contract to signed state (final active state)."""

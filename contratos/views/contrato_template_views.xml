@@ -79,7 +79,7 @@
 
     <menuitem id="menu_contrato_template"
               name="Plantillas de Contratos Marcos"
-              parent="menu_contrato_root"
+              parent="menu_plantillas_group"
               action="action_contrato_template"
-              sequence="20"/>
+              sequence="10"/>
 </odoo>

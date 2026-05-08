@@ -78,7 +78,13 @@ class ContratoEspecifico(models.Model):
 
     # Fields updated automatically by the ORM (computed stored or system fields)
     _SYSTEM_WRITE_ALLOWED = frozenset(
-        ["state", "service_line_state", "invoice_count", "end_date"]
+        [
+            "state",
+            "service_line_state",
+            "invoice_count",
+            "end_date",
+            "motivo_cancelacion",
+        ]
     )
 
     suplemento_especifico_ids = fields.One2many(
@@ -90,11 +96,39 @@ class ContratoEspecifico(models.Model):
         string="Nº Suplementos",
         compute="_compute_suplemento_especifico_count",
     )
+    amount_pending_invoice = fields.Float(
+        string="Por Facturar",
+        compute="_compute_amount_pending_invoice",
+        store=True,
+    )
 
     @api.depends("suplemento_especifico_ids")
     def _compute_suplemento_especifico_count(self) -> None:
         for record in self:
             record.suplemento_especifico_count = len(record.suplemento_especifico_ids)
+
+    @api.depends(
+        "line_ids.price_subtotal",
+        "line_ids.invoiced",
+        "line_ids.is_invoice_line",
+        "ueb_section_ids.line_ids.price_subtotal",
+        "ueb_section_ids.line_ids.invoiced",
+        "ueb_section_ids.line_ids.is_invoice_line",
+    )
+    def _compute_amount_pending_invoice(self) -> None:
+        for record in self:
+            general = sum(
+                ln.price_subtotal
+                for ln in record.line_ids
+                if not ln.invoiced and not ln.is_invoice_line
+            )
+            ueb = sum(
+                ln.price_subtotal
+                for section in record.ueb_section_ids
+                for ln in section.line_ids
+                if not ln.invoiced and not ln.is_invoice_line
+            )
+            record.amount_pending_invoice = general + ueb
 
     def write(self, vals):
         """Intercepts writes on signed contracts to create suplementos automatically.
@@ -174,11 +208,25 @@ class ContratoEspecifico(models.Model):
         # Build modificaciones (comma-separated list of changed field labels)
         sup_vals["modificaciones"] = self._build_modificaciones(vals)
 
+        # Prepend "SUPLEMENTO AL " to the first contract title in the content
+        raw_content = str(sup_vals.get("content") or "")
+        if raw_content:
+            modified = re.sub(
+                r"(CONTRATO\s+(?:ESPECÍFICO|MARCO))",
+                r"SUPLEMENTO AL \1",
+                raw_content,
+                count=1,
+            )
+            sup_vals["content"] = Markup(modified)
+
         sup = self.env["contrato.especifico.suplemento"].create(sup_vals)
 
         # Copy service lines (apply ORM commands if present)
         line_commands = vals.get("line_ids")
-        lines_data = self._resolve_line_snapshot(self.line_ids, line_commands)
+        invoiced_ids = frozenset(self.line_ids.filtered("invoiced").ids)
+        lines_data = self._resolve_line_snapshot(
+            self.line_ids, line_commands, invoiced_ids
+        )
         SupLine = self.env["contrato.especifico.suplemento.line"]
         for data in lines_data:
             SupLine.create({"suplemento_id": sup.id, **data})
@@ -198,8 +246,9 @@ class ContratoEspecifico(models.Model):
             ueb_section_commands = self._extract_ueb_section_commands(
                 ueb_commands, section.id
             )
+            ueb_invoiced_ids = frozenset(section.line_ids.filtered("invoiced").ids)
             ueb_lines_data = self._resolve_line_snapshot(
-                section.line_ids, ueb_section_commands
+                section.line_ids, ueb_section_commands, ueb_invoiced_ids
             )
             for data in ueb_lines_data:
                 data.pop("date_deadline_invoice", None)
@@ -247,8 +296,13 @@ class ContratoEspecifico(models.Model):
         return ", ".join(changed) if changed else ""
 
     @staticmethod
-    def _resolve_line_snapshot(current_lines, commands) -> list[dict]:
-        """Applies ORM commands against current lines and returns a list of field dicts."""
+    def _resolve_line_snapshot(
+        current_lines, commands, invoiced_ids: frozenset | None = None
+    ) -> list[dict]:
+        """Applies ORM commands against current lines and returns a list of field dicts.
+
+        If invoiced_ids is provided, quantity and price_unit are preserved for those line IDs.
+        """
         COPYABLE = [
             "product_id",
             "name",
@@ -259,6 +313,7 @@ class ContratoEspecifico(models.Model):
             "start_date",
             "end_date",
         ]
+        PROTECTED_INVOICED = {"quantity", "price_unit"}
 
         def _line_to_dict(line) -> dict:
             return {
@@ -270,6 +325,7 @@ class ContratoEspecifico(models.Model):
                 "date_deadline_invoice": getattr(line, "date_deadline_invoice", False),
                 "start_date": getattr(line, "start_date", False),
                 "end_date": getattr(line, "end_date", False),
+                "original_invoiced": getattr(line, "invoiced", False),
             }
 
         lines_by_id: dict[int, dict] = {
@@ -288,9 +344,11 @@ class ContratoEspecifico(models.Model):
                 extra.append(data)
             elif code == 1:  # UPDATE
                 if cmd[1] in lines_by_id:
-                    lines_by_id[cmd[1]].update(
-                        {k: v for k, v in cmd[2].items() if k in COPYABLE}
-                    )
+                    update_data = {k: v for k, v in cmd[2].items() if k in COPYABLE}
+                    if invoiced_ids and cmd[1] in invoiced_ids:
+                        for f in PROTECTED_INVOICED:
+                            update_data.pop(f, None)
+                    lines_by_id[cmd[1]].update(update_data)
             elif code in (2, 3):  # DELETE / UNLINK
                 result_ids = [i for i in result_ids if i != cmd[1]]
             elif code == 5:  # CLEAR
@@ -387,6 +445,11 @@ class ContratoEspecifico(models.Model):
         default="borrador",
         required=True,
         copy=False,
+    )
+    motivo_cancelacion = fields.Text(
+        string="Motivo de Cancelación",
+        copy=False,
+        readonly=True,
     )
 
     content = fields.Html(string="Contract Content")
@@ -694,7 +757,19 @@ class ContratoEspecifico(models.Model):
             record.write({"state": "borrador"})
 
     def action_cancel(self):
-        """Cancel the contract and all associated invoices."""
+        """Open cancellation wizard."""
+        self.ensure_one()
+        return {
+            "name": _("Confirmar Cancelación"),
+            "type": "ir.actions.act_window",
+            "res_model": "contrato.especifico.cancel.wizard",
+            "view_mode": "form",
+            "target": "new",
+            "context": {"default_contrato_id": self.id},
+        }
+
+    def action_cancel_confirmed(self, motivo: str) -> None:
+        """Cancel the contract with the given reason and cancel all associated invoices."""
         for record in self:
             # General service lines
             lines = record.line_ids
@@ -722,6 +797,7 @@ class ContratoEspecifico(models.Model):
                 ueb_lines.with_context(is_uninvoice=True).write({"invoiced": False})
 
             record.write({"state": "cancelado"})
+            record.write({"motivo_cancelacion": motivo})
 
     def action_add_ueb_section(self) -> dict:
         """Open wizard to add a new UEB service line table to the contract."""
@@ -794,9 +870,11 @@ class ContratoEspecifico(models.Model):
                 )
             )
 
-        uninvoiced_lines = self.line_ids.filtered(lambda ln: not ln.invoiced)
+        uninvoiced_lines = self.line_ids.filtered(
+            lambda ln: not ln.invoiced and not ln.is_invoice_line
+        )
         uninvoiced_ueb_lines = self.ueb_section_ids.mapped("line_ids").filtered(
-            lambda ln: not ln.invoiced
+            lambda ln: not ln.invoiced and not ln.is_invoice_line
         )
 
         if not uninvoiced_lines and not uninvoiced_ueb_lines:

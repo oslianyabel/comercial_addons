@@ -60,8 +60,8 @@
     </record>
 
     <menuitem id="menu_contrato_especifico_template"
-              name="Specific Templates"
-              parent="contratos.menu_contrato_root"
+              name="Plantillas de Contratos Específicos"
+              parent="contratos.menu_plantillas_group"
               action="action_contrato_especifico_template"
-              sequence="30"/>
+              sequence="20"/>
 </odoo>

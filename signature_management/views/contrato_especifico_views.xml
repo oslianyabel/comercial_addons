@@ -16,7 +16,7 @@
                     <attribute name="invisible">state != 'cancelado'</attribute>
                 </xpath>
                 <xpath expr="//header" position="inside">
-                    <button name="%(signature_management.action_report_contrato_especifico)d" 
+                    <button name="%(contratos_especificos.action_report_contrato_especifico)d" 
                             string="Print PDF" 
                             type="action" 
                             class="oe_highlight" 

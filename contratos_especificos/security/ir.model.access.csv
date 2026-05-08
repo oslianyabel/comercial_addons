@@ -10,3 +10,5 @@ access_contrato_especifico_suplemento,contrato.especifico.suplemento.all,model_c
 access_contrato_especifico_suplemento_line,contrato.especifico.suplemento.line.all,model_contrato_especifico_suplemento_line,,1,1,1,1
 access_contrato_especifico_suplemento_ueb_section,contrato.especifico.suplemento.ueb.section.all,model_contrato_especifico_suplemento_ueb_section,,1,1,1,1
 access_contrato_especifico_suplemento_ueb_line,contrato.especifico.suplemento.ueb.line.all,model_contrato_especifico_suplemento_ueb_line,,1,1,1,1
+access_contrato_especifico_cancel_wizard,contrato.especifico.cancel.wizard.all,model_contrato_especifico_cancel_wizard,,1,1,1,1
+access_contrato_especifico_facturar_wizard,contrato.especifico.facturar.wizard.all,model_contrato_especifico_facturar_wizard,,1,1,1,1

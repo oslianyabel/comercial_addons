@@ -1,15 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Report Action for Specific Contract -->
-    <record id="action_report_contrato_especifico" model="ir.actions.report">
-        <field name="name">Imprimir Contrato Específico</field>
-        <field name="model">contrato.especifico</field>
-        <field name="report_type">qweb-pdf</field>
+    <!-- Update the existing report action to use the signature template -->
+    <record id="contratos_especificos.action_report_contrato_especifico" model="ir.actions.report">
         <field name="report_name">signature_management.report_contrato_especifico_template</field>
         <field name="report_file">signature_management.report_contrato_especifico_template</field>
-        <field name="print_report_name">'Contrato Específico - %s' % (object.name)</field>
-        <field name="binding_model_id" ref="contratos_especificos.model_contrato_especifico"/>
-        <field name="binding_type">report</field>
     </record>
 
     <!-- Reusable Signature Snippet -->

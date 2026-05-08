@@ -48,48 +48,43 @@
             <t t-foreach="docs" t-as="o">
                 <t t-call="web.external_layout">
                     <div class="page">
-                        <!-- Encabezado de metadatos -->
-                        <table style="width:100%; margin-bottom: 12px; font-size: 11px; border-collapse: collapse;">
-                            <tr>
-                                <td style="width:50%; padding: 4px;">
-                                    <strong>Suplemento:</strong>
-                                    <span t-out="o.name"/>
-                                </td>
-                                <td style="width:50%; padding: 4px; text-align: right;">
-                                    <strong>Versión:</strong>
-                                    <span t-out="o.sequence_number"/>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 4px;">
-                                    <strong>Contrato Original:</strong>
-                                    <span t-out="o.contrato_id.name"/>
-                                </td>
-                                <td style="padding: 4px; text-align: right;">
-                                    <strong>Fecha de Modificación:</strong>
-                                    <span t-out="o.modification_date and o.modification_date.strftime('%d/%m/%Y %H:%M') or ''"/>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="2" style="padding: 4px;">
-                                    <strong>Modificado por:</strong>
-                                    <span t-out="o.modified_by_id.name or ''"/>
-                                </td>
-                            </tr>
-                            <t t-if="o.modificaciones">
-                                <tr>
-                                    <td colspan="2" style="padding: 4px; border-top: 1px solid #ccc;">
-                                        <strong>Modificaciones:</strong><br/>
-                                        <span t-out="o.modificaciones"/>
-                                    </td>
-                                </tr>
-                            </t>
-                        </table>
-                        <hr style="border: 1px solid #000; margin-bottom: 16px;"/>
                         <!-- Contenido del contrato -->
                         <div style="text-align: justify; font-size: 12px;">
                             <t t-out="o.content"/>
                         </div>
+
+                        <!-- Líneas de Servicio -->
+                        <t t-if="o.line_ids">
+                            <div style="margin-top: 24px;">
+                                <h4 style="font-size: 12px; margin-bottom: 6px;">Líneas de Servicio</h4>
+                                <table style="width:100%; border-collapse: collapse; font-size: 11px;">
+                                    <thead>
+                                        <tr style="background-color: #f0f0f0;">
+                                            <th style="border: 1px solid #ccc; padding: 4px; text-align: left;">Descripción</th>
+                                            <th style="border: 1px solid #ccc; padding: 4px; text-align: center;">Cantidad</th>
+                                            <th style="border: 1px solid #ccc; padding: 4px; text-align: center;">U.M.</th>
+                                            <th style="border: 1px solid #ccc; padding: 4px; text-align: right;">Precio Unit. (CUP)</th>
+                                            <th style="border: 1px solid #ccc; padding: 4px; text-align: right;">Subtotal (CUP)</th>
+                                            <th style="border: 1px solid #ccc; padding: 4px; text-align: center;">Fecha Inicio</th>
+                                            <th style="border: 1px solid #ccc; padding: 4px; text-align: center;">Fecha Final</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="o.line_ids" t-as="line">
+                                            <tr>
+                                                <td style="border: 1px solid #ccc; padding: 4px;"><t t-out="line.name"/></td>
+                                                <td style="border: 1px solid #ccc; padding: 4px; text-align: center;"><t t-out="line.quantity"/></td>
+                                                <td style="border: 1px solid #ccc; padding: 4px; text-align: center;"><t t-out="line.uom_id.name or ''"/></td>
+                                                <td style="border: 1px solid #ccc; padding: 4px; text-align: right;"><t t-out="'%.2f' % line.price_unit"/></td>
+                                                <td style="border: 1px solid #ccc; padding: 4px; text-align: right;"><t t-out="'%.2f' % line.price_subtotal"/></td>
+                                                <td style="border: 1px solid #ccc; padding: 4px; text-align: center;"><t t-out="line.start_date and line.start_date.strftime('%d/%m/%Y') or ''"/></td>
+                                                <td style="border: 1px solid #ccc; padding: 4px; text-align: center;"><t t-out="line.end_date and line.end_date.strftime('%d/%m/%Y') or ''"/></td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </t>
                     </div>
                 </t>
             </t>
