@@ -112,6 +112,12 @@ class ContratoMarco(models.Model):
         string="Nº Suplementos",
         compute="_compute_suplemento_count",
     )
+    pending_suplemento_id = fields.Many2one(
+        "contrato.suplemento",
+        string="Suplemento Pendiente de Redirección",
+        copy=False,
+        help="Set automatically when a suplemento is auto-created for a firmado contract.",
+    )
     creation_date_auto = fields.Datetime(
         string="Fecha de Creación", default=fields.Datetime.now, readonly=True
     )
@@ -384,6 +390,11 @@ class ContratoMarco(models.Model):
             )
 
     content = fields.Html(string="Contenido del Contrato")
+    content_generated = fields.Boolean(
+        string="Content Generated",
+        default=False,
+        copy=False,
+    )
 
     def _has_generated_content(self):
         self.ensure_one()

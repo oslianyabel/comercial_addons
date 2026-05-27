@@ -16,17 +16,60 @@
                         <field name="contrato_especifico_id" string="" readonly="1" no_open="0"/>
                     </div>
                 </button>
+                <button class="oe_stat_button"
+                        name="action_open_suplemento_especifico"
+                        type="object"
+                        icon="fa-file-text"
+                        invisible="not suplemento_especifico_id">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_text">Suplemento</span>
+                        <field name="suplemento_especifico_id" string="" readonly="1" no_open="0"/>
+                    </div>
+                </button>
             </xpath>
             <xpath expr="//field[@name='payment_reference']" position="after">
                 <field name="contrato_especifico_id" readonly="1" invisible="not contrato_especifico_id"/>
                 <field name="payment_form_id" readonly="1" invisible="not payment_form_id"/>
+                <field name="operacion" string="Operación"/>
+                <field name="num_ins_rcc" string="Número Ins. RCC"/>
+                <field name="cunyo_id" string="Cuño" options="{'no_create': True}"/>
             </xpath>
             <xpath expr="//group[@name='sale_info_group']" position="inside">
                 <field name="client_address" readonly="1" invisible="not client_address"/>
                 <field name="client_nit" readonly="1" invisible="not client_nit"/>
                 <field name="client_bank_account" readonly="1" invisible="not client_bank_account"/>
             </xpath>
+            <xpath expr="//group[hasclass('oe_invoice_lines_tab')]//field[@name='narration']" position="before">
+                <field name="total_cup_literal" readonly="1" nolabel="1" colspan="2"
+                       invisible="not total_cup_literal"
+                       style="font-style:italic; font-weight:bold; padding: 4px 0;"/>
+            </xpath>
             <xpath expr="//page[@name='other_info']" position="after">
+                <page string="Empresa Emisora" name="empresa_emisora">
+                    <group>
+                        <group>
+                            <field name="empresa_id" options="{'no_create': True}"/>
+                            <field name="organismo_id" readonly="1"/>
+                            <field name="unidad_empresa" readonly="1" string="Unidad"/>
+                            <field name="direccion_empresa" readonly="1" string="Dirección"/>
+                            <field name="nit_empresa" readonly="1" string="NIT"/>
+                            <field name="cuenta_pagar" readonly="1" string="Cuenta a Pagar"/>
+                            <field name="sucursal_pagar" readonly="1" string="Sucursal"/>
+                            <field name="banco_pagar" readonly="1" string="Banco"/>
+                        </group>
+                    </group>
+                </page>
+                <page string="Datos del Cliente" name="client_data">
+                    <group>
+                        <group>
+                            <field name="cliente_id" readonly="1" string="Cliente (Representante)"/>
+                            <field name="direccion_cliente" readonly="1" string="Dirección del Cliente"/>
+                            <field name="codigo_cliente" readonly="1" string="Código del Cliente"/>
+                            <field name="nit_cliente" readonly="1" string="NIT del Cliente"/>
+                            <field name="cuenta_bancaria_cliente" readonly="1" string="Cuenta Bancaria del Cliente"/>
+                        </group>
+                    </group>
+                </page>
                 <page string="Firmas de Auditoría" name="audit_signatures">
                     <group>
                         <group string="Operaciones">
@@ -40,6 +83,10 @@
                             <div class="o_row">
                                 <field name="transportado_por_id" options="{'no_create': True}" readonly="1"/>
                                 <field name="transportado_fecha" readonly="1"/>
+                            </div>
+                            <div class="o_row" invisible="not transportado_por_id">
+                                <field name="transportado_ch" string="CH"/>
+                                <field name="transportado_lic" string="LIC"/>
                             </div>
 
                             <label for="recibido_por_id" string="Recibido por"/>

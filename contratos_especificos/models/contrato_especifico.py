@@ -41,7 +41,7 @@ class ContratoEspecifico(models.Model):
         store=True,
     )
     contract_type = fields.Selection(
-        related="marco_id.contract_type",
+        [("mipyme", "MiPyme"), ("tcp", "TCP"), ("empresa", "Empresa")],
         string="Contract Type",
         store=True,
     )
@@ -55,6 +55,13 @@ class ContratoEspecifico(models.Model):
         string="Our Representative",
         related="marco_id.our_representative_id",
         readonly=True,
+    )
+    representative_id = fields.Many2one(
+        "res.partner",
+        string="Representante del Cliente",
+        related="marco_id.representative_id",
+        readonly=True,
+        store=False,
     )
     our_rep_decision_number = fields.Char(
         string="Our Rep. Decision Number",
@@ -84,6 +91,23 @@ class ContratoEspecifico(models.Model):
             "invoice_count",
             "end_date",
             "motivo_cancelacion",
+        ]
+    )
+
+    # Fields whose changes should trigger content auto-regeneration
+    _CONTENT_FIELDS = frozenset(
+        [
+            "template_id",
+            "marco_id",
+            "suplemento_id",
+            "project_leader_id",
+            "application_name",
+            "start_date",
+            "validity_years",
+            "date",
+            "name",
+            "line_ids",
+            "ueb_section_ids",
         ]
     )
 
@@ -133,10 +157,15 @@ class ContratoEspecifico(models.Model):
     def write(self, vals):
         """Intercepts writes on signed contracts to create suplementos automatically.
 
+        - marco_id is immutable once the record is saved.
         - Signed contracts: creates a suplemento with the new values; original stays unchanged.
         - Non-signed contracts: normal write.
         - ORM-managed system fields (state, end_date, …) always go through.
         """
+        if "marco_id" in vals and not self.env.su:
+            raise UserError(
+                _("El Contrato Marco no puede modificarse una vez guardado el contrato.")
+            )
         if not self.env.su:
             blocked_keys = vals.keys() - self._SYSTEM_WRITE_ALLOWED
             if blocked_keys:
@@ -147,8 +176,25 @@ class ContratoEspecifico(models.Model):
                     non_firmado = self - firmado_records
                     if non_firmado:
                         super(ContratoEspecifico, non_firmado).write(vals)
+                        non_firmado._auto_regenerate_content(vals)
                     return True
-        return super().write(vals)
+        result = super().write(vals)
+        self._auto_regenerate_content(vals)
+        return result
+
+    def _auto_regenerate_content(self, vals: dict) -> None:
+        """Regenerates contract content automatically when content-related fields change."""
+        if self.env.context.get("_generating_content"):
+            return
+        if not self._CONTENT_FIELDS & vals.keys():
+            return
+        for record in self.filtered(
+            lambda r: r.content_generated and r.state not in ("firmado", "cancelado")
+        ):
+            try:
+                record.with_context(_generating_content=True).action_generate_content()
+            except UserError:
+                pass
 
     def _create_suplemento_from_vals(self, vals: dict) -> None:
         """Creates a new suplemento from the current firmado contract applying the provided vals.
@@ -453,6 +499,11 @@ class ContratoEspecifico(models.Model):
     )
 
     content = fields.Html(string="Contract Content")
+    content_generated = fields.Boolean(
+        string="Content Generated",
+        default=False,
+        copy=False,
+    )
     line_ids = fields.One2many(
         "contrato.especifico.line",
         "contrato_id",
@@ -588,10 +639,19 @@ class ContratoEspecifico(models.Model):
             content = unescape(str(record.template_id.content or ""))
             p = record.partner_id
             marco = record.marco_id
-            our_r = record.our_representative_id
+            # Use suplemento's representative/dates if linked, else fall back to marco
+            if record.suplemento_id and record.suplemento_id.our_representative_id:
+                our_r = record.suplemento_id.our_representative_id
+                our_rep_decision_number = (
+                    record.suplemento_id.our_rep_decision_number
+                    or our_r.current_resolution_number
+                )
+            else:
+                our_r = record.our_representative_id
+                our_rep_decision_number = record.our_rep_decision_number
 
             missing = []
-            if not record.our_representative_id:
+            if not our_r:
                 missing.append(_("Our Representative"))
             if not marco:
                 missing.append(_("Master Contract"))
@@ -633,7 +693,7 @@ class ContratoEspecifico(models.Model):
                 ),
                 "our_representative": highlight(our_r.name if our_r else ""),
                 "our_rep_function": highlight(our_r.function if our_r else ""),
-                "our_rep_decision_number": highlight(record.our_rep_decision_number),
+                "our_rep_decision_number": highlight(our_rep_decision_number),
                 "partner_name": highlight(p.name),
                 "partner_short_name": highlight(p.short_name),
                 "project_leader": highlight(
@@ -668,6 +728,9 @@ class ContratoEspecifico(models.Model):
 
             content = content.strip()
             record.content = Markup(content)
+            record.with_context(_generating_content=True).write(
+                {"content_generated": True}
+            )
 
     def _render_lines_block(self, lines) -> str:
         """Render an HTML table for a list of service line records."""
@@ -749,6 +812,10 @@ class ContratoEspecifico(models.Model):
                     )
                     or "/"
                 )
+            # Set contract_type from marco if not already specified
+            if not vals.get("contract_type") and vals.get("marco_id"):
+                marco = self.env["contrato.marco"].browse(vals["marco_id"])
+                vals["contract_type"] = marco.contract_type
         return super().create(vals_list)
 
     def action_draft(self):

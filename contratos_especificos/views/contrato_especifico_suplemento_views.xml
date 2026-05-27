@@ -10,15 +10,45 @@
         <field name="arch" type="xml">
             <form>
                 <header>
-                    <button name="action_generate_content"
-                            string="Generar Contenido"
+                    <button name="action_sign"
+                            string="Entregar"
                             type="object"
-                            class="oe_highlight"/>
+                            class="oe_highlight"
+                            invisible="state not in ('borrador',)"
+                            confirm="¿Está seguro de que desea entregar este suplemento?"/>
+                    <button name="action_draft_from_entregado"
+                            string="Retroceder a Borrador"
+                            type="object"
+                            invisible="state != 'entregado'"/>
+                    <button name="action_entregar"
+                            string="Firmar"
+                            type="object"
+                            class="oe_highlight"
+                            invisible="state != 'entregado'"
+                            confirm="¿Está seguro de que desea firmar este suplemento? Esta acción no se puede deshacer."/>
+                    <button name="action_cancel"
+                            string="Cancelar"
+                            type="object"
+                            invisible="state not in ('borrador', 'entregado', 'firmado')"/>
+                    <button name="action_draft"
+                            string="Pasar a Borrador"
+                            type="object"
+                            invisible="state != 'cancelado'"/>
                     <button name="action_open_contrato_original"
                             string="Ver Contrato Original"
                             type="object"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="borrador,entregado,firmado,cancelado"/>
                 </header>
                 <sheet>
+                    <field name="content_generated" invisible="1"/>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" name="action_view_invoices"
+                                type="object" icon="fa-pencil-square-o"
+                                invisible="invoice_count == 0">
+                            <field name="invoice_count" string="Facturas" widget="statinfo"/>
+                        </button>
+                    </div>
                     <!-- Título -->
                     <div class="oe_title">
                         <label for="name" string="Suplemento"/>
@@ -44,6 +74,12 @@
                                    colspan="2"
                                    widget="text"/>
                         </group>
+                    </group>
+
+                    <group invisible="state != 'cancelado'">
+                        <field name="motivo_cancelacion"
+                               string="Motivo de Cancelación"
+                               readonly="1"/>
                     </group>
 
                     <group>
@@ -113,19 +149,38 @@
                     <notebook>
                         <page string="Líneas de Servicios" name="service_lines">
                             <field name="line_ids">
-                                <tree editable="bottom">
+                                <tree editable="bottom" decoration-info="is_invoice_line">
+                                    <field name="sequence" widget="handle"/>
                                     <field name="original_invoiced" invisible="1"/>
+                                    <field name="is_invoice_line" invisible="1"/>
+                                    <field name="invoiced" invisible="1"/>
                                     <field name="product_id"
                                            string="Producto/Servicio"/>
                                     <field name="name" string="Descripción"/>
                                     <field name="start_date" optional="show"/>
                                     <field name="end_date" optional="show"/>
-                                    <field name="quantity" string="Cant." readonly="original_invoiced"/>
+                                    <field name="quantity" string="Cant."
+                                           readonly="is_invoice_line or original_invoiced"/>
                                     <field name="uom_id" string="UdM"/>
-                                    <field name="price_unit" string="Precio Unitario" readonly="original_invoiced"/>
+                                    <field name="price_unit" string="Precio Unitario"
+                                           readonly="is_invoice_line or original_invoiced"/>
                                     <field name="price_subtotal" string="Subtotal"/>
                                     <field name="date_deadline_invoice"
                                            string="Límite Facturación"/>
+                                    <field name="invoice_state" string="Estado Factura"
+                                           widget="badge" optional="show"
+                                           decoration-success="invoice_state == 'posted'"
+                                           decoration-warning="invoice_state == 'draft'"
+                                           decoration-danger="invoice_state == 'cancel'"/>
+                                    <button name="action_facturar" string="Facturar"
+                                            type="object" icon="fa-file-invoice"
+                                            invisible="invoiced or is_invoice_line"/>
+                                    <button name="action_view_invoice" string="Ver Factura"
+                                            type="object" icon="fa-external-link"
+                                            invisible="not invoiced"/>
+                                    <button name="action_uninvoice" string="Desfacturar"
+                                            type="object" icon="fa-times"
+                                            invisible="not invoiced or invoice_state == 'cancel'"/>
                                 </tree>
                             </field>
                         </page>
@@ -146,18 +201,37 @@
                                             </h2>
                                         </div>
                                         <field name="line_ids">
-                                            <tree editable="bottom">
+                                            <tree editable="bottom" decoration-info="is_invoice_line">
+                                                <field name="sequence" widget="handle"/>
                                                 <field name="original_invoiced" invisible="1"/>
+                                                <field name="is_invoice_line" invisible="1"/>
+                                                <field name="invoiced" invisible="1"/>
                                                 <field name="product_id"
                                                        string="Producto/Servicio"/>
                                                 <field name="name"
                                                        string="Descripción"/>
-                                                <field name="quantity" string="Cant." readonly="original_invoiced"/>
+                                                <field name="quantity" string="Cant."
+                                                       readonly="is_invoice_line or original_invoiced"/>
                                                 <field name="uom_id" string="UdM"/>
                                                 <field name="price_unit"
-                                                       string="Precio Unitario" readonly="original_invoiced"/>
+                                                       string="Precio Unitario"
+                                                       readonly="is_invoice_line or original_invoiced"/>
                                                 <field name="price_subtotal"
                                                        string="Subtotal"/>
+                                                <field name="invoice_state" string="Estado Factura"
+                                                       widget="badge" optional="show"
+                                                       decoration-success="invoice_state == 'posted'"
+                                                       decoration-warning="invoice_state == 'draft'"
+                                                       decoration-danger="invoice_state == 'cancel'"/>
+                                                <button name="action_facturar" string="Facturar"
+                                                        type="object" icon="fa-file-invoice"
+                                                        invisible="invoiced or is_invoice_line"/>
+                                                <button name="action_view_invoice" string="Ver Factura"
+                                                        type="object" icon="fa-external-link"
+                                                        invisible="not invoiced"/>
+                                                <button name="action_uninvoice" string="Desfacturar"
+                                                        type="object" icon="fa-times"
+                                                        invisible="not invoiced or invoice_state == 'cancel'"/>
                                             </tree>
                                         </field>
                                     </sheet>
@@ -189,6 +263,11 @@
                 <field name="name" string="Suplemento"/>
                 <field name="contrato_id" string="Contrato Específico"/>
                 <field name="partner_id" string="Cliente"/>
+                <field name="state" string="Estado" widget="badge"
+                       decoration-success="state == 'firmado'"
+                       decoration-warning="state == 'entregado'"
+                       decoration-danger="state == 'cancelado'"
+                       decoration-info="state == 'borrador'"/>
                 <field name="modified_by_id" string="Creado por"/>
                 <field name="modification_date" string="Fecha"/>
                 <field name="modificaciones" string="Modificaciones" optional="show"/>
@@ -207,11 +286,21 @@
                 <field name="name"/>
                 <field name="contrato_id"/>
                 <field name="partner_id"/>
+                <filter string="Borrador" name="filter_borrador"
+                        domain="[('state', '=', 'borrador')]"/>
+                <filter string="Entregado" name="filter_entregado"
+                        domain="[('state', '=', 'entregado')]"/>
+                <filter string="Firmado" name="filter_firmado"
+                        domain="[('state', '=', 'firmado')]"/>
+                <filter string="Cancelado" name="filter_cancelado"
+                        domain="[('state', '=', 'cancelado')]"/>
                 <group expand="0" string="Agrupar por">
                     <filter string="Contrato" name="group_contrato"
                             context="{'group_by': 'contrato_id'}"/>
                     <filter string="Cliente" name="group_partner"
                             context="{'group_by': 'partner_id'}"/>
+                    <filter string="Estado" name="group_state"
+                            context="{'group_by': 'state'}"/>
                 </group>
             </search>
         </field>

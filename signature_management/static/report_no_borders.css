@@ -1,0 +1,14 @@
+/* Force-remove Bootstrap 5 table borders in wkhtmltopdf PDF reports. */
+.factura-personalizada table,
+.factura-personalizada thead,
+.factura-personalizada tbody,
+.factura-personalizada tfoot,
+.factura-personalizada tr,
+.factura-personalizada td,
+.factura-personalizada th {
+    border: 0 none !important;
+    border-width: 0 !important;
+    border-style: none !important;
+    outline: 0 !important;
+    box-shadow: none !important;
+}

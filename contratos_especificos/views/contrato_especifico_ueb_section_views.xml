@@ -49,7 +49,7 @@
                             <field name="invoiced" optional="hide" string="Facturado"/>
                             <button name="action_facturar" type="object" string="Facturar"
                                     class="btn-primary" invisible="invoiced"/>
-                                <button name="action_uninvoice" type="object" string="Cancel"
+                                <button name="action_uninvoice" type="object" string="Desfacturar"
                                     class="btn-warning" invisible="not invoiced" confirm="Esta accion cancelará la factura asociada. Estas seguro?"/>
                         </tree>
                     </field>

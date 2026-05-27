@@ -1,0 +1,536 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Override the standard invoice print action to use our custom template -->
+    <record id="account.account_invoices" model="ir.actions.report">
+        <field name="report_name">signature_management.report_factura_contrato_template</field>
+        <field name="report_file">signature_management.report_factura_contrato_template</field>
+    </record>
+
+    <!-- ═══════════════════════════════════════════════════════
+         TEMPLATE: Factura de Contrato
+    ═══════════════════════════════════════════════════════ -->
+    <template id="report_factura_contrato_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-set="company" t-value="o.company_id"/>
+                <div class="page" style="font-family: Arial, sans-serif; font-size: 11px; padding: 10mm 15mm;">
+
+                    <!-- ── TOP HEADER ── -->
+                    <table style="width:100%; border-collapse:collapse; margin-bottom:8px;">
+                        <tr>
+                            <!-- Left block: logo + company info -->
+                            <td style="width:55%; vertical-align:top; padding-right:10px;">
+                                <table style="width:100%; border-collapse:collapse;">
+                                    <tr>
+                                        <td style="width:60px; vertical-align:top; padding-right:8px;">
+                                            <t t-if="company.logo">
+                                                <img t-att-src="image_data_uri(company.logo)"
+                                                     style="width:55px; height:55px; object-fit:contain;"/>
+                                            </t>
+                                        </td>
+                                        <td style="vertical-align:top; font-size:10px;">
+                                            <t t-if="o.organismo_id">
+                                                <div><strong>Organismo:</strong> <t t-out="o.organismo_id.name"/></div>
+                                            </t>
+                                            <t t-if="o.empresa_id">
+                                                <div><strong>Empresa:</strong> <t t-out="o.empresa_id.name or ''"/></div>
+                                            </t>
+                                            <t t-if="o.unidad_empresa">
+                                                <div><strong>Unidad:</strong> <t t-out="o.unidad_empresa"/></div>
+                                            </t>
+                                            <t t-if="o.direccion_empresa">
+                                                <div><strong>Dirección:</strong> <t t-out="o.direccion_empresa"/></div>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <!-- Right block: date, page, FACTURA, number, NIT/Contract -->
+                            <td style="width:45%; vertical-align:top; text-align:right; padding-left:10px;">
+                                <div style="font-size:10px;">
+                                    <strong>Fecha de emisión:</strong>
+                                    <t t-if="o.invoice_date">
+                                        <t t-out="o.invoice_date.strftime('%d/%m/%Y')"/>
+                                    </t>
+                                </div>
+                                <div style="font-size:10px; margin-bottom:4px;">
+                                    <strong>Página</strong> <span class="page"/> de <span class="topage"/>
+                                </div>
+                                <div style="font-size:22px; font-weight:bold; letter-spacing:2px; margin:4px 0;">
+                                    FACTURA
+                                </div>
+                                <div style="font-size:10px;">
+                                    <strong>Número:</strong> <t t-out="o.name or ''"/>
+                                </div>
+                                <div style="font-size:10px;">
+                                    <strong>NIT:</strong> <t t-out="o.nit_empresa or ''"/>
+                                    <t t-if="o.contrato_especifico_id">
+                                        &#160;&#160;
+                                        <strong>Contrato:</strong> <t t-out="o.contrato_especifico_id.name"/>
+                                    </t>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <hr style="border:1px solid #333; margin:4px 0;"/>
+
+                    <!-- ── CENTRAL BLOCK ── -->
+                    <div style="text-align:center; font-size:16px; font-weight:bold; margin:6px 0;">
+                        Ventas en CUP
+                    </div>
+
+                    <table style="width:100%; font-size:10px; margin-bottom:4px;">
+                        <tr>
+                            <td style="width:50%;">
+                                <strong>Código:</strong>
+                                <t t-out="o.codigo_cliente or ''"/>
+                            </td>
+                            <td style="width:50%;">
+                                <strong>Cliente:</strong>
+                                <t t-out="o.cliente_id.name if o.cliente_id else (o.partner_id.name or '')"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <strong>Dirección:</strong>
+                                <t t-out="o.direccion_cliente or ''"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>NIT:</strong> <t t-out="o.nit_cliente or o.client_nit or ''"/></td>
+                            <td>
+                                <strong>Número Ins. RCC:</strong> <t t-out="o.num_ins_rcc or ''"/>
+                                &#160;&#160;
+                                <strong>Cuenta Bancaria:</strong>
+                                <t t-out="o.cuenta_bancaria_cliente or o.client_bank_account or ''"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>Forma de pago:</strong>
+                                <t t-out="o.invoice_payment_term_id.name if o.invoice_payment_term_id else ''"/>
+                            </td>
+                            <td>
+                                <strong>Operación:</strong>
+                                <t t-if="o.operacion">
+                                    <t t-out="dict(o._fields['operacion'].selection).get(o.operacion, o.operacion) if isinstance(o._fields['operacion'].selection, list) else o.operacion"/>
+                                </t>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <!-- Service lines table -->
+                    <table style="width:100%; border-collapse:collapse; font-size:10px; margin-top:6px;">
+                        <thead>
+                            <tr style="background-color:#f0f0f0;">
+                                <th style="border:1px solid #333; padding:3px 5px; text-align:center;">Código</th>
+                                <th style="border:1px solid #333; padding:3px 5px; text-align:left;">Descripción</th>
+                                <th style="border:1px solid #333; padding:3px 5px; text-align:center;">UM</th>
+                                <th style="border:1px solid #333; padding:3px 5px; text-align:center;">Cantidad</th>
+                                <th style="border:1px solid #333; padding:3px 5px; text-align:right;">Precio</th>
+                                <th style="border:1px solid #333; padding:3px 5px; text-align:right;">Importe</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="o.invoice_line_ids.filtered(lambda l: l.display_type == 'product')" t-as="line">
+                                <tr>
+                                    <td style="border:1px solid #ccc; padding:3px 5px; text-align:center;">
+                                        <t t-out="line.product_id.default_code or ''"/>
+                                    </td>
+                                    <td style="border:1px solid #ccc; padding:3px 5px;">
+                                        <t t-out="line.name or ''"/>
+                                    </td>
+                                    <td style="border:1px solid #ccc; padding:3px 5px; text-align:center;">
+                                        <t t-out="line.product_uom_id.name if line.product_uom_id else ''"/>
+                                    </td>
+                                    <td style="border:1px solid #ccc; padding:3px 5px; text-align:center;">
+                                        <t t-out="'%.2f' % line.quantity"/>
+                                    </td>
+                                    <td style="border:1px solid #ccc; padding:3px 5px; text-align:right;">
+                                        <t t-out="'%.2f' % line.price_unit"/>
+                                    </td>
+                                    <td style="border:1px solid #ccc; padding:3px 5px; text-align:right;">
+                                        <t t-out="'%.2f' % line.price_subtotal"/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="5" style="border:1px solid #333; padding:3px 5px; text-align:right; font-weight:bold;">
+                                    Subtotal servicios:
+                                </td>
+                                <td style="border:1px solid #333; padding:3px 5px; text-align:right; font-weight:bold;">
+                                    <t t-out="'%.2f' % sum(o.invoice_line_ids.filtered(lambda l: l.display_type == 'product').mapped('price_subtotal'))"/>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                    <div style="margin-top:6px; font-size:11px;">
+                        <strong>Total en CUP:</strong>
+                        <t t-out="'%.2f' % o.amount_total"/>
+                    </div>
+
+                    <div style="margin-top:4px; font-size:13px; font-weight:bold; border:2px solid #333; padding:5px; text-align:center;">
+                        Páguese CUP a
+                        <t t-out="o.empresa_id.name or ''"/>
+                        Cuenta <t t-out="o.cuenta_pagar or ''"/>
+                        Sucursal <t t-out="o.sucursal_pagar or ''"/>
+                        del <t t-out="o.banco_pagar.name if o.banco_pagar else ''"/>
+                    </div>
+
+                    <t t-if="o.total_cup_literal">
+                        <div style="margin-top:4px; font-size:10px; font-style:italic;">
+                            <t t-out="o.total_cup_literal"/>
+                        </div>
+                    </t>
+
+                    <hr style="border:1px solid #333; margin:8px 0;"/>
+
+                    <!-- ── BOTTOM: SIGNATURES ── -->
+                    <table style="width:100%; border-collapse:collapse; font-size:9px; margin-top:6px;">
+                        <thead>
+                            <tr>
+                                <th style="border:1px solid #333; padding:4px; text-align:center; width:20%;">Realizada por</th>
+                                <th style="border:1px solid #333; padding:4px; text-align:center; width:25%;">Transportado por</th>
+                                <th style="border:1px solid #333; padding:4px; text-align:center; width:20%;">Recibido por</th>
+                                <th style="border:1px solid #333; padding:4px; text-align:center; width:20%;">Entregada por</th>
+                                <th style="border:1px solid #333; padding:4px; text-align:center; width:15%;">Cuño</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="height:70px; vertical-align:top;">
+                                <!-- Realizada por -->
+                                <td style="border:1px solid #ccc; padding:4px; vertical-align:top;">
+                                    <div><strong>Nombre:</strong> <t t-out="o.realizada_por_id.name if o.realizada_por_id else ''"/></div>
+                                    <div><strong>Cargo:</strong> <t t-out="o.realizada_por_id.function if o.realizada_por_id else ''"/></div>
+                                    <div style="margin-top:20px; border-top:1px solid #666; font-size:8px;">Firma</div>
+                                    <div><strong>Fecha:</strong>
+                                        <t t-if="o.realizada_fecha">
+                                            <t t-out="o.realizada_fecha.strftime('%d/%m/%Y')"/>
+                                        </t>
+                                    </div>
+                                </td>
+                                <!-- Transportado por -->
+                                <td style="border:1px solid #ccc; padding:4px; vertical-align:top;">
+                                    <div><strong>Nombre:</strong> <t t-out="o.transportado_por_id.name if o.transportado_por_id else ''"/></div>
+                                    <div>
+                                        <strong>CH:</strong> <t t-out="o.transportado_ch or ''"/>
+                                        &#160;
+                                        <strong>LIC:</strong> <t t-out="o.transportado_lic or ''"/>
+                                        &#160;
+                                        <strong>CI:</strong> <t t-out="o.transportado_por_id.id_card if o.transportado_por_id else ''"/>
+                                    </div>
+                                    <div style="margin-top:10px; border-top:1px solid #666; font-size:8px;">Firma</div>
+                                    <div><strong>Fecha:</strong>
+                                        <t t-if="o.transportado_fecha">
+                                            <t t-out="o.transportado_fecha.strftime('%d/%m/%Y')"/>
+                                        </t>
+                                    </div>
+                                </td>
+                                <!-- Recibido por -->
+                                <td style="border:1px solid #ccc; padding:4px; vertical-align:top;">
+                                    <div><strong>Nombre:</strong> <t t-out="o.recibido_por_id.name if o.recibido_por_id else ''"/></div>
+                                    <div><strong>Cargo:</strong> <t t-out="o.recibido_por_id.function if o.recibido_por_id else ''"/></div>
+                                    <div><strong>CI:</strong> <t t-out="o.recibido_por_id.id_card if o.recibido_por_id else ''"/></div>
+                                    <div style="margin-top:10px; border-top:1px solid #666; font-size:8px;">Firma</div>
+                                    <div><strong>Fecha:</strong>
+                                        <t t-if="o.recibido_fecha">
+                                            <t t-out="o.recibido_fecha.strftime('%d/%m/%Y')"/>
+                                        </t>
+                                    </div>
+                                </td>
+                                <!-- Entregada por -->
+                                <td style="border:1px solid #ccc; padding:4px; vertical-align:top;">
+                                    <div><strong>Nombre:</strong> <t t-out="o.entregada_por_id.name if o.entregada_por_id else ''"/></div>
+                                    <div style="margin-top:25px; border-top:1px solid #666; font-size:8px;">Firma</div>
+                                    <div><strong>Fecha:</strong>
+                                        <t t-if="o.entregada_fecha">
+                                            <t t-out="o.entregada_fecha.strftime('%d/%m/%Y')"/>
+                                        </t>
+                                    </div>
+                                </td>
+                                <!-- Cuño -->
+                                <td style="border:1px solid #ccc; padding:4px; vertical-align:middle; text-align:center;">
+                                    <t t-if="o.cunyo_id and o.cunyo_id.image">
+                                        <img t-att-src="image_data_uri(o.cunyo_id.image)"
+                                             style="max-width:70px; max-height:70px;"/>
+                                    </t>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Contabilizada por -->
+                    <table style="width:40%; border-collapse:collapse; font-size:9px; margin-top:4px;">
+                        <tr>
+                            <th style="border:1px solid #333; padding:4px; text-align:center;">Contabilizada por</th>
+                        </tr>
+                        <tr style="height:50px; vertical-align:top;">
+                            <td style="border:1px solid #ccc; padding:4px; vertical-align:top;">
+                                <div><strong>Nombre:</strong> <t t-out="o.contabilizada_por_id.name if o.contabilizada_por_id else ''"/></div>
+                                <div style="margin-top:15px; border-top:1px solid #666; font-size:8px;">Firma</div>
+                                <div><strong>Fecha:</strong>
+                                    <t t-if="o.contabilizada_fecha">
+                                        <t t-out="o.contabilizada_fecha.strftime('%d/%m/%Y')"/>
+                                    </t>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+            </t>
+        </t>
+    </template>
+
+</odoo>
+                                <table style="width:100%; border-collapse:collapse;">
+                                    <tr>
+                                        <td style="width:60px; vertical-align:top; padding-right:8px;">
+                                            <t t-if="company.logo">
+                                                <img t-att-src="image_data_uri(company.logo)"
+                                                     style="width:55px; height:55px; object-fit:contain;"/>
+                                            </t>
+                                        </td>
+                                        <td style="vertical-align:top; font-size:10px;">
+                                            <t t-if="o.organismo_id">
+                                                <div><strong>Organismo:</strong> <t t-out="o.organismo_id.name"/></div>
+                                            </t>
+                                            <t t-if="o.empresa_id">
+                                                <div><strong>Empresa:</strong> <t t-out="o.empresa_id.name or ''"/></div>
+                                            </t>
+                                            <t t-if="o.unidad_empresa">
+                                                <div><strong>Unidad:</strong> <t t-out="o.unidad_empresa"/></div>
+                                            </t>
+                                            <t t-if="o.direccion_empresa">
+                                                <div><strong>Dirección:</strong> <t t-out="o.direccion_empresa"/></div>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <!-- Right block: date, page, FACTURA, number, NIT/Contract -->
+                            <td style="width:45%; vertical-align:top; text-align:right; padding-left:10px;">
+                                <div style="font-size:10px;">
+                                    <strong>Fecha de emisión:</strong>
+                                    <t t-out="o.invoice_date.strftime('%-d/%-m/%Y') if o.invoice_date else ''"/>
+                                </div>
+                                <div style="font-size:10px; margin-bottom:4px;">
+                                    <t t-set="page_count" t-value="1"/>
+                                    <strong>Página</strong> <span class="page"/> de <span class="topage"/>
+                                </div>
+                                <div style="font-size:22px; font-weight:bold; letter-spacing:2px; margin:4px 0;">
+                                    FACTURA
+                                </div>
+                                <div style="font-size:10px;">
+                                    <strong>Número:</strong> <t t-out="o.name or ''"/>
+                                </div>
+                                <div style="font-size:10px;">
+                                    <strong>NIT:</strong> <t t-out="o.nit_empresa or ''"/>
+                                    <t t-if="o.contrato_especifico_id">
+                                        &amp;nbsp;&amp;nbsp;
+                                        <strong>Contrato:</strong> <t t-out="o.contrato_especifico_id.name"/>
+                                    </t>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <hr style="border:1px solid #333; margin:4px 0;"/>
+
+                    <!-- ── CENTRAL BLOCK ── -->
+                    <div style="text-align:center; font-size:16px; font-weight:bold; margin:6px 0;">
+                        Ventas en CUP
+                    </div>
+
+                    <table style="width:100%; font-size:10px; margin-bottom:4px;">
+                        <tr>
+                            <td style="width:50%;">
+                                <strong>Código:</strong>
+                                <t t-out="o.codigo_cliente or ''"/>
+                            </td>
+                            <td style="width:50%;">
+                                <strong>Cliente:</strong>
+                                <t t-out="o.cliente_id.name if o.cliente_id else (o.partner_id.name or '')"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <strong>Dirección:</strong>
+                                <t t-out="o.direccion_cliente or ''"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>NIT:</strong> <t t-out="o.nit_cliente or o.client_nit or ''"/></td>
+                            <td>
+                                <strong>Número Ins. RCC:</strong> <t t-out="o.num_ins_rcc or ''"/>
+                                &amp;nbsp;&amp;nbsp;
+                                <strong>Cuenta Bancaria:</strong>
+                                <t t-out="o.cuenta_bancaria_cliente or o.client_bank_account or ''"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>Forma de pago:</strong>
+                                <t t-out="o.invoice_payment_term_id.name if o.invoice_payment_term_id else ''"/>
+                            </td>
+                            <td>
+                                <strong>Operación:</strong>
+                                <t t-if="o.operacion">
+                                    <t t-out="dict(o.fields_get(['operacion'])['operacion']['selection']).get(o.operacion, o.operacion)"/>
+                                </t>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <!-- Service lines table -->
+                    <table style="width:100%; border-collapse:collapse; font-size:10px; margin-top:6px;">
+                        <thead>
+                            <tr style="background-color:#f0f0f0;">
+                                <th style="border:1px solid #333; padding:3px 5px; text-align:center;">Código</th>
+                                <th style="border:1px solid #333; padding:3px 5px; text-align:left;">Descripción</th>
+                                <th style="border:1px solid #333; padding:3px 5px; text-align:center;">UM</th>
+                                <th style="border:1px solid #333; padding:3px 5px; text-align:center;">Cantidad</th>
+                                <th style="border:1px solid #333; padding:3px 5px; text-align:right;">Precio</th>
+                                <th style="border:1px solid #333; padding:3px 5px; text-align:right;">Importe</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="o.invoice_line_ids.filtered(lambda l: l.display_type == 'product')" t-as="line">
+                                <tr>
+                                    <td style="border:1px solid #ccc; padding:3px 5px; text-align:center;">
+                                        <t t-out="line.product_id.default_code or ''"/>
+                                    </td>
+                                    <td style="border:1px solid #ccc; padding:3px 5px;">
+                                        <t t-out="line.name or ''"/>
+                                    </td>
+                                    <td style="border:1px solid #ccc; padding:3px 5px; text-align:center;">
+                                        <t t-out="line.product_uom_id.name if line.product_uom_id else ''"/>
+                                    </td>
+                                    <td style="border:1px solid #ccc; padding:3px 5px; text-align:center;">
+                                        <t t-out="'%.2f' % line.quantity"/>
+                                    </td>
+                                    <td style="border:1px solid #ccc; padding:3px 5px; text-align:right;">
+                                        <t t-out="'%.2f' % line.price_unit"/>
+                                    </td>
+                                    <td style="border:1px solid #ccc; padding:3px 5px; text-align:right;">
+                                        <t t-out="'%.2f' % line.price_subtotal"/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="5" style="border:1px solid #333; padding:3px 5px; text-align:right; font-weight:bold;">
+                                    Subtotal servicios:
+                                </td>
+                                <td style="border:1px solid #333; padding:3px 5px; text-align:right; font-weight:bold;">
+                                    <t t-out="'%.2f' % sum(o.invoice_line_ids.filtered(lambda l: l.display_type == 'product').mapped('price_subtotal'))"/>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                    <div style="margin-top:6px; font-size:11px;">
+                        <strong>Total en CUP:</strong>
+                        <t t-out="'%.2f' % o.amount_total"/>
+                    </div>
+
+                    <div style="margin-top:4px; font-size:13px; font-weight:bold; border:2px solid #333; padding:5px; text-align:center;">
+                        Páguese CUP a
+                        <t t-out="o.empresa_id.name or ''"/>
+                        Cuenta <t t-out="o.cuenta_pagar or ''"/>
+                        Sucursal <t t-out="o.sucursal_pagar or ''"/>
+                        del <t t-out="o.banco_pagar.name if o.banco_pagar else ''"/>
+                    </div>
+
+                    <!-- Literal amount -->
+                    <t t-if="o.total_cup_literal">
+                        <div style="margin-top:4px; font-size:10px; font-style:italic;">
+                            <t t-out="o.total_cup_literal"/>
+                        </div>
+                    </t>
+
+                    <hr style="border:1px solid #333; margin:8px 0;"/>
+
+                    <!-- ── BOTTOM: SIGNATURES ── -->
+                    <table style="width:100%; border-collapse:collapse; font-size:9px; margin-top:6px;">
+                        <thead>
+                            <tr>
+                                <th style="border:1px solid #333; padding:4px; text-align:center; width:20%;">Realizada por</th>
+                                <th style="border:1px solid #333; padding:4px; text-align:center; width:25%;">Transportado por</th>
+                                <th style="border:1px solid #333; padding:4px; text-align:center; width:20%;">Recibido por</th>
+                                <th style="border:1px solid #333; padding:4px; text-align:center; width:20%;">Entregada por</th>
+                                <th style="border:1px solid #333; padding:4px; text-align:center; width:15%;">Cuño</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="height:60px; vertical-align:top;">
+                                <!-- Realizada por -->
+                                <td style="border:1px solid #ccc; padding:4px; vertical-align:top;">
+                                    <div><strong>Nombre:</strong> <t t-out="o.realizada_por_id.name if o.realizada_por_id else ''"/></div>
+                                    <div><strong>Cargo:</strong> <t t-out="o.realizada_por_id.function if o.realizada_por_id else ''"/></div>
+                                    <div style="margin-top:20px; border-top:1px solid #666; font-size:8px;">Firma</div>
+                                    <div><strong>Fecha:</strong> <t t-out="o.realizada_fecha.strftime('%d/%m/%Y') if o.realizada_fecha else ''"/></div>
+                                </td>
+                                <!-- Transportado por -->
+                                <td style="border:1px solid #ccc; padding:4px; vertical-align:top;">
+                                    <div><strong>Nombre:</strong> <t t-out="o.transportado_por_id.name if o.transportado_por_id else ''"/></div>
+                                    <div>
+                                        <strong>CH:</strong> <t t-out="o.transportado_ch or ''"/>
+                                        &amp;nbsp;
+                                        <strong>LIC:</strong> <t t-out="o.transportado_lic or ''"/>
+                                    </div>
+                                    <div><strong>CI:</strong> <t t-out="o.transportado_por_id.id_card if o.transportado_por_id else ''"/></div>
+                                    <div style="margin-top:10px; border-top:1px solid #666; font-size:8px;">Firma</div>
+                                    <div><strong>Fecha:</strong> <t t-out="o.transportado_fecha.strftime('%d/%m/%Y') if o.transportado_fecha else ''"/></div>
+                                </td>
+                                <!-- Recibido por -->
+                                <td style="border:1px solid #ccc; padding:4px; vertical-align:top;">
+                                    <div><strong>Nombre:</strong> <t t-out="o.recibido_por_id.name if o.recibido_por_id else ''"/></div>
+                                    <div><strong>Cargo:</strong> <t t-out="o.recibido_por_id.function if o.recibido_por_id else ''"/></div>
+                                    <div><strong>CI:</strong> <t t-out="o.recibido_por_id.id_card if o.recibido_por_id else ''"/></div>
+                                    <div style="margin-top:10px; border-top:1px solid #666; font-size:8px;">Firma</div>
+                                    <div><strong>Fecha:</strong> <t t-out="o.recibido_fecha.strftime('%d/%m/%Y') if o.recibido_fecha else ''"/></div>
+                                </td>
+                                <!-- Entregada por -->
+                                <td style="border:1px solid #ccc; padding:4px; vertical-align:top;">
+                                    <div><strong>Nombre:</strong> <t t-out="o.entregada_por_id.name if o.entregada_por_id else ''"/></div>
+                                    <div style="margin-top:25px; border-top:1px solid #666; font-size:8px;">Firma</div>
+                                    <div><strong>Fecha:</strong> <t t-out="o.entregada_fecha.strftime('%d/%m/%Y') if o.entregada_fecha else ''"/></div>
+                                </td>
+                                <!-- Cuño -->
+                                <td style="border:1px solid #ccc; padding:4px; vertical-align:middle; text-align:center;">
+                                    <t t-if="o.cunyo_id and o.cunyo_id.image">
+                                        <img t-att-src="image_data_uri(o.cunyo_id.image)"
+                                             style="max-width:70px; max-height:70px;"/>
+                                    </t>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Contabilizada por (below main table) -->
+                    <table style="width:40%; border-collapse:collapse; font-size:9px; margin-top:4px;">
+                        <tr>
+                            <th style="border:1px solid #333; padding:4px; text-align:center;">Contabilizada por</th>
+                        </tr>
+                        <tr style="height:50px; vertical-align:top;">
+                            <td style="border:1px solid #ccc; padding:4px; vertical-align:top;">
+                                <div><strong>Nombre:</strong> <t t-out="o.contabilizada_por_id.name if o.contabilizada_por_id else ''"/></div>
+                                <div style="margin-top:15px; border-top:1px solid #666; font-size:8px;">Firma</div>
+                                <div><strong>Fecha:</strong> <t t-out="o.contabilizada_fecha.strftime('%d/%m/%Y') if o.contabilizada_fecha else ''"/></div>
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+            </t>
+        </t>
+    </template>
+
+</odoo>

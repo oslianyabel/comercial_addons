@@ -16,6 +16,16 @@ class ContratoEspecificoFacturarWizard(models.TransientModel):
         string="Línea UEB",
         readonly=True,
     )
+    sup_line_id = fields.Many2one(
+        "contrato.especifico.suplemento.line",
+        string="Línea de Suplemento",
+        readonly=True,
+    )
+    sup_ueb_line_id = fields.Many2one(
+        "contrato.especifico.suplemento.ueb.line",
+        string="Línea UEB de Suplemento",
+        readonly=True,
+    )
     product_id = fields.Many2one(
         "product.product",
         string="Producto/Servicio",
@@ -32,10 +42,12 @@ class ContratoEspecificoFacturarWizard(models.TransientModel):
     quantity = fields.Float(string="Cantidad a Facturar", required=True)
     price_unit = fields.Float(string="Precio Unitario a Facturar", required=True)
 
-    @api.depends("line_id", "ueb_line_id")
+    @api.depends("line_id", "ueb_line_id", "sup_line_id", "sup_ueb_line_id")
     def _compute_display_fields(self) -> None:
         for rec in self:
-            src = rec.line_id or rec.ueb_line_id
+            src = (
+                rec.line_id or rec.ueb_line_id or rec.sup_line_id or rec.sup_ueb_line_id
+            )
             rec.product_id = src.product_id if src else False
             rec.line_name = src.name if src else ""
 
@@ -123,14 +135,35 @@ class ContratoEspecificoFacturarWizard(models.TransientModel):
                 )
             )
 
+        is_sup_ueb = bool(self.sup_ueb_line_id)
+        is_sup = bool(self.sup_line_id)
         is_ueb = bool(self.ueb_line_id)
-        line = self.ueb_line_id if is_ueb else self.line_id
+
+        if is_sup_ueb:
+            line = self.sup_ueb_line_id
+        elif is_sup:
+            line = self.sup_line_id
+        elif is_ueb:
+            line = self.ueb_line_id
+        else:
+            line = self.line_id
 
         if not line:
             raise UserError(_("No hay ninguna línea de servicio seleccionada."))
 
-        contract = line._get_contract() if is_ueb else line.contrato_id
-        partner = contract.partner_id
+        # Obtener contrato/suplemento y partner según el tipo de línea
+        if is_sup or is_sup_ueb:
+            sup = line._get_suplemento() if is_sup_ueb else line.suplemento_id
+            contract = sup.contrato_id
+            partner = sup.partner_id
+            forma_pago = sup.forma_pago_id
+            realizada_por = sup.realizada_por_id
+        else:
+            sup = None
+            contract = line._get_contract() if is_ueb else line.contrato_id
+            partner = contract.partner_id
+            forma_pago = contract.forma_pago_id
+            realizada_por = contract.realizada_por_id
 
         line._apply_default_invoice_dates()
 
@@ -145,7 +178,7 @@ class ContratoEspecificoFacturarWizard(models.TransientModel):
                 "quantity": self.quantity,
                 "uom_id": line.uom_id.id,
                 "price_unit": self.price_unit,
-                "date_deadline_invoice": line.date_deadline_invoice,
+                "date_deadline_invoice": getattr(line, "date_deadline_invoice", False),
                 "start_date": line.start_date,
                 "end_date": line.end_date,
                 "parent_line_id": line.id,
@@ -153,7 +186,17 @@ class ContratoEspecificoFacturarWizard(models.TransientModel):
                 "invoiced": True,
                 "sequence": line.sequence,
             }
-            if is_ueb:
+            if is_sup_ueb:
+                child_vals["section_id"] = line.section_id.id
+                child_line = self.env["contrato.especifico.suplemento.ueb.line"].create(
+                    child_vals
+                )
+            elif is_sup:
+                child_vals["suplemento_id"] = sup.id
+                child_line = self.env["contrato.especifico.suplemento.line"].create(
+                    child_vals
+                )
+            elif is_ueb:
                 child_vals["section_id"] = line.section_id.id
                 child_line = self.env["contrato.especifico.ueb.line"].create(child_vals)
             else:
@@ -174,15 +217,24 @@ class ContratoEspecificoFacturarWizard(models.TransientModel):
             billing_line = line
             line.with_context(is_uninvoice=True).write({"invoiced": True})
 
-        invoice_line_field = "ueb_service_line_id" if is_ueb else "service_line_id"
+        # Campo del modelo account.move para la línea
+        if is_sup_ueb:
+            invoice_line_field = "sup_ueb_service_line_id"
+        elif is_sup:
+            invoice_line_field = "sup_service_line_id"
+        elif is_ueb:
+            invoice_line_field = "ueb_service_line_id"
+        else:
+            invoice_line_field = "service_line_id"
 
         base_invoice_vals: dict = {
             "move_type": "out_invoice",
             "partner_id": partner.id,
             "invoice_date": fields.Date.today(),
-            "contrato_especifico_id": contract.id,
+            "contrato_especifico_id": contract.id if contract else False,
+            "suplemento_especifico_id": sup.id if sup else False,
             invoice_line_field: billing_line.id,
-            "invoice_payment_term_id": contract.forma_pago_id.id,
+            "invoice_payment_term_id": forma_pago.id if forma_pago else False,
             "invoice_line_ids": [
                 (
                     0,
@@ -199,9 +251,7 @@ class ContratoEspecificoFacturarWizard(models.TransientModel):
             "client_address": f"{partner.street or ''} {partner.city or ''}".strip(),
             "client_nit": getattr(partner, "tax_id", None) or partner.vat or "",
             "client_bank_account": getattr(partner, "bank_account_cup", None) or "",
-            "realizada_por_id": contract.realizada_por_id.id
-            if contract.realizada_por_id
-            else False,
+            "realizada_por_id": realizada_por.id if realizada_por else False,
         }
 
         move = self.env["account.move"].create(base_invoice_vals)

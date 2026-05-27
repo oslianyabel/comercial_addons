@@ -46,6 +46,27 @@
                         </group>
                     </group>
                     <group>
+                        <group string="Representación">
+                            <field name="representative_id"
+                                   options="{'no_create': True, 'no_quick_create': True, 'no_create_edit': True}"
+                                   readonly="state == 'firmado'"/>
+                            <field name="our_representative_id"
+                                   options="{'no_create': True, 'no_quick_create': True, 'no_create_edit': True}"
+                                   readonly="state == 'firmado'"/>
+                            <field name="authorized_contact_ids" widget="many2many_tags"
+                                   readonly="state == 'firmado'"/>
+                            <field name="our_rep_decision_number" readonly="state == 'firmado'"/>
+                            <field name="our_rep_decision_date" readonly="state == 'firmado'"/>
+                        </group>
+                        <group string="Fechas">
+                            <field name="start_date" string="Fecha de Firma"
+                                   readonly="state == 'firmado'"/>
+                            <field name="validity_years" string="Tiempo de Validez"
+                                   readonly="state == 'firmado'"/>
+                            <field name="end_date" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
                         <field name="description" placeholder="Describa las modificaciones realizadas en este suplemento..."/>
                     </group>
                     <notebook>

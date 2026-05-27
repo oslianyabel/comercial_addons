@@ -6,7 +6,7 @@
         <field name="arch" type="xml">
             <form>
                 <header>
-                    <button name="action_generate_content" string="Generate Content" type="object" class="oe_highlight" invisible="state in ('firmado', 'entregado')"/>
+                    <button name="action_generate_content" string="Generate Content" type="object" class="oe_highlight" invisible="content_generated or state in ('firmado', 'entregado')"/>
                     <button name="action_sign" string="Entregar" type="object" class="oe_highlight" invisible="state in ('firmado', 'entregado')" confirm="¿Está seguro de que desea entregar este contrato?"/>
                     <button name="action_draft_from_entregado" string="Retroceder a Borrador" type="object" invisible="state != 'entregado'"/>
                     <button name="action_entregar" string="Firmar" type="object" class="oe_highlight" invisible="state != 'entregado'" confirm="¿Está seguro de que desea firmar este contrato? Esta acción no se puede deshacer."/>
@@ -17,6 +17,7 @@
                     <field name="state" widget="statusbar" statusbar_visible="borrador,entregado,firmado,cancelado"/>
                 </header>
                 <sheet>
+                    <field name="content_generated" invisible="1"/>
                     <div class="oe_button_box" name="button_box">
                         <button name="action_open_suplementos" type="object"
                                 class="oe_stat_button" icon="fa-file-text-o">
@@ -30,15 +31,22 @@
                         </h1>
                         <label for="contract_name" string="Contract Title"/>
                         <h2>
-                            <field name="contract_name" placeholder="Describe the contract..." autocomplete="off"/>
+                            <field name="contract_name" placeholder="Describe the contract..."
+                                   autocomplete="off" readonly="state == 'firmado'"/>
                         </h2>
+                    </div>
+                    <div class="alert alert-info" role="alert"
+                         invisible="state != 'firmado'" style="margin: 0 0 8px 0;">
+                        <i class="fa fa-info-circle"/> Contrato firmado. Modificar los campos de representación o fechas creará automáticamente un suplemento.
                     </div>
                     <group>
                         <group string="General Information">
-                            <field name="company_id"/>
-                            <field name="partner_id" options="{'no_create': True, 'no_quick_create': True, 'no_create_edit': True}"/>
+                            <field name="company_id" readonly="state == 'firmado'"/>
+                            <field name="partner_id"
+                                   options="{'no_create': True, 'no_quick_create': True, 'no_create_edit': True}"
+                                   readonly="state == 'firmado'"/>
                             <field name="contract_type" readonly="1"/>
-                            <field name="oeb" autocomplete="off"/>
+                            <field name="oeb" autocomplete="off" readonly="state == 'firmado'"/>
                         </group>
                         <group name="dates_and_signatures" string="Dates and Signatures">
                             <field name="start_date" string="Fecha de Firma"/>
@@ -68,7 +76,8 @@
                     <notebook>
                         <page string="Contract Content">
                             <div style="max-width: 800px; margin: 0 auto; border: 1px solid #dee2e6; padding: 40px; background: white; min-height: 1000px; overflow-wrap: break-word; font-family: 'Times New Roman', Times, serif;">
-                                <field name="content" widget="html" options="{'style-inline': true}"/>
+                                <field name="content" widget="html" options="{'style-inline': true}"
+                                       readonly="state == 'firmado'"/>
                             </div>
                         </page>
                     </notebook>

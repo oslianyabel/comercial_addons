@@ -6,7 +6,7 @@
         <field name="arch" type="xml">
             <form>
                 <header>
-                    <button name="action_generate_content" string="Generate Content" type="object" class="oe_highlight" invisible="state in ('firmado', 'entregado')"/>
+                    <button name="action_generate_content" string="Generate Content" type="object" class="oe_highlight" invisible="content_generated or state in ('firmado', 'entregado')"/>
                     <button name="action_sign" string="Entregar" type="object" class="oe_highlight" invisible="state in ('firmado', 'entregado')" confirm="¿Está seguro de que desea entregar este contrato?"/>
                     <button name="action_draft_from_entregado" string="Retroceder a Borrador" type="object" invisible="state != 'entregado'"/>
                     <button name="action_entregar" string="Firmar" type="object" class="oe_highlight" invisible="state != 'entregado'" confirm="¿Está seguro de que desea firmar este contrato? Esta acción no se puede deshacer."/>
@@ -16,6 +16,7 @@
                     <field name="state" widget="statusbar" statusbar_visible="borrador,entregado,firmado,cancelado"/>
                 </header>
                 <sheet>
+                    <field name="content_generated" invisible="1"/>
                     <div class="oe_button_box" name="button_box">
                         <button name="action_open_suplementos_especificos"
                                 type="object"
@@ -35,13 +36,14 @@
                     </div>
                     <group>
                         <group string="Información General">
-                            <field name="marco_id" context="{'display_partner_name': True}" readonly="suplemento_id != False" required="suplemento_id == False"/>
+                            <field name="marco_id" context="{'display_partner_name': True}" readonly="id" required="not id"/>
                             <field name="suplemento_id"
                                    options="{'no_create': True}"
                                    string="Suplemento (opcional)"/>
                             <field name="company_id" readonly="1"/>
                             <field name="partner_id" readonly="1"/>
                             <field name="template_id" string="Tipo de Contrato"/>
+                            <field name="contract_type" string="Operación"/>
                         </group>
                         <group name="dates" string="Fechas">
                             <field name="date" string="Fecha de Suscripción"/>
@@ -96,7 +98,7 @@
                                     <field name="invoiced" optional="hide" string="Facturado"/>
                                     <button name="action_facturar" type="object" string="Facturar" class="btn-primary" invisible="invoiced or parent.state != 'firmado' or is_invoice_line"/>
                                     <button name="action_view_invoice" type="object" string="Ver Factura" class="btn-secondary" invisible="not invoice_id"/>
-                                    <button name="action_uninvoice" type="object" string="Cancel" class="btn-warning" invisible="not invoiced or invoice_state == 'cancel'" confirm="Esta accion cancelará la factura asociada. Estas seguro?"/>
+                                    <button name="action_uninvoice" type="object" string="Desfacturar" class="btn-warning" invisible="not invoiced or invoice_state == 'cancel'" confirm="Esta accion cancelará la factura asociada. Estas seguro?"/>
                                 </tree>
                             </field>
                         </page>
@@ -140,7 +142,7 @@
                                                     class="btn-primary" invisible="invoiced or parent.contract_state != 'firmado' or is_invoice_line"/>
                                                 <button name="action_view_invoice" type="object" string="Ver Factura"
                                                     class="btn-secondary" invisible="not invoice_id"/>
-                                                <button name="action_uninvoice" type="object" string="Cancel"
+                                                <button name="action_uninvoice" type="object" string="Desfacturar"
                                                         class="btn-warning" invisible="not invoiced or invoice_state == 'cancel'" confirm="Esta accion cancelará la factura asociada. Estas seguro?"/>
                                             </tree>
                                         </field>

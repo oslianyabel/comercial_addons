@@ -17,6 +17,7 @@
     "data": [
         "security/ir.model.access.csv",
         "report/signature_report_templates.xml",
+        "report/factura_report.xml",
         "views/res_config_settings_views.xml",
         "views/res_signature_views.xml",
         "views/contrato_marco_views.xml",
@@ -24,7 +25,13 @@
         "views/account_move_views.xml",
         "views/payment_form_views.xml",
         "views/res_partner_views.xml",
+        "views/contratos_navbar_views.xml",
     ],
+    "assets": {
+        "web.report_assets_common": [
+            "signature_management/static/report_no_borders.css",
+        ],
+    },
     "installable": True,
     "application": False,
     "license": "LGPL-3",

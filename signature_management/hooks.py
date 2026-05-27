@@ -5,8 +5,23 @@ _logger = logging.getLogger(__name__)
 MODULE_NAME = "Signature Management (signature_management)"
 
 
+import logging
+
+_logger = logging.getLogger(__name__)
+
+MODULE_NAME = "Signature Management (signature_management)"
+
+
 def post_init_hook(env) -> None:
-    """Notify the developer after the module is installed."""
+    """Set default Mi Empresa and notify the developer after the module is installed."""
+    for company in env["res.company"].search([]):
+        if not company.mi_empresa_partner_id:
+            dteam = env["res.partner"].search(
+                [("name", "ilike", "Soluciones DTeam"), ("is_company", "=", True)],
+                limit=1,
+            )
+            if dteam:
+                company.mi_empresa_partner_id = dteam
     try:
         from odoo.addons.telegram_notifier import send_message
 

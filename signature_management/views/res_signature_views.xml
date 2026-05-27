@@ -48,18 +48,18 @@
         </record>
 
         <record id="action_res_signature" model="ir.actions.act_window">
-            <field name="name">Firmas</field>
+            <field name="name">Firmas y Cuños</field>
             <field name="res_model">signature.signature</field>
             <field name="view_mode">tree,form</field>
         </record>
 
         <menuitem id="menu_res_signature_root"
-                  name="Firmas"
+                  name="Firmas y Cuños"
                   parent="contacts.res_partner_menu_config"
                   sequence="60"/>
 
         <menuitem id="menu_res_signature"
-                  name="Firmas"
+                  name="Firmas y Cuños"
                   parent="menu_res_signature_root"
                   action="action_res_signature"
                   sequence="10"/>

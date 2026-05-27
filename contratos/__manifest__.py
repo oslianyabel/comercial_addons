@@ -22,6 +22,7 @@
         "wizard/template_import_wizard_views.xml",
         "wizard/contrato_marco_cancel_wizard_views.xml",
         "views/contrato_views.xml",
+        "views/empresa_views.xml",
         "views/res_config_settings_views.xml",
         "views/contrato_template_views.xml",
         "report/contrato_reports.xml",

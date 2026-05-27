@@ -81,6 +81,43 @@ class ContratoSuplemento(models.Model):
         readonly=True,
     )
 
+    # Overriding fields (can differ from the parent marco)
+    representative_id = fields.Many2one(
+        "res.partner",
+        string="Representante del Cliente",
+    )
+    our_representative_id = fields.Many2one(
+        "res.partner",
+        string="Nuestro Representante",
+    )
+    authorized_contact_ids = fields.Many2many(
+        "res.partner",
+        "contrato_suplemento_authorized_contacts_rel",
+        "suplemento_id",
+        "partner_id",
+        string="Contactos Autorizados",
+    )
+    our_rep_decision_number = fields.Char(string="Acuerdo/Decisión")
+    our_rep_decision_date = fields.Date(string="Fecha de Resolución del Rep")
+    start_date = fields.Date(string="Fecha de Firma")
+    validity_years = fields.Integer(string="Tiempo de Validez")
+    end_date = fields.Date(
+        string="Fecha de Finalización",
+        compute="_compute_end_date",
+        store=True,
+    )
+
+    @api.depends("start_date", "validity_years")
+    def _compute_end_date(self):
+        for record in self:
+            if record.start_date and record.validity_years:
+                from dateutil.relativedelta import relativedelta
+                record.end_date = record.start_date + relativedelta(
+                    years=record.validity_years
+                )
+            else:
+                record.end_date = False
+
     # Campos de datos
     content = fields.Html(string="Contenido del Contrato")
     content_modified = fields.Boolean(
@@ -88,6 +125,18 @@ class ContratoSuplemento(models.Model):
         compute="_compute_modified_flags",
         store=True,
         readonly=True,
+    )
+
+    # Content-relevant fields: changes trigger auto-regeneration
+    _CONTENT_FIELDS = frozenset(
+        [
+            "representative_id",
+            "our_representative_id",
+            "our_rep_decision_number",
+            "our_rep_decision_date",
+            "start_date",
+            "validity_years",
+        ]
     )
 
     @api.depends(
@@ -133,15 +182,39 @@ class ContratoSuplemento(models.Model):
             "signed_by_id",
             "signing_date",
             "content_modified",
+            "content",
         ]
     )
 
     def write(self, vals: dict) -> bool:
-        """Prevent editing signed supplements."""
+        """Prevent editing signed supplements and auto-regenerate content on field changes."""
         if any(r.state == "firmado" for r in self) and not self.env.su:
             if not vals.keys() <= self._SYSTEM_WRITE_ALLOWED:
                 raise UserError(_("No puede editar un suplemento firmado."))
-        return super().write(vals)
+        result = super().write(vals)
+        self._auto_regenerate_content(vals)
+        return result
+
+    def _auto_regenerate_content(self, vals: dict) -> None:
+        """Auto-regenerate suplemento content when content-related fields change."""
+        if self.env.context.get("_generating_content"):
+            return
+        if not self._CONTENT_FIELDS & vals.keys():
+            return
+        for record in self.filtered(
+            lambda r: bool(r.content) and r.state not in ("firmado", "cancelado")
+        ):
+            try:
+                record.with_context(_generating_content=True).action_generate_content()
+            except UserError:
+                pass
+
+    def action_generate_content(self) -> None:
+        """Generate content for this suplemento using its overriding field values."""
+        for record in self:
+            if not record.marco_id:
+                continue
+            record.marco_id.action_generate_content_for_suplemento(record)
 
     def action_sign(self) -> None:
         """Transition borrador → entregado."""

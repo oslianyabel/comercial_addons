@@ -5,6 +5,7 @@ from html import unescape
 from markupsafe import Markup
 
 from odoo import _, api, fields, models
+from odoo.exceptions import UserError
 
 # Labels shown in the changed-fields summary
 _FIELD_LABELS: dict[str, str] = {
@@ -31,6 +32,27 @@ class ContratoEspecificoSuplemento(models.Model):
     _name = "contrato.especifico.suplemento"
     _description = "Suplemento de Contrato Específico"
     _order = "sequence_number desc"
+
+    # Fields that the ORM is allowed to write freely (system/state fields)
+    _SYSTEM_WRITE_ALLOWED = frozenset(
+        ["state", "motivo_cancelacion", "content_generated"]
+    )
+
+    # Fields whose changes trigger content auto-regeneration
+    _CONTENT_FIELDS = frozenset(
+        [
+            "template_id",
+            "our_project_leader_id",
+            "project_leader_id",
+            "application_name",
+            "date",
+            "validity_years",
+            "start_date",
+            "name",
+            "line_ids",
+            "ueb_section_ids",
+        ]
+    )
 
     # ── Identificación y versioning ──────────────────────────────────────────
 
@@ -67,6 +89,28 @@ class ContratoEspecificoSuplemento(models.Model):
     )
     modificaciones = fields.Text(
         string="Modificaciones",
+        copy=False,
+    )
+    state = fields.Selection(
+        [
+            ("borrador", "Borrador"),
+            ("entregado", "Entregado"),
+            ("firmado", "Firmado"),
+            ("cancelado", "Cancelado"),
+        ],
+        string="Estado",
+        default="borrador",
+        required=True,
+        copy=False,
+    )
+    motivo_cancelacion = fields.Text(
+        string="Motivo de Cancelación",
+        copy=False,
+        readonly=True,
+    )
+    content_generated = fields.Boolean(
+        string="Contenido Generado",
+        default=False,
         copy=False,
     )
 
@@ -166,8 +210,36 @@ class ContratoEspecificoSuplemento(models.Model):
         "suplemento_id",
         string="Secciones UEB",
     )
+    invoice_count = fields.Integer(
+        string="Facturas",
+        compute="_compute_invoice_count",
+    )
 
     # ── Constrains y computed ─────────────────────────────────────────────────
+
+    def _compute_invoice_count(self) -> None:
+        for rec in self:
+            rec.invoice_count = self.env["account.move"].search_count(
+                [
+                    ("suplemento_especifico_id", "=", rec.id),
+                    ("move_type", "=", "out_invoice"),
+                ]
+            )
+
+    def action_view_invoices(self) -> dict:
+        """Open the list of invoices generated from this suplemento."""
+        self.ensure_one()
+        return {
+            "type": "ir.actions.act_window",
+            "name": _("Facturas"),
+            "res_model": "account.move",
+            "view_mode": "tree,form",
+            "domain": [
+                ("suplemento_especifico_id", "=", self.id),
+                ("move_type", "=", "out_invoice"),
+            ],
+            "context": {"default_move_type": "out_invoice"},
+        }
 
     @api.depends("start_date", "validity_years")
     def _compute_end_date(self) -> None:
@@ -217,7 +289,41 @@ class ContratoEspecificoSuplemento(models.Model):
                     contrato_name = contrato.name or "/"
                 seq = vals.get("sequence_number", 1)
                 vals["name"] = f"SUP_{seq:02d}_{contrato_name}"
+            # Mark content as generated when content is set on creation
+            if vals.get("content") and not vals.get("content_generated"):
+                vals["content_generated"] = True
         return super().create(vals_list)
+
+    def write(self, vals: dict) -> bool:
+        if not self.env.su:
+            blocked_keys = vals.keys() - self._SYSTEM_WRITE_ALLOWED
+            if blocked_keys:
+                firmado_records = self.filtered(lambda r: r.state == "firmado")
+                if firmado_records:
+                    names = ", ".join(firmado_records.mapped("name"))
+                    raise UserError(
+                        _(
+                            "No se pueden modificar suplementos firmados: %s",
+                            names,
+                        )
+                    )
+        result = super().write(vals)
+        self._auto_regenerate_content(vals)
+        return result
+
+    def _auto_regenerate_content(self, vals: dict) -> None:
+        """Auto-regenerate contract content when content-related fields change."""
+        if self.env.context.get("_generating_content"):
+            return
+        if not self._CONTENT_FIELDS & vals.keys():
+            return
+        for record in self.filtered(
+            lambda r: r.content_generated and r.state not in ("firmado", "cancelado")
+        ):
+            try:
+                record.with_context(_generating_content=True).action_generate_content()
+            except UserError:
+                pass
 
     # ── Generación de contenido ───────────────────────────────────────────────
 
@@ -307,9 +413,8 @@ class ContratoEspecificoSuplemento(models.Model):
             )
 
             content = content.strip()
-            # bypass_suplemento_write para evitar que el write() intercepte
-            record.with_context(bypass_suplemento_write=True).write(
-                {"content": Markup(content)}
+            record.with_context(_generating_content=True).write(
+                {"content": Markup(content), "content_generated": True}
             )
 
     # ── Renderizado de líneas ─────────────────────────────────────────────────
@@ -390,3 +495,79 @@ class ContratoEspecificoSuplemento(models.Model):
             "view_mode": "form",
             "res_id": self.contrato_id.id,
         }
+
+    def action_sign(self) -> None:
+        """Transition suplemento to entregado state."""
+        for record in self:
+            if record.state not in ("borrador", "cancelado", "firmado"):
+                raise UserError(_("Solo se pueden entregar suplementos en Borrador."))
+            if not record._has_generated_content():
+                raise UserError(
+                    _("Genere el contenido del suplemento antes de entregarlo.")
+                )
+            record.write({"state": "entregado"})
+
+    def action_entregar(self) -> None:
+        """Transition suplemento to firmado state (from entregado)."""
+        for record in self:
+            if record.state != "entregado":
+                raise UserError(_("Solo se pueden firmar suplementos entregados."))
+            record.write({"state": "firmado"})
+
+    def action_draft_from_entregado(self) -> None:
+        """Revert suplemento from entregado back to borrador."""
+        for record in self:
+            if record.state != "entregado":
+                raise UserError(
+                    _("Solo se puede retroceder a Borrador desde Entregado.")
+                )
+            record.write({"state": "borrador"})
+
+    def action_draft(self) -> None:
+        """Revert cancelled suplemento to borrador."""
+        for record in self:
+            record.write({"state": "borrador"})
+
+    def action_cancel(self) -> dict:
+        """Open cancellation wizard."""
+        self.ensure_one()
+        return {
+            "name": _("Confirmar Cancelación"),
+            "type": "ir.actions.act_window",
+            "res_model": "contrato.especifico.suplemento.cancel.wizard",
+            "view_mode": "form",
+            "target": "new",
+            "context": {"default_suplemento_id": self.id},
+        }
+
+    def action_cancel_confirmed(self, motivo: str) -> None:
+        """Cancel the suplemento and all associated invoices."""
+        for record in self:
+            invoices = self.env["account.move"].search(
+                [
+                    ("suplemento_especifico_id", "=", record.id),
+                    ("move_type", "=", "out_invoice"),
+                ]
+            )
+            for inv in invoices:
+                if inv.state == "posted":
+                    inv.button_draft()
+                if inv.state != "cancel":
+                    inv.button_cancel()
+
+            record.line_ids.with_context(is_uninvoice=True).write({"invoiced": False})
+            ueb_lines = record.ueb_section_ids.mapped("line_ids")
+            if ueb_lines:
+                ueb_lines.with_context(is_uninvoice=True).write({"invoiced": False})
+
+            record.write({"state": "cancelado", "motivo_cancelacion": motivo})
+
+    def _has_generated_content(self) -> bool:
+        self.ensure_one()
+        if not self.content:
+            return False
+        plain = unescape(str(self.content or ""))
+        plain = re.sub(r"<[^>]+>", " ", plain)
+        plain = plain.replace("&nbsp;", " ")
+        plain = re.sub(r"\s+", " ", plain).strip()
+        return bool(plain)

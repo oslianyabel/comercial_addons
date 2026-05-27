@@ -1,0 +1,148 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ================================================================
+         VISTA DEDICADA DE "MI EMPRESA" EN res.config.settings
+    ================================================================ -->
+    <record id="view_config_mi_empresa_form" model="ir.ui.view">
+        <field name="name">res.config.settings.mi.empresa.form</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority">999</field>
+        <field name="arch" type="xml">
+            <form string="Mi Empresa">
+                <sheet>
+                    <group>
+                        <group string="Empresa">
+                            <field name="mi_empresa_partner_id"
+                                   options="{'no_create': True}"
+                                   string="Mi Empresa"
+                                   help="Selecciona el contacto de tipo empresa que representa a tu organizacion. Afecta las listas de Trabajadores y Clientes."/>
+                        </group>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="execute" type="object" string="Guardar" class="btn-primary"/>
+                    <button special="cancel" string="Descartar"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         ACCION: MI EMPRESA (settings, sin redireccion)
+    ================================================================ -->
+    <record id="action_config_mi_empresa" model="ir.actions.act_window">
+        <field name="name">Mi Empresa</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_id" ref="view_config_mi_empresa_form"/>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+        <field name="context">{'module': 'signature_management', 'bin_size': False}</field>
+    </record>
+
+    <!-- ================================================================
+         ACCIONES SERVER (dominios dinamicos basados en mi_empresa)
+    ================================================================ -->
+    <record id="action_server_trabajadores" model="ir.actions.server">
+        <field name="name">Trabajadores</field>
+        <field name="model_id" ref="base.model_res_company"/>
+        <field name="state">code</field>
+        <field name="code">action = env['res.company'].action_view_trabajadores()</field>
+    </record>
+
+    <record id="action_server_clientes" model="ir.actions.server">
+        <field name="name">Clientes</field>
+        <field name="model_id" ref="base.model_res_company"/>
+        <field name="state">code</field>
+        <field name="code">action = env['res.company'].action_view_clientes()</field>
+    </record>
+
+    <!-- ================================================================
+         ACCION: FACTURAS DE CONTRATOS ESPECIFICOS
+    ================================================================ -->
+    <record id="action_facturas_contratos" model="ir.actions.act_window">
+        <field name="name">Facturas</field>
+        <field name="res_model">account.move</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('contrato_especifico_id', '!=', False), ('move_type', '=', 'out_invoice')]</field>
+        <field name="context">{'default_move_type': 'out_invoice'}</field>
+    </record>
+
+    <!-- ================================================================
+         ACCIONES CONFIG (replicas de ajustes para el navbar)
+    ================================================================ -->
+    <record id="action_config_tiempos_validez" model="ir.actions.act_window">
+        <field name="name">Tiempos de Validez</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+        <field name="context">{'module': 'contratos', 'bin_size': False}</field>
+    </record>
+
+    <record id="action_config_firmas" model="ir.actions.act_window">
+        <field name="name">Firmas</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+        <field name="context">{'module': 'signature_management', 'bin_size': False}</field>
+    </record>
+
+    <!-- ================================================================
+         MENU: FACTURAS
+    ================================================================ -->
+    <menuitem id="menu_facturas_group"
+              name="Facturas"
+              parent="contratos.menu_contrato_root"
+              action="action_facturas_contratos"
+              sequence="40"/>
+
+    <!-- ================================================================
+         MENU: CLIENTES
+    ================================================================ -->
+    <menuitem id="menu_clientes_group"
+              name="Clientes"
+              parent="contratos.menu_contrato_root"
+              action="action_server_clientes"
+              sequence="50"/>
+
+    <!-- ================================================================
+         MENU: TRABAJADORES
+    ================================================================ -->
+    <menuitem id="menu_trabajadores_group"
+              name="Trabajadores"
+              parent="contratos.menu_contrato_root"
+              action="action_server_trabajadores"
+              sequence="55"/>
+
+    <!-- ================================================================
+         MENU: CONFIGURACION (solo admins)
+    ================================================================ -->
+    <menuitem id="menu_configuracion_group"
+              name="Configuracion"
+              parent="contratos.menu_contrato_root"
+              sequence="60"
+              groups="base.group_system"/>
+
+    <menuitem id="menu_config_mi_empresa"
+              name="Mi Empresa"
+              parent="menu_configuracion_group"
+              action="action_config_mi_empresa"
+              sequence="10"/>
+
+    <menuitem id="menu_config_tiempos_validez"
+              name="Tiempos de Validez"
+              parent="menu_configuracion_group"
+              action="action_config_tiempos_validez"
+              sequence="30"/>
+
+    <menuitem id="menu_config_firmas"
+              name="Configuración de Firmas"
+              parent="menu_configuracion_group"
+              action="action_config_firmas"
+              sequence="40"/>
+
+    <menuitem id="menu_config_firmas_y_cunos"
+              name="Firmas y Cuños"
+              parent="menu_configuracion_group"
+              action="action_res_signature"
+              sequence="41"/>
+</odoo>
