@@ -111,6 +111,9 @@
                             <field name="our_representative_id"
                                    string="Nuestro Representante"
                                    readonly="1"/>
+                            <field name="representative_id"
+                                   string="Representante del Cliente"
+                                   readonly="1"/>
                             <field name="our_rep_decision_number"
                                    string="Acuerdo/Resolución"
                                    readonly="1"/>

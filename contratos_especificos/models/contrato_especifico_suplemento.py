@@ -153,6 +153,13 @@ class ContratoEspecificoSuplemento(models.Model):
         related="contrato_id.our_representative_id",
         readonly=True,
     )
+    representative_id = fields.Many2one(
+        "res.partner",
+        string="Representante del Cliente",
+        related="contrato_id.representative_id",
+        readonly=True,
+        store=False,
+    )
     our_rep_decision_number = fields.Char(
         string="Acuerdo/Resolución",
         related="contrato_id.our_rep_decision_number",

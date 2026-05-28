@@ -55,6 +55,7 @@
                     <group>
                         <group string="Representación">
                             <field name="our_representative_id" required="template_type_requires_rep" string="Nuestro Representante" readonly="1"/>
+                            <field name="representative_id" string="Representante del Cliente" readonly="1"/>
                             <field name="our_rep_decision_number" string="Acuerdo/Resolución" readonly="1"/>
                             <field name="our_rep_decision_date" string="Fecha de Resolución" readonly="1"/>
                             <field name="our_project_leader_id"/>
