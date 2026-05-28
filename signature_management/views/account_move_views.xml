@@ -30,7 +30,7 @@
             <xpath expr="//field[@name='payment_reference']" position="after">
                 <field name="contrato_especifico_id" readonly="1" invisible="not contrato_especifico_id"/>
                 <field name="payment_form_id" readonly="1" invisible="not payment_form_id"/>
-                <field name="operacion" string="Operación"/>
+                <field name="operacion_id" string="Operación" options="{'no_create': True}"/>
                 <field name="num_ins_rcc" string="Número Ins. RCC"/>
                 <field name="cunyo_id" string="Cuño" options="{'no_create': True}"/>
             </xpath>

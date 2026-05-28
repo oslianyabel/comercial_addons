@@ -118,7 +118,7 @@
                             </td>
                             <td style="border:0;">
                                 <strong>Operación:</strong>
-                                <span style="letter-spacing: 0.4px; white-space: nowrap;"><t t-out="o._report_spaced_text(o.operacion_label or '')"/></span>
+                                <span style="letter-spacing: 0.4px; white-space: nowrap;"><t t-out="o._report_spaced_text(o.operacion_id.name or '')"/></span>
                             </td>
                         </tr>
                     </table>

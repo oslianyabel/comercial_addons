@@ -11,7 +11,7 @@ _DECENAS = ['', 'DIEZ', 'VEINTE', 'TREINTA', 'CUARENTA', 'CINCUENTA',
             'SESENTA', 'SETENTA', 'OCHENTA', 'NOVENTA']
 _CENTENAS = ['', 'CIEN', 'DOSCIENTOS', 'TRESCIENTOS', 'CUATROCIENTOS',
              'QUINIENTOS', 'SEISCIENTOS', 'SETECIENTOS', 'OCHOCIENTOS', 'NOVECIENTOS']
-_OPERACION_SELECTION = [("mipyme", "MiPyme"), ("tcp", "TCP"), ("empresa", "Empresa")]
+
 
 
 def _convertir(n):
@@ -132,14 +132,9 @@ class AccountMove(models.Model):
         related="contrato_especifico_id.marco_id.partner_id.bank_account_cup",
         store=False,
     )
-    operacion = fields.Selection(
-        selection=_OPERACION_SELECTION,
+    operacion_id = fields.Many2one(
+        "contrato.especifico.template",
         string="Operación",
-    )
-    operacion_label = fields.Char(
-        compute="_compute_operacion_label",
-        string="Operación (Etiqueta)",
-        store=False,
     )
     num_ins_rcc = fields.Char(string="Número de Ins. RCC")
 
@@ -198,11 +193,10 @@ class AccountMove(models.Model):
     # Computed helpers
     # ------------------------------------------------------------------
 
-    @api.depends("operacion")
-    def _compute_operacion_label(self):
-        selection_map = dict(_OPERACION_SELECTION)
-        for move in self:
-            move.operacion_label = selection_map.get(move.operacion, move.operacion or "")
+    @api.onchange("contrato_especifico_id")
+    def _onchange_contrato_especifico_id(self):
+        if self.contrato_especifico_id and not self.operacion_id:
+            self.operacion_id = self.contrato_especifico_id.template_id
 
     @api.depends("empresa_id", "empresa_id.company_id", "empresa_id.company_id.street",
                  "empresa_id.company_id.city")
@@ -261,9 +255,10 @@ class AccountMove(models.Model):
     def create(self, vals_list):
         contrato_model = self.env["contrato.especifico"]
         for vals in vals_list:
-            if not vals.get("operacion") and vals.get("contrato_especifico_id"):
+            if not vals.get("operacion_id") and vals.get("contrato_especifico_id"):
                 contract = contrato_model.browse(vals["contrato_especifico_id"])
-                vals["operacion"] = contract.contract_type
+                if contract.template_id:
+                    vals["operacion_id"] = contract.template_id.id
         records = super().create(vals_list)
         for move in records:
             if move.contrato_especifico_id and move.move_type == "out_invoice":
