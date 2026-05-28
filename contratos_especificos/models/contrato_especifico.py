@@ -805,13 +805,27 @@ class ContratoEspecifico(models.Model):
             if not vals.get("state"):
                 vals["state"] = "borrador"
             if not vals.get("name") or vals.get("name") == "/":
-                vals["name"] = (
-                    self.env["ir.sequence"].next_by_code(
-                        "contrato.especifico.sequence",
-                        sequence_date=fields.Date.context_today(self),
+                marco_id = vals.get("marco_id")
+                if marco_id:
+                    marco = self.env["contrato.marco"].browse(marco_id)
+                    # Strip "CM " prefix from marco name (e.g. "CM 01-26" → "01-26")
+                    marco_suffix = marco.name or ""
+                    if marco_suffix.upper().startswith("CM "):
+                        marco_suffix = marco_suffix[3:]
+                    # Count existing CEs for this marco
+                    existing = self.env["contrato.especifico"].search_count(
+                        [("marco_id", "=", marco_id)]
                     )
-                    or "/"
-                )
+                    consecutive = existing + 1
+                    vals["name"] = f"CE {consecutive:02d}-{marco_suffix}"
+                else:
+                    vals["name"] = (
+                        self.env["ir.sequence"].next_by_code(
+                            "contrato.especifico.sequence",
+                            sequence_date=fields.Date.context_today(self),
+                        )
+                        or "/"
+                    )
             # Set contract_type from marco if not already specified
             if not vals.get("contract_type") and vals.get("marco_id"):
                 marco = self.env["contrato.marco"].browse(vals["marco_id"])
