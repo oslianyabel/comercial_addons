@@ -164,7 +164,9 @@ class ContratoEspecifico(models.Model):
         """
         if "marco_id" in vals and not self.env.su:
             raise UserError(
-                _("El Contrato Marco no puede modificarse una vez guardado el contrato.")
+                _(
+                    "El Contrato Marco no puede modificarse una vez guardado el contrato."
+                )
             )
         if not self.env.su:
             blocked_keys = vals.keys() - self._SYSTEM_WRITE_ALLOWED
@@ -897,6 +899,10 @@ class ContratoEspecifico(models.Model):
         for record in self:
             if record.state != "entregado":
                 raise UserError(_("Solo se pueden firmar contratos entregados."))
+            if not record.forma_pago_id:
+                raise UserError(
+                    _("Debe establecer la Forma de Pago antes de firmar el contrato.")
+                )
             record.write({"state": "firmado"})
 
     def action_draft_from_entregado(self):

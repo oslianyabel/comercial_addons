@@ -29,6 +29,9 @@
                         </div>
                     </group>
                 </group>
+                <group string="Datos de la Factura">
+                    <field name="departamento_id" required="1" options="{'no_create': True}"/>
+                </group>
                 <footer>
                     <button string="Confirmar"
                             name="action_confirm"

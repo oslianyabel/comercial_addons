@@ -16,6 +16,7 @@
                     <field name="id_card" placeholder="11 dígitos..." invisible="is_company"/>
                     <field name="classification" invisible="not is_company"/>
                     <field name="organism_id" invisible="not is_company"/>
+                    <field name="departamento_id"/>
                     <field name="ueb_id" invisible="not is_company"/>
                     
                     <!-- Sección de Resolución -->
@@ -50,7 +51,7 @@
 
                     <field name="reeup" invisible="not is_company"/>
                     <field name="customer_number" invisible="not is_company"/>
-                    <field name="tax_id" invisible="is_company"/>
+                    <field name="tax_id" invisible="not is_company"/>
                     
                     <field name="bank_id_ref" invisible="not is_company"/>
                     <field name="titular" invisible="not is_company"/>
@@ -169,5 +170,64 @@
             action="action_res_partner_ueb"
             parent="contacts.res_partner_menu_config"
             sequence="30"/>
+
+        <!-- Vistas y Menú de Departamento -->
+        <record id="view_res_partner_departamento_tree" model="ir.ui.view">
+            <field name="name">res.partner.departamento.tree</field>
+            <field name="model">res.partner.departamento</field>
+            <field name="arch" type="xml">
+                <tree string="Departamentos" editable="bottom">
+                    <field name="name" string="Nombre"/>
+                    <field name="codigo" string="Código"/>
+                    <field name="municipio" string="Municipio"/>
+                    <field name="provincia" string="Provincia"/>
+                    <field name="partner_count" string="Nº Contactos" readonly="1"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_res_partner_departamento_form" model="ir.ui.view">
+            <field name="name">res.partner.departamento.form</field>
+            <field name="model">res.partner.departamento</field>
+            <field name="arch" type="xml">
+                <form string="Departamento">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name" string="Nombre"/>
+                                <field name="codigo" string="Código"/>
+                            </group>
+                            <group>
+                                <field name="municipio" string="Municipio"/>
+                                <field name="provincia" string="Provincia"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Contactos" name="partners">
+                                <field name="partner_ids" options="{'no_create': True, 'no_quick_create': True}">
+                                    <tree>
+                                        <field name="name" string="Nombre"/>
+                                        <field name="email" string="Email"/>
+                                        <field name="phone" string="Teléfono"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_res_partner_departamento" model="ir.actions.act_window">
+            <field name="name">Departamentos</field>
+            <field name="res_model">res.partner.departamento</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_res_partner_departamento"
+            name="Departamentos"
+            action="action_res_partner_departamento"
+            parent="contacts.res_partner_menu_config"
+            sequence="22"/>
     </data>
 </odoo>

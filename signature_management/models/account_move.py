@@ -1,49 +1,88 @@
 from odoo import api, fields, models
 
-
 # ---------------------------------------------------------------------------
 # Spanish number-to-words helper
 # ---------------------------------------------------------------------------
-_UNIDADES = ['', 'UN', 'DOS', 'TRES', 'CUATRO', 'CINCO', 'SEIS', 'SIETE', 'OCHO', 'NUEVE']
-_TEENS = ['DIEZ', 'ONCE', 'DOCE', 'TRECE', 'CATORCE', 'QUINCE',
-          'DIECISÉIS', 'DIECISIETE', 'DIECIOCHO', 'DIECINUEVE']
-_DECENAS = ['', 'DIEZ', 'VEINTE', 'TREINTA', 'CUARENTA', 'CINCUENTA',
-            'SESENTA', 'SETENTA', 'OCHENTA', 'NOVENTA']
-_CENTENAS = ['', 'CIEN', 'DOSCIENTOS', 'TRESCIENTOS', 'CUATROCIENTOS',
-             'QUINIENTOS', 'SEISCIENTOS', 'SETECIENTOS', 'OCHOCIENTOS', 'NOVECIENTOS']
-
+_UNIDADES = [
+    "",
+    "UN",
+    "DOS",
+    "TRES",
+    "CUATRO",
+    "CINCO",
+    "SEIS",
+    "SIETE",
+    "OCHO",
+    "NUEVE",
+]
+_TEENS = [
+    "DIEZ",
+    "ONCE",
+    "DOCE",
+    "TRECE",
+    "CATORCE",
+    "QUINCE",
+    "DIECISÉIS",
+    "DIECISIETE",
+    "DIECIOCHO",
+    "DIECINUEVE",
+]
+_DECENAS = [
+    "",
+    "DIEZ",
+    "VEINTE",
+    "TREINTA",
+    "CUARENTA",
+    "CINCUENTA",
+    "SESENTA",
+    "SETENTA",
+    "OCHENTA",
+    "NOVENTA",
+]
+_CENTENAS = [
+    "",
+    "CIEN",
+    "DOSCIENTOS",
+    "TRESCIENTOS",
+    "CUATROCIENTOS",
+    "QUINIENTOS",
+    "SEISCIENTOS",
+    "SETECIENTOS",
+    "OCHOCIENTOS",
+    "NOVECIENTOS",
+]
 
 
 def _convertir(n):
     if n == 0:
-        return ''
+        return ""
     if n < 10:
         return _UNIDADES[n]
     if n < 20:
         return _TEENS[n - 10]
     if n < 30:
-        return 'VEINTE' if n == 20 else 'VEINTI' + _UNIDADES[n - 20]
+        return "VEINTE" if n == 20 else "VEINTI" + _UNIDADES[n - 20]
     if n < 100:
         resto = n % 10
-        return _DECENAS[n // 10] + (' Y ' + _UNIDADES[resto] if resto else '')
+        return _DECENAS[n // 10] + (" Y " + _UNIDADES[resto] if resto else "")
     if n < 1000:
         centena, resto = divmod(n, 100)
         if centena == 1:
-            return 'CIEN' if resto == 0 else 'CIENTO ' + _convertir(resto)
-        return _CENTENAS[centena] + (' ' + _convertir(resto) if resto else '')
+            return "CIEN" if resto == 0 else "CIENTO " + _convertir(resto)
+        return _CENTENAS[centena] + (" " + _convertir(resto) if resto else "")
     if n < 1_000_000:
         miles, resto = divmod(n, 1000)
-        prefix = 'MIL' if miles == 1 else _convertir(miles) + ' MIL'
-        return prefix + (' ' + _convertir(resto) if resto else '')
+        prefix = "MIL" if miles == 1 else _convertir(miles) + " MIL"
+        return prefix + (" " + _convertir(resto) if resto else "")
     millones, resto = divmod(n, 1_000_000)
-    prefix = 'UN MILLÓN' if millones == 1 else _convertir(millones) + ' MILLONES'
-    return prefix + (' ' + _convertir(resto) if resto else '')
+    prefix = "UN MILLÓN" if millones == 1 else _convertir(millones) + " MILLONES"
+    return prefix + (" " + _convertir(resto) if resto else "")
 
 
 def numero_a_letras(numero):
     """Convert a positive number to uppercase Spanish words."""
     if numero == 0:
-        return 'CERO'
+        return "CERO"
     return _convertir(int(numero)).strip()
 
 
@@ -108,8 +147,8 @@ class AccountMove(models.Model):
     # Client-side fields derived from the specific contract
     cliente_id = fields.Many2one(
         "res.partner",
-        string="Cliente (Representante)",
-        related="contrato_especifico_id.marco_id.representative_id",
+        string="Cliente",
+        related="contrato_especifico_id.partner_id",
         store=False,
     )
     direccion_cliente = fields.Char(
@@ -135,6 +174,10 @@ class AccountMove(models.Model):
     operacion_id = fields.Many2one(
         "contrato.especifico.template",
         string="Operación",
+    )
+    departamento_id = fields.Many2one(
+        "res.partner.departamento",
+        string="Departamento",
     )
     num_ins_rcc = fields.Char(string="Número de Ins. RCC")
 
@@ -198,20 +241,28 @@ class AccountMove(models.Model):
         if self.contrato_especifico_id and not self.operacion_id:
             self.operacion_id = self.contrato_especifico_id.template_id
 
-    @api.depends("empresa_id", "empresa_id.company_id", "empresa_id.company_id.street",
-                 "empresa_id.company_id.city")
+    @api.depends(
+        "empresa_id",
+        "empresa_id.company_id",
+        "empresa_id.company_id.street",
+        "empresa_id.company_id.city",
+    )
     def _compute_direccion_empresa(self):
         for move in self:
             partner = move.empresa_id.company_id
             parts = [p for p in [partner.street, partner.city] if p]
             move.direccion_empresa = ", ".join(parts) if parts else ""
 
-    @api.depends("contrato_especifico_id", "contrato_especifico_id.marco_id",
-                 "contrato_especifico_id.marco_id.representative_id")
+    @api.depends(
+        "contrato_especifico_id",
+        "contrato_especifico_id.partner_id",
+        "contrato_especifico_id.partner_id.street",
+        "contrato_especifico_id.partner_id.city",
+    )
     def _compute_direccion_cliente(self):
         for move in self:
-            rep = move.contrato_especifico_id.marco_id.representative_id
-            parts = [p for p in [rep.street, rep.city] if p]
+            partner = move.contrato_especifico_id.partner_id
+            parts = [p for p in [partner.street, partner.city] if p]
             move.direccion_cliente = ", ".join(parts) if parts else ""
 
     @api.depends("amount_total")
@@ -263,7 +314,27 @@ class AccountMove(models.Model):
         for move in records:
             if move.contrato_especifico_id and move.move_type == "out_invoice":
                 move._assign_contrato_invoice_name()
+                move._clear_invoice_line_taxes()
         return records
+
+    def _clear_invoice_line_taxes(self) -> None:
+        """Remove taxes from all product lines of this contract invoice."""
+        self.ensure_one()
+        product_lines = self.invoice_line_ids.filtered(
+            lambda l: l.display_type == "product"
+        )
+        if product_lines:
+            product_lines.with_context(check_move_validity=False).write(
+                {"tax_ids": [(5, 0, 0)]}
+            )
+
+    def action_post(self):
+        """Strip taxes before confirming contract invoices."""
+        for move in self.filtered(
+            lambda m: m.contrato_especifico_id and m.move_type == "out_invoice"
+        ):
+            move._clear_invoice_line_taxes()
+        return super().action_post()
 
     def _assign_contrato_invoice_name(self) -> None:
         """Assign a custom name FACT_<consecutive>_<contract_number> to the invoice."""
@@ -365,7 +436,6 @@ class AccountMove(models.Model):
             )
 
         return res
-
 
     contrato_especifico_id = fields.Many2one(
         "contrato.especifico", string="Specific Contract"
@@ -418,7 +488,36 @@ class AccountMove(models.Model):
         for move in records:
             if move.contrato_especifico_id and move.move_type == "out_invoice":
                 move._assign_contrato_invoice_name()
+                move._clear_invoice_line_taxes()
         return records
+
+    def _clear_invoice_line_taxes(self) -> None:
+        """Remove taxes from all product lines of this contract invoice."""
+        self.ensure_one()
+        product_lines = self.invoice_line_ids.filtered(
+            lambda l: l.display_type == "product"
+        )
+        if product_lines:
+            product_lines.with_context(check_move_validity=False).write(
+                {"tax_ids": [(5, 0, 0)]}
+            )
+
+    def action_post(self):
+        """Strip taxes before confirming contract invoices."""
+        for move in self.filtered(
+            lambda m: m.contrato_especifico_id and m.move_type == "out_invoice"
+        ):
+            move._clear_invoice_line_taxes()
+        return super().action_post()
+
+    def button_draft(self):
+        """Clear taxes when resetting contract invoices to draft."""
+        result = super().button_draft()
+        for move in self.filtered(
+            lambda m: m.contrato_especifico_id and m.move_type == "out_invoice"
+        ):
+            move._clear_invoice_line_taxes()
+        return result
 
     def _assign_contrato_invoice_name(self) -> None:
         """Assign a custom name FACT_<consecutive>_<contract_number> to the invoice."""
@@ -520,3 +619,14 @@ class AccountMove(models.Model):
             )
 
         return res
+
+
+class AccountMoveLine(models.Model):
+    _inherit = "account.move.line"
+
+    @api.depends("product_id", "product_uom_id")
+    def _compute_tax_ids(self):
+        """This system uses no taxes — always keep tax_ids empty."""
+        for line in self:
+            if line.display_type not in ("line_section", "line_note", "payment_term"):
+                line.tax_ids = self.env["account.tax"]

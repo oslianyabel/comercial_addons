@@ -65,6 +65,7 @@
         <field name="view_mode">tree,form</field>
         <field name="domain">[('contrato_especifico_id', '!=', False), ('move_type', '=', 'out_invoice')]</field>
         <field name="context">{'default_move_type': 'out_invoice'}</field>
+        <field name="view_ids" eval="[(5, 0, 0), (0, 0, {'view_mode': 'tree', 'view_id': ref('signature_management.view_move_tree_contract_restricted')})]"/>
     </record>
 
     <!-- ================================================================
@@ -145,4 +146,10 @@
               parent="menu_configuracion_group"
               action="action_res_signature"
               sequence="41"/>
+
+    <menuitem id="menu_config_departamentos"
+              name="Departamentos"
+              parent="menu_configuracion_group"
+              action="partner_custom_fields.action_res_partner_departamento"
+              sequence="25"/>
 </odoo>

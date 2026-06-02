@@ -43,7 +43,6 @@
                             <field name="company_id" readonly="1"/>
                             <field name="partner_id" readonly="1"/>
                             <field name="template_id" string="Tipo de Contrato"/>
-                            <field name="contract_type" string="Operación"/>
                         </group>
                         <group name="dates" string="Fechas">
                             <field name="date" string="Fecha de Suscripción"/>

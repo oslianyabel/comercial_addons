@@ -182,12 +182,6 @@
                         <span style="letter-spacing: 0.4px; word-spacing: 0.4px; display:inline-block;"><t t-out="o._report_spaced_label('del')"/></span> <span style="letter-spacing: 0.4px; white-space: nowrap; display:inline-block;"><t t-out="o._report_spaced_text(o.banco_pagar.name if o.banco_pagar else '')"/></span>
                     </div>
 
-                    <t t-if="o.total_cup_literal">
-                        <div style="margin-top:4px; font-size:10px; font-style:italic; letter-spacing: 0.4px;">
-                            <span style="letter-spacing: 0.4px;"><t t-out="o._report_spaced_text(o.total_cup_literal)"/></span>
-                        </div>
-                    </t>
-
                     <div style="margin:10px 0;"/>
 
                     <!-- FIRMAS: sin bordes de tabla, columnas con div inline-block -->

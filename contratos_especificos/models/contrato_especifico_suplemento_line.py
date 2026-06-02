@@ -113,6 +113,15 @@ class ContratoEspecificoSupplementoLine(models.Model):
         """Open billing wizard for this suplemento service line."""
         self.ensure_one()
         sup = self.suplemento_id
+        if sup.state != "firmado":
+            raise UserError(
+                _(
+                    "Solo se pueden facturar líneas de suplementos firmados. "
+                    "El suplemento '%s' está en estado '%s'.",
+                    sup.name,
+                    sup.state,
+                )
+            )
         if not sup.forma_pago_id:
             raise UserError(
                 _(

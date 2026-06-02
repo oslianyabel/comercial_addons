@@ -41,6 +41,11 @@ class ContratoEspecificoFacturarWizard(models.TransientModel):
     max_price = fields.Float(string="Precio Máximo", readonly=True)
     quantity = fields.Float(string="Cantidad a Facturar", required=True)
     price_unit = fields.Float(string="Precio Unitario a Facturar", required=True)
+    departamento_id = fields.Many2one(
+        "res.partner.departamento",
+        string="Departamento",
+        required=True,
+    )
 
     @api.depends("line_id", "ueb_line_id", "sup_line_id", "sup_ueb_line_id")
     def _compute_display_fields(self) -> None:
@@ -207,6 +212,11 @@ class ContratoEspecificoFacturarWizard(models.TransientModel):
 
             residual_quantity = self.max_quantity - self.quantity
             residual_price = self.max_price - self.price_unit
+            # Si la facturación parcial solo redujo el precio pero no la cantidad
+            # (ej: UdM=Unidades, cantidad=1), la línea residual conserva la cantidad original
+            # para que pueda volver a facturarse sin fallar la validación de cantidad > 0.
+            if residual_quantity <= 0 and self.price_unit < self.max_price:
+                residual_quantity = self.max_quantity
             line.with_context(is_uninvoice=True).write(
                 {
                     "quantity": residual_quantity,
@@ -235,6 +245,9 @@ class ContratoEspecificoFacturarWizard(models.TransientModel):
             "suplemento_especifico_id": sup.id if sup else False,
             invoice_line_field: billing_line.id,
             "invoice_payment_term_id": forma_pago.id if forma_pago else False,
+            "departamento_id": self.departamento_id.id
+            if self.departamento_id
+            else False,
             "invoice_line_ids": [
                 (
                     0,
@@ -245,6 +258,7 @@ class ContratoEspecificoFacturarWizard(models.TransientModel):
                         "quantity": self.quantity,
                         "product_uom_id": billing_line.uom_id.id,
                         "price_unit": self.price_unit,
+                        "tax_ids": [(5, 0, 0)],
                     },
                 )
             ],

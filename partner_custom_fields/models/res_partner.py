@@ -12,6 +12,29 @@ class ResPartnerOrganism(models.Model):
     name = fields.Char(string="Nombre", required=True)
 
 
+class ResPartnerDepartamento(models.Model):
+    _name = "res.partner.departamento"
+    _description = "Departamento"
+
+    name = fields.Char(string="Nombre", required=True)
+    codigo = fields.Char(string="Código", required=True)
+    municipio = fields.Char(string="Municipio")
+    provincia = fields.Char(string="Provincia")
+    partner_ids = fields.One2many(
+        "res.partner",
+        "departamento_id",
+        string="Contactos",
+    )
+    partner_count = fields.Integer(
+        string="Nº de Contactos",
+        compute="_compute_partner_count",
+    )
+
+    def _compute_partner_count(self):
+        for rec in self:
+            rec.partner_count = len(rec.partner_ids)
+
+
 class ResPartnerUEB(models.Model):
     _name = "res.partner.ueb"
     _description = "UEB"
@@ -65,6 +88,7 @@ class ResPartner(models.Model):
     vat = fields.Char(string="NIT")
 
     organism_id = fields.Many2one("res.partner.organism", string="Organismo")
+    departamento_id = fields.Many2one("res.partner.departamento", string="Departamento")
     short_name = fields.Char(string="Nombre Abreviado")
     titular = fields.Char(string="Titular de Cuenta Bancaria")
     id_card = fields.Char(string="Carnet de Identidad")

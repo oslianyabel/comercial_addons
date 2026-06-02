@@ -273,6 +273,7 @@
                        decoration-info="state == 'borrador'"/>
                 <field name="modified_by_id" string="Creado por"/>
                 <field name="modification_date" string="Fecha"/>
+                <field name="end_date" string="Fecha de Finalización"/>
                 <field name="modificaciones" string="Modificaciones" optional="show"/>
             </tree>
         </field>
