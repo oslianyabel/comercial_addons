@@ -100,6 +100,7 @@ class ContratoEspecifico(models.Model):
             "template_id",
             "marco_id",
             "suplemento_id",
+            "our_project_leader_id",
             "project_leader_id",
             "application_name",
             "start_date",
@@ -617,16 +618,17 @@ class ContratoEspecifico(models.Model):
 
     @api.depends("template_id", "template_id.type")
     def _compute_template_type_flags(self):
+        ContratoTemplate = self.env["contrato.especifico.template"]
         for record in self:
             t = record.template_id.type if record.template_id else False
-            record.template_type_requires_rep = t in (
-                "cgm_disponibilidad",
-                "productos_soporte",
+            record.template_type_requires_rep = (
+                t in ContratoTemplate._TYPES_WITH_REPRESENTATIVE
             )
-            record.template_type_requires_leader = t == "versat_iniciales"
-            record.template_type_requires_application_name = t in (
-                "productos_soporte",
-                "soporte_desarrollo",
+            record.template_type_requires_leader = (
+                t in ContratoTemplate._TYPES_WITH_LEADERS
+            )
+            record.template_type_requires_application_name = (
+                t in ContratoTemplate._TYPES_WITH_APP_NAME
             )
 
     def action_generate_content(self):
@@ -698,6 +700,11 @@ class ContratoEspecifico(models.Model):
                 "our_rep_decision_number": highlight(our_rep_decision_number),
                 "partner_name": highlight(p.name),
                 "partner_short_name": highlight(p.short_name),
+                "our_project_leader": highlight(
+                    record.our_project_leader_id.name
+                    if record.our_project_leader_id
+                    else ""
+                ),
                 "project_leader": highlight(
                     record.project_leader_id.name if record.project_leader_id else ""
                 ),
@@ -940,8 +947,42 @@ class ContratoEspecifico(models.Model):
         plain_content = re.sub(r"\s+", " ", plain_content).strip()
         return bool(plain_content)
 
+    def action_facturar_seleccion(self) -> dict:
+        """Abre wizard para que el usuario seleccione las líneas a facturar y el departamento."""
+        self.ensure_one()
+
+        if self.state != "firmado":
+            raise UserError(
+                _("Solo puede facturar un contrato que se encuentre Firmado.")
+            )
+        if not self.forma_pago_id:
+            raise UserError(
+                _(
+                    "Debe configurar la Forma de Pago en los Datos de Facturación "
+                    "del contrato antes de facturar."
+                )
+            )
+
+        uninvoiced = self.line_ids.filtered(
+            lambda ln: not ln.invoiced and not ln.is_invoice_line
+        )
+        if not uninvoiced:
+            raise UserError(_("No hay líneas de servicio pendientes de facturar."))
+
+        wizard = self.env["contrato.especifico.facturar.seleccion.wizard"].create(
+            {"contrato_id": self.id}
+        )
+        return {
+            "name": _("Facturar Conjunto"),
+            "type": "ir.actions.act_window",
+            "res_model": "contrato.especifico.facturar.seleccion.wizard",
+            "res_id": wizard.id,
+            "view_mode": "form",
+            "target": "new",
+        }
+
     def action_facturar_todo(self) -> dict:
-        """Invoice all uninvoiced service lines (general + UEB) of this contract."""
+        """Abre el wizard para seleccionar departamento y luego facturar todas las líneas."""
         self.ensure_one()
 
         if self.state != "firmado":
@@ -967,65 +1008,14 @@ class ContratoEspecifico(models.Model):
         if not uninvoiced_lines and not uninvoiced_ueb_lines:
             raise UserError(_("Todas las líneas de servicio ya han sido facturadas."))
 
-        partner = self.partner_id
-        base_vals: dict = {
-            "move_type": "out_invoice",
-            "partner_id": partner.id,
-            "invoice_date": fields.Date.today(),
-            "contrato_especifico_id": self.id,
-            "invoice_payment_term_id": self.forma_pago_id.id,
-            "client_address": f"{partner.street or ''} {partner.city or ''}".strip(),
-            "client_nit": getattr(partner, "tax_id", None) or partner.vat or "",
-            "client_bank_account": getattr(partner, "bank_account_cup", None) or "",
-            "realizada_por_id": self.realizada_por_id.id
-            if self.realizada_por_id
-            else False,
+        wizard = self.env["contrato.especifico.facturar.todo.wizard"].create(
+            {"contrato_id": self.id}
+        )
+        return {
+            "name": _("Facturar Todo"),
+            "type": "ir.actions.act_window",
+            "res_model": "contrato.especifico.facturar.todo.wizard",
+            "res_id": wizard.id,
+            "view_mode": "form",
+            "target": "new",
         }
-
-        for line in uninvoiced_lines:
-            line._apply_default_invoice_dates()
-            self.env["account.move"].create(
-                {
-                    **base_vals,
-                    "service_line_id": line.id,
-                    "invoice_line_ids": [
-                        (
-                            0,
-                            0,
-                            {
-                                "product_id": line.product_id.id,
-                                "name": line.name,
-                                "quantity": line.quantity,
-                                "product_uom_id": line.uom_id.id,
-                                "price_unit": line.price_unit,
-                            },
-                        )
-                    ],
-                }
-            )
-            line.with_context(is_uninvoice=True).write({"invoiced": True})
-
-        for line in uninvoiced_ueb_lines:
-            line._apply_default_invoice_dates()
-            self.env["account.move"].create(
-                {
-                    **base_vals,
-                    "ueb_service_line_id": line.id,
-                    "invoice_line_ids": [
-                        (
-                            0,
-                            0,
-                            {
-                                "product_id": line.product_id.id,
-                                "name": line.name,
-                                "quantity": line.quantity,
-                                "product_uom_id": line.uom_id.id,
-                                "price_unit": line.price_unit,
-                            },
-                        )
-                    ],
-                }
-            )
-            line.with_context(is_uninvoice=True).write({"invoiced": True})
-
-        return self.action_view_invoices()

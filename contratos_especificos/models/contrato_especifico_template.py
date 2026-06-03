@@ -13,10 +13,51 @@ class ContratoEspecificoTemplate(models.Model):
     name = fields.Char(string="Name", required=True)
     type = fields.Selection(
         [
+            # ── Existentes ──────────────────────────────────────────────────
             ("cgm_disponibilidad", "CGM Disponibilidad y Soporte"),
             ("productos_soporte", "Productos Soporte"),
             ("soporte_desarrollo", "Servicio Soporte Desarrollo"),
             ("versat_iniciales", "Versat Servicios Iniciales"),
+            # ── Versat ──────────────────────────────────────────────────────
+            ("versat_soporte", "Versat Soporte"),
+            ("versat_licencia", "Versat Licencia"),
+            ("versat_licencia_activacion", "Versat Licencia y Activación"),
+            ("versat_soporte_activacion", "Versat Soporte y Activación"),
+            ("versat_lic_activ_sop_mipyme", "Versat Lic.+Activ.+Sop. MIPYME"),
+            ("versat_lic_activ_sop_tcp", "Versat Lic.+Activ.+Sop. TCP"),
+            ("versat_diagnostico", "Versat Diagnóstico"),
+            # ── Productos genéricos ──────────────────────────────────────────
+            ("productos_suscripcion_soporte", "Productos Suscripción y Soporte"),
+            ("productos_servicios_iniciales", "Productos Servicios Iniciales"),
+            ("productos_acompanamiento", "Productos Acompañamiento"),
+            ("productos_proc_datos", "Productos Procesamiento de Datos"),
+            # ── Segurmática ──────────────────────────────────────────────────
+            ("segurmatica_licencia", "Segurmática Licencia"),
+            ("segurmatica_licencia_soporte", "Segurmática Licencia y Soporte"),
+            # ── Firma Digital ────────────────────────────────────────────────
+            ("firma_digital", "Certificados y Servicios Firma Digital"),
+            # ── Formación ───────────────────────────────────────────────────
+            ("curso_juridicas", "Curso Formación - Personas Jurídicas"),
+            ("curso_naturales", "Curso Formación - Personas Naturales"),
+            # ── Servicios técnicos ───────────────────────────────────────────
+            ("servicio_desarrollo", "Servicio Desarrollo de Software"),
+            ("servicio_consultoria", "Servicio Consultoría"),
+            ("servicio_psi", "Servicio Asesoramiento PSI"),
+            ("servicio_iniciales_so", "Servicio Iniciales Sistema Operativo"),
+            ("servicio_reparacion_bd", "Servicio Reparación Base de Datos"),
+            ("servicio_log_correo", "Servicio Análisis Log de Correo"),
+            ("servicio_log_internet", "Servicio Análisis Log de Internet"),
+            ("servicio_vulnerabilidades", "Servicio Detección de Vulnerabilidades"),
+            ("servicio_descontaminacion", "Servicio Descontaminación"),
+            ("servicio_recuperacion", "Servicio Recuperación de Información"),
+            ("servicio_externo_ti", "Servicio Externo de Operaciones TI"),
+            ("servicio_redes", "Servicio Redes Informáticas"),
+            ("servicio_redes_webmaster", "Servicio Redes Informáticas Webmaster"),
+            ("servicio_webmaster", "Servicio Webmaster"),
+            ("servicio_webmaster_hosting", "Servicio Webmaster y Hosting"),
+            ("servicio_desarrollo_web", "Servicio Desarrollo Sitio Web"),
+            # ── Especiales ───────────────────────────────────────────────────
+            ("obligaciones_pendientes", "Contrato Obligaciones Pendientes"),
         ],
         string="Contract Type",
         required=True,
@@ -51,10 +92,51 @@ class ContratoEspecificoTemplate(models.Model):
     # Template type -> filename mapping
     # -------------------------------------------------------------------------
     TEMPLATE_FILES = {
+        # Existentes
         "cgm_disponibilidad": "CGM Disponibilidad y Soporte.txt",
         "productos_soporte": "Productos Soporte.txt",
         "soporte_desarrollo": "Servicio Soporte Desarrollo.txt",
         "versat_iniciales": "Versat Servicios Iniciales.txt",
+        # Versat
+        "versat_soporte": "Versat Soporte.txt",
+        "versat_licencia": "Versat Licencia.txt",
+        "versat_licencia_activacion": "Versat Licencia y Activacion.txt",
+        "versat_soporte_activacion": "Versat Soporte y Activacion.txt",
+        "versat_lic_activ_sop_mipyme": "Versat Lic Activ Sop MIPYME.txt",
+        "versat_lic_activ_sop_tcp": "Versat Lic Activ Sop TCP.txt",
+        "versat_diagnostico": "Versat Diagnostico.txt",
+        # Productos genéricos
+        "productos_suscripcion_soporte": "Productos Suscripcion y Soporte.txt",
+        "productos_servicios_iniciales": "Productos Servicios Iniciales.txt",
+        "productos_acompanamiento": "Productos Acompanamiento.txt",
+        "productos_proc_datos": "Productos Procesamiento de Datos.txt",
+        # Segurmática
+        "segurmatica_licencia": "Segurmatica Licencia.txt",
+        "segurmatica_licencia_soporte": "Segurmatica Licencia y Soporte.txt",
+        # Firma Digital
+        "firma_digital": "Firma Digital.txt",
+        # Formación
+        "curso_juridicas": "Curso Formacion Juridicas.txt",
+        "curso_naturales": "Curso Formacion Naturales.txt",
+        # Servicios técnicos
+        "servicio_desarrollo": "Servicio Desarrollo.txt",
+        "servicio_consultoria": "Servicio Consultoria.txt",
+        "servicio_psi": "Servicio Asesoramiento PSI.txt",
+        "servicio_iniciales_so": "Servicio Iniciales SO.txt",
+        "servicio_reparacion_bd": "Servicio Reparacion Base Datos.txt",
+        "servicio_log_correo": "Servicio Analisis Log Correo.txt",
+        "servicio_log_internet": "Servicio Analisis Log Internet.txt",
+        "servicio_vulnerabilidades": "Servicio Deteccion Vulnerabilidades.txt",
+        "servicio_descontaminacion": "Servicio Descontaminacion.txt",
+        "servicio_recuperacion": "Servicio Recuperacion Informacion.txt",
+        "servicio_externo_ti": "Servicio Externo TI.txt",
+        "servicio_redes": "Servicio Redes Informaticas.txt",
+        "servicio_redes_webmaster": "Servicio Redes Webmaster.txt",
+        "servicio_webmaster": "Servicio Webmaster.txt",
+        "servicio_webmaster_hosting": "Servicio Webmaster y Hosting.txt",
+        "servicio_desarrollo_web": "Servicio Desarrollo Sitio Web.txt",
+        # Especiales
+        "obligaciones_pendientes": "Obligaciones Pendientes.txt",
     }
 
     # -------------------------------------------------------------------------
@@ -72,7 +154,60 @@ class ContratoEspecificoTemplate(models.Model):
         "day",
         "month",
         "year",
+        # Leaders (present in most templates)
+        "our_project_leader",
+        "project_leader",
     ]
+
+    # Types that use {{our_representative}}, {{our_rep_function}}, {{our_rep_decision_number}}
+    _TYPES_WITH_REPRESENTATIVE = frozenset(
+        [
+            "cgm_disponibilidad",
+            "productos_soporte",
+            "productos_suscripcion_soporte",
+            "curso_naturales",
+        ]
+    )
+
+    # Types that use {{application_name}}
+    _TYPES_WITH_APP_NAME = frozenset(
+        [
+            "productos_soporte",
+            "soporte_desarrollo",
+            "productos_suscripcion_soporte",
+            "productos_servicios_iniciales",
+            "productos_acompanamiento",
+            "productos_proc_datos",
+            "servicio_externo_ti",
+        ]
+    )
+
+    # Types that use {{project_leader}} and/or {{our_project_leader}}
+    _TYPES_WITH_LEADERS = frozenset(
+        [
+            "versat_iniciales",
+            "versat_diagnostico",
+            "productos_servicios_iniciales",
+            "productos_acompanamiento",
+            "productos_proc_datos",
+            "servicio_desarrollo",
+            "servicio_consultoria",
+            "servicio_psi",
+            "servicio_iniciales_so",
+            "servicio_reparacion_bd",
+            "servicio_log_correo",
+            "servicio_log_internet",
+            "servicio_vulnerabilidades",
+            "servicio_descontaminacion",
+            "servicio_recuperacion",
+            "servicio_externo_ti",
+            "servicio_redes",
+            "servicio_redes_webmaster",
+            "servicio_webmaster",
+            "servicio_webmaster_hosting",
+            "servicio_desarrollo_web",
+        ]
+    )
 
     TYPE_EXTRA_VARIABLES = {
         "cgm_disponibilidad": [
@@ -89,9 +224,50 @@ class ContratoEspecificoTemplate(models.Model):
         "soporte_desarrollo": [
             "application_name",
         ],
-        "versat_iniciales": [
-            "project_leader",
+        "versat_iniciales": [],
+        # New types
+        "versat_soporte": [],
+        "versat_licencia": [],
+        "versat_licencia_activacion": [],
+        "versat_soporte_activacion": [],
+        "versat_lic_activ_sop_mipyme": [],
+        "versat_lic_activ_sop_tcp": [],
+        "versat_diagnostico": [],
+        "productos_suscripcion_soporte": [
+            "our_representative",
+            "our_rep_function",
+            "our_rep_decision_number",
+            "application_name",
         ],
+        "productos_servicios_iniciales": ["application_name"],
+        "productos_acompanamiento": ["application_name"],
+        "productos_proc_datos": ["application_name"],
+        "segurmatica_licencia": [],
+        "segurmatica_licencia_soporte": [],
+        "firma_digital": [],
+        "curso_juridicas": [],
+        "curso_naturales": [
+            "our_representative",
+            "our_rep_function",
+            "our_rep_decision_number",
+        ],
+        "servicio_desarrollo": [],
+        "servicio_consultoria": [],
+        "servicio_psi": [],
+        "servicio_iniciales_so": [],
+        "servicio_reparacion_bd": [],
+        "servicio_log_correo": [],
+        "servicio_log_internet": [],
+        "servicio_vulnerabilidades": [],
+        "servicio_descontaminacion": [],
+        "servicio_recuperacion": [],
+        "servicio_externo_ti": ["application_name"],
+        "servicio_redes": [],
+        "servicio_redes_webmaster": [],
+        "servicio_webmaster": [],
+        "servicio_webmaster_hosting": [],
+        "servicio_desarrollo_web": [],
+        "obligaciones_pendientes": [],
     }
 
     COMMON_REQUIRED = [
@@ -117,9 +293,49 @@ class ContratoEspecificoTemplate(models.Model):
             "our_rep_decision_number",
         ],
         "soporte_desarrollo": [],
-        "versat_iniciales": [
-            "project_leader",
+        "versat_iniciales": ["project_leader"],
+        # New types
+        "versat_soporte": [],
+        "versat_licencia": [],
+        "versat_licencia_activacion": [],
+        "versat_soporte_activacion": [],
+        "versat_lic_activ_sop_mipyme": [],
+        "versat_lic_activ_sop_tcp": [],
+        "versat_diagnostico": ["project_leader"],
+        "productos_suscripcion_soporte": [
+            "our_representative",
+            "our_rep_function",
+            "our_rep_decision_number",
         ],
+        "productos_servicios_iniciales": ["project_leader"],
+        "productos_acompanamiento": ["project_leader"],
+        "productos_proc_datos": ["project_leader"],
+        "segurmatica_licencia": [],
+        "segurmatica_licencia_soporte": [],
+        "firma_digital": [],
+        "curso_juridicas": [],
+        "curso_naturales": [
+            "our_representative",
+            "our_rep_function",
+            "our_rep_decision_number",
+        ],
+        "servicio_desarrollo": ["project_leader"],
+        "servicio_consultoria": ["project_leader"],
+        "servicio_psi": ["project_leader"],
+        "servicio_iniciales_so": ["project_leader"],
+        "servicio_reparacion_bd": ["project_leader"],
+        "servicio_log_correo": ["project_leader"],
+        "servicio_log_internet": ["project_leader"],
+        "servicio_vulnerabilidades": ["project_leader"],
+        "servicio_descontaminacion": ["project_leader"],
+        "servicio_recuperacion": ["project_leader"],
+        "servicio_externo_ti": ["project_leader"],
+        "servicio_redes": ["project_leader"],
+        "servicio_redes_webmaster": [],
+        "servicio_webmaster": [],
+        "servicio_webmaster_hosting": [],
+        "servicio_desarrollo_web": [],
+        "obligaciones_pendientes": [],
     }
 
     # -------------------------------------------------------------------------

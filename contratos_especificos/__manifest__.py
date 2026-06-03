@@ -23,6 +23,8 @@
         "data/specific_template_data.xml",
         "wizard/contrato_especifico_cancel_wizard_views.xml",
         "wizard/contrato_especifico_facturar_wizard_views.xml",
+        "wizard/contrato_especifico_facturar_todo_wizard_views.xml",
+        "wizard/contrato_especifico_facturar_seleccion_wizard_views.xml",
         "wizard/contrato_especifico_suplemento_cancel_wizard_views.xml",
         "views/contrato_especifico_import_wizard_views.xml",
         "views/contrato_especifico_template_views.xml",

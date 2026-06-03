@@ -44,7 +44,6 @@ class ContratoEspecificoFacturarWizard(models.TransientModel):
     departamento_id = fields.Many2one(
         "res.partner.departamento",
         string="Departamento",
-        required=True,
     )
 
     @api.depends("line_id", "ueb_line_id", "sup_line_id", "sup_ueb_line_id")

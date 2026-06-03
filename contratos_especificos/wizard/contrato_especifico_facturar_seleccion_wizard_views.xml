@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_contrato_especifico_facturar_seleccion_wizard_form" model="ir.ui.view">
+        <field name="name">contrato.especifico.facturar.seleccion.wizard.form</field>
+        <field name="model">contrato.especifico.facturar.seleccion.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Facturar Conjunto">
+                <group>
+                    <field name="contrato_id" invisible="1"/>
+                    <field name="departamento_id" required="1" options="{'no_create': True}"/>
+                </group>
+                <field name="line_ids"
+                       widget="many2many"
+                       nolabel="1"
+                       domain="[('contrato_id', '=', contrato_id), ('invoiced', '=', False), ('is_invoice_line', '=', False)]"
+                       string="Líneas de Servicio a Facturar">
+                    <tree create="0" delete="0">
+                        <field name="product_id" string="Producto/Servicio" readonly="1"/>
+                        <field name="name" string="Descripción" readonly="1"/>
+                        <field name="quantity" string="Cantidad" readonly="1"/>
+                        <field name="uom_id" string="UdM" readonly="1"/>
+                        <field name="price_unit" string="Precio Unitario" readonly="1"/>
+                        <field name="price_subtotal" string="Subtotal" readonly="1"/>
+                    </tree>
+                </field>
+                <footer>
+                    <button string="Confirmar"
+                            name="action_confirm"
+                            type="object"
+                            class="btn-primary"/>
+                    <button string="Cancelar" special="cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>
