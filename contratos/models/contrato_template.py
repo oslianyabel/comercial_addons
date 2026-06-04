@@ -116,13 +116,19 @@ class ContratoTemplate(models.Model):
             record.available_variables = "\n".join([f"{{{{{v}}}}}" for v in vars_list])
 
     def _get_base_path(self):
-        """Automatically detect the context directory relative to this file."""
+        """Return the plantillas directory inside the contratos module, creating it if needed."""
         # This file is in: extra_addons/contratos/models/contrato_template.py
-        # We need: extra_addons/context
+        # We need:          extra_addons/contratos/static/plantillas/
         current_dir = os.path.dirname(os.path.abspath(__file__))
-        # Go up 2 levels: models -> contratos -> extra_addons
-        extra_addons_path = os.path.abspath(os.path.join(current_dir, "..", ".."))
-        return os.path.join(extra_addons_path, "context")
+        module_path = os.path.abspath(os.path.join(current_dir, ".."))
+        path = os.path.join(module_path, "static", "plantillas")
+        os.makedirs(path, exist_ok=True)
+        return path
+
+    def _register_hook(self):
+        """Ensure the plantillas directory exists on every Odoo startup."""
+        self._get_base_path()
+        return super()._register_hook()
 
     def _get_filesystem_content(self):
         """Helper to get and format the current filesystem content for comparison."""

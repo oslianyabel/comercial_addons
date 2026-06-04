@@ -363,10 +363,19 @@ class ContratoEspecificoTemplate(models.Model):
     # Filesystem sync
     # -------------------------------------------------------------------------
     def _get_base_path(self):
-        """Detect the context/contratos especificos directory."""
+        """Return the plantillas directory inside the contratos_especificos module, creating it if needed."""
+        # This file is in: extra_addons/contratos_especificos/models/contrato_especifico_template.py
+        # We need:          extra_addons/contratos_especificos/static/plantillas/
         current_dir = os.path.dirname(os.path.abspath(__file__))
-        extra_addons_path = os.path.abspath(os.path.join(current_dir, "..", ".."))
-        return os.path.join(extra_addons_path, "context", "contratos especificos")
+        module_path = os.path.abspath(os.path.join(current_dir, ".."))
+        path = os.path.join(module_path, "static", "plantillas")
+        os.makedirs(path, exist_ok=True)
+        return path
+
+    def _register_hook(self):
+        """Ensure the plantillas directory exists on every Odoo startup."""
+        self._get_base_path()
+        return super()._register_hook()
 
     def _get_filesystem_content(self):
         """Get and format the current filesystem content for comparison."""
