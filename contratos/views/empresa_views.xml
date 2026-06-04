@@ -45,9 +45,4 @@
         <field name="view_mode">tree,form</field>
     </record>
 
-    <menuitem id="menu_empresa"
-              name="Empresas"
-              parent="signature_management.menu_configuracion_group"
-              action="action_contratos_empresa"
-              sequence="20"/>
 </odoo>

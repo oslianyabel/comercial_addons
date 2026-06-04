@@ -316,6 +316,12 @@
               sequence="60"
               groups="base.group_system"/>
 
+    <menuitem id="menu_empresa"
+              name="Empresas"
+              parent="menu_configuracion_group"
+              action="contratos.action_contratos_empresa"
+              sequence="20"/>
+
     <menuitem id="menu_config_mi_empresa"
               name="Mi Empresa"
               parent="menu_configuracion_group"
