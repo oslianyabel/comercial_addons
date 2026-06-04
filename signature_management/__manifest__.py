@@ -16,6 +16,7 @@
     "uninstall_hook": "uninstall_hook",
     "data": [
         "security/ir.model.access.csv",
+        "data/cron.xml",
         "report/signature_report_templates.xml",
         "report/factura_report.xml",
         "views/res_config_settings_views.xml",
@@ -25,6 +26,7 @@
         "views/account_move_views.xml",
         "views/payment_form_views.xml",
         "views/res_partner_views.xml",
+        "wizard/lineas_por_facturar_multiples_wizard_views.xml",
         "views/contratos_navbar_views.xml",
     ],
     "assets": {

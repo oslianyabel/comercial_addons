@@ -1,0 +1,69 @@
+﻿CONTRATO ESPECÍFICO No. {{specific_number}}
+
+AL CONTRATO MARCO DE PRESTACIÓN DE SERVICIOS INFORMÁTICOS No. {{marco_number}}
+
+DE UNA PARTE: Sociedad Mercantil Soluciones DTeam S.U.R.L, Sociedad Unipersonal de Responsabilidad Limitada, de carácter estatal, que en lo adelante y a los efectos de este Contrato se denominará EL PRESTADOR.
+
+DE LA OTRA PARTE: La {{partner_name}}, a través de {{partner_via}} en forma abreviada {{partner_short_name}}, quien en lo adelante y a los efectos del presente contrato se denominará EL CLIENTE.
+
+AMBAS PARTES: Reconociéndose recíprocamente la representación, el carácter y personalidad con que comparecen a nombre de sus respectivas entidades, y dando fe que mantienen los datos referentes a la personalidad jurídica que obran en el Contrato Marco convienen lo siguiente:
+DEFINICIONES:
+
+•	SEGURMÁTICA ANTIVIRUS PERSONAL: Programa antivirus que garantiza la protección en tiempo real de estaciones y servidores con sistemas operativos de Microsoft Windows frente a las amenazas que representan los programas malignos.
+
+•	SEGURMÁTICA ANTIVIRUS CORPORATIVO: Escenario basado en una estructura CLIENTE-servidor que permite administrar de manera centralizada los programas Segurmática Antivirus instalados en las computadoras de una red basada en un dominio de Microsoft Windows.
+
+•	Segurmática Seguridad Móvil (SSM): Software orientado a la protección contra el accionar de los programas malignos para Móviles.
+
+•	PRODUCTOR: Empresa de Consultoría y Seguridad Informática, en su forma abreviada SEGURMÁTICA.
+
+CLÁUSULAS:
+
+1.	OBJETO DEL CONTRATO
+
+1.1	El presente Contrato tiene como objeto establecer las Condiciones Específicas para la prestación del servicio de Licencia de Uso al producto Segurmática Antivirus.
+
+2.	OBLIGACIONES DE LAS PARTES
+
+2.1	Es obligación de EL PRESTADOR:
+
+2.1.1	Prestar el servicio de Licencia de Uso al producto Segurmática Antivirus, como se describe en el Lineas de servicios que forma parte integrante del presente contrato.
+
+2.1.2	Entregar a EL CLIENTE la Licencia de Uso del producto Segurmática Antivirus en un término inferior a las 72 horas posteriores a la firma del contrato.
+
+2.1.3	EL PRESTADOR está en la obligación de entregar a EL CLIENTE: Instalador del Software y Certificación del Registro de la Dirección General de Informática del Ministerio de Comunicaciones.
+
+2.1.4	Facturar el servicio al CLIENTE según lo descrito en el Lineas de servicios.
+
+2.2	Es obligación del CLIENTE:
+
+2.2.1	El producto Segurmática Antivirus distribuido para EL CLIENTE será entregado para uso estricto interno del mismo, sin que éste tenga derecho a transferirlo a otras unidades o a terceros.
+
+2.2.2	Recibir el servicio de Licencia de Uso al producto Segurmática Antivirus, como se describe en el Lineas de servicios.
+
+2.2.3	Pagar el servicio al PRESTADOR según lo descrito en el Lineas de servicios.
+
+3.	VALOR Y FORMAS DE PAGO
+
+3.1	El precio del servicio prestado se establece en el Lineas de servicios. EL CLIENTE realizará el pago al PRESTADOR en CUP, a través de cheque o transferencia bancaria, dentro del término de 30 días naturales siguientes a la recepción de la factura comercial.
+
+4.	GARANTÍA
+
+4.1	El PRODUCTOR garantiza a través del PRESTADOR que, con la aplicación eficaz de su Sistema de Gestión de la Calidad basado en la Norma Cubana NC ISO 9001:2015 vigente, tiene la capacidad para proporcionar los productos referenciados en el Lineas de servicios que satisfagan los requisitos de EL CLIENTE.
+
+4.2	En caso de notificar EL CLIENTE alguna inconformidad con la Licencia de Uso del producto, informarlo al departamento Comercial del PRESTADOR; de resultar procedente y ser responsabilidad del PRODUCTOR, este asume la solución.
+
+5.	DERECHOS SOBRE LA PROPIEDAD INTELECTUAL
+
+5.1	LAS PARTES reconocen que el PRODUCTOR posee todos los derechos de propiedad intelectual sobre la obra original de SEGURMATICA ANTIVIRUS. EL CLIENTE no transmitirá estos derechos a terceros.
+OTROS
+
+Todo lo que no se encuentre estipulado en este contrato será regido por lo pactado en el Contrato Marco No. {{marco_number}} de fecha {{marco_date}}; lo cual es de entera vigencia para LAS PARTES.
+
+VIGENCIA
+
+El presente Contrato, subscrito entre las partes, entrará en vigor a partir de fecha {{start_date}} y mantendrá su vigencia por el término de {{validity_years}} año natural.
+
+Y para que así conste, se subscribe el presente Contrato, en dos ejemplares, a un mismo tenor y efectos legales, en la ciudad de Sancti Spíritus a los {{day}} días del mes de {{month}} del año {{year}}.
+
+{{service_lines_table}}

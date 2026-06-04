@@ -1,0 +1,55 @@
+﻿CONTRATO ESPECÍFICO No. {{specific_number}}
+
+AL CONTRATO MARCO DE PRESTACIÓN DE SERVICIOS INFORMÁTICOS No. {{marco_number}}
+
+DE UNA PARTE: Sociedad Mercantil Soluciones DTeam S.U.R.L, Sociedad Unipersonal de Responsabilidad Limitada, de carácter estatal, representada en este acto por {{our_representative}}, quien comparece en su condición de {{our_rep_function}}, según Acuerdo Número {{our_rep_decision_number}} tomado en la Primera Reunión del Consejo de la Administración en fecha 2 de Octubre de 2023, donde se le otorga la facultad de firmar contratos económicos con clientes en representación de la Sociedad, lo que fue autorizado previamente por el Socio Único mediante la Decisión No. 5 tomada en fecha 15 de septiembre de 2023, y en uso de tal facultad, en lo adelante y a los efectos del presente instrumento jurídico se denominará EL PRESTADOR.
+
+DE LA OTRA PARTE: La {{partner_name}}, a través de {{partner_via}} en forma abreviada {{partner_short_name}}, quien en lo adelante y a los efectos del presente contrato se denominará EL CLIENTE.
+
+AMBAS PARTES: Reconociéndose recíprocamente la representación, el carácter y personalidad con que comparecen a nombre de sus respectivas entidades, y dando fe que mantienen los datos referentes a la personalidad jurídica que obran en el Contrato Marco convienen lo siguiente:
+DEFINICIONES:
+
+•	Suscripción a la aplicación: Permite el acceso total a la funcionalidad de la solución informática, le garantiza al cliente disponer de todas las correcciones y mejoras que se le hagan a la solución.
+
+•	Soporte: Es el servicio de asistencia técnica que brinda el distribuidor de una aplicación relacionada con aclaración de dudas de operación o errores de operación, aunque impliquen la modificación de los programas y corrección o ajuste de las bases de datos. Se realiza de manera presencial.
+
+CLÁUSULAS:
+
+1.	OBJETO DEL CONTRATO
+
+1.1	El presente Contrato tiene como objeto establecer las Condiciones Específicas para la prestación de los servicios de Suscripción y Soporte a la aplicación {{application_name}}.
+
+2.	OBLIGACIONES DE LAS PARTES
+
+2.1	Es obligación de EL PRESTADOR:
+
+2.1.1	Prestar los servicios de Suscripción y Soporte, en las unidades que se describen en el Lineas de servicios, que forma parte integrante del presente contrato.
+
+2.1.2	Si procede, entregar a EL CLIENTE la clave de la Licencia en un término de tres (3) días hábiles posteriores a la solicitud y pago de las facturas.
+
+2.1.3	Recepcionar la solicitud de asistencia técnica en el Centro de Soporte, por las vías de comunicación presencial o telefónica.
+
+2.1.4	Prestar asistencia técnica, dando solución a la necesidad de EL CLIENTE, para lo cual EL PRESTADOR tendrá un término de tres (3) días hábiles para acudir al CLIENTE, y se firmará Orden de Servicio de Soporte.
+
+2.1.5	EL PRESTADOR no podrá realizar cambios ni manipular internamente la Base de Datos de EL CLIENTE.
+
+2.2	Es obligación del CLIENTE:
+
+2.2.1	Recibir los servicios de Suscripción y Soporte, en las unidades que se describen en el Lineas de servicios.
+
+2.2.2	Solicitar asistencia técnica en el Centro de Soporte por las vías de comunicación: presencial o telefónica a los números: 41327273 ó 41327980, de lunes a jueves de 8:00 am a 5:00 pm, y viernes de 8:00 am a 4:00 pm.
+
+2.2.3	Firmar la Orden de Servicio de Soporte cuando reciba la asistencia técnica.
+
+2.2.4	EL CLIENTE no realizará cambios ni manipulará internamente la Base de Datos.
+OTROS
+
+Todo lo que no se encuentre estipulado en este contrato será regido por lo pactado en el Contrato Marco No. {{marco_number}} de fecha {{marco_date}}; lo cual es de entera vigencia para LAS PARTES.
+
+VIGENCIA
+
+El presente Contrato, subscrito entre las partes, entrará en vigor a partir de fecha {{start_date}} y mantendrá su vigencia por el término de {{validity_years}} año natural.
+
+Y para que así conste, se subscribe el presente Contrato, en dos ejemplares, a un mismo tenor y efectos legales, en la ciudad de Sancti Spíritus a los {{day}} días del mes de {{month}} del año {{year}}.
+
+{{service_lines_table}}

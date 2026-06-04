@@ -1,0 +1,65 @@
+﻿CONTRATO ESPECÍFICO No. {{specific_number}}
+
+AL CONTRATO MARCO DE PRESTACIÓN DE SERVICIOS INFORMÁTICOS No. {{marco_number}}
+
+DE UNA PARTE: Sociedad Mercantil Soluciones DTeam S.U.R.L, Sociedad Unipersonal de Responsabilidad Limitada, de carácter estatal, que en lo adelante y a los efectos de este Contrato se denominará EL PRESTADOR.
+
+DE LA OTRA PARTE: La {{partner_name}}, a través de {{partner_via}} en forma abreviada {{partner_short_name}}, quien en lo adelante y a los efectos del presente contrato se denominará EL CLIENTE.
+
+AMBAS PARTES: Reconociéndose recíprocamente la representación, el carácter y personalidad con que comparecen a nombre de sus respectivas entidades, y dando fe que mantienen los datos referentes a la personalidad jurídica que obran en el Contrato Marco convienen lo siguiente:
+CLÁUSULAS:
+
+1.	OBJETO DEL CONTRATO
+
+1.1	Por el presente contrato se establecen los términos y condiciones específicas, bajo las cuales EL PRESTADOR se obliga a la prestación de servicios de formación, como se relaciona en el Lineas de servicios. EL CLIENTE a su vez se obliga al pago de dichos servicios de conformidad con lo pactado.
+
+2.	CONDICIONES DEL SERVICIO
+
+2.1	La temática del curso y el cronograma de ejecución se describen en el Lineas de servicios del presente contrato.
+
+2.2	El curso se realizará en la modalidad presencial en las instalaciones de Soluciones DTeam S.U.R.L.
+
+3.	OBLIGACIONES DE LAS PARTES
+
+3.1	Es obligación de EL PRESTADOR:
+
+3.1.1	Contar con el personal especializado para cumplir con las obligaciones que por el presente contrato adquiere.
+
+3.1.2	Documentar como Lineas de servicios la relación de las temáticas que se incluyen en la convocatoria del curso objeto de este servicio.
+
+3.1.3	Prestar el servicio en la fecha y lugar previamente coordinados.
+
+3.1.4	Aplicar a los cursistas un examen elaborado sobre la base de los contenidos incluidos en el Programa de Estudio.
+
+3.1.5	Entregar a EL CLIENTE el certificado de graduado de los cursistas en un plazo no mayor de los quince (15) días hábiles posteriores a la realización del examen.
+
+3.2	Es obligación del CLIENTE:
+
+3.2.1	Designar los alumnos que participarán y entregar a EL PRESTADOR los datos generales de los cursistas.
+
+3.2.2	Garantizar la asistencia de los cursistas.
+
+3.2.3	Garantizar la presentación de los cursistas en la fecha prevista para el examen.
+
+3.2.4	Realizar el pago de la factura por el servicio recibido de acuerdo a los precios, formas y plazos pactados en el presente contrato.
+
+4.	VALOR
+
+4.1	El valor de este contrato será en pesos cubanos CUP y el valor real se formará a partir de la suma de los importes de las facturas emitidas y aceptadas por AMBAS PARTES durante la ejecución del mismo.
+
+4.2	El pago del servicio se ejecutará dentro de los TRES (3) primeros días de iniciado el curso.
+
+5.	CALIDAD
+
+5.1	EL PRESTADOR garantiza la calidad del servicio Formación, pues cuenta con el personal especializado necesario para cumplir con las obligaciones adquiridas a través del presente contrato.
+OTROS
+
+Todo lo que no se encuentre estipulado en este contrato será regido por lo pactado en el Contrato Marco No. {{marco_number}} de fecha {{marco_date}}; lo cual es de entera vigencia para LAS PARTES.
+
+VIGENCIA
+
+El presente Contrato entrará en vigor a partir de la fecha de su firma por ambas partes y mantendrá su vigencia hasta que se culmine el servicio pactado.
+
+Y para que así conste, se subscribe el presente Contrato, en dos ejemplares, a un mismo tenor y efectos legales, en la ciudad de Sancti Spíritus a los {{day}} días del mes de {{month}} del año {{year}}.
+
+{{service_lines_table}}

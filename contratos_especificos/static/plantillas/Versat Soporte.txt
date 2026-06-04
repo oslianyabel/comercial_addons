@@ -1,0 +1,55 @@
+﻿CONTRATO ESPECÍFICO No. {{specific_number}}
+
+AL CONTRATO MARCO DE PRESTACIÓN DE SERVICIOS INFORMÁTICOS No. {{marco_number}}
+
+DE UNA PARTE: Sociedad Mercantil Soluciones DTeam S.U.R.L, Sociedad Unipersonal de Responsabilidad Limitada, de carácter estatal, que en lo adelante y a los efectos de este Contrato se denominará EL PRESTADOR.
+
+DE LA OTRA PARTE: La {{partner_name}}, a través de {{partner_via}} en forma abreviada {{partner_short_name}}, quien en lo adelante y a los efectos del presente contrato se denominará EL CLIENTE.
+
+AMBAS PARTES: Reconociéndose recíprocamente la representación, el carácter y personalidad con que comparecen a nombre de sus respectivas entidades, y dando fe que mantienen los datos referentes a la personalidad jurídica que obran en el Contrato Marco convienen lo siguiente:
+DEFINICIONES:
+
+•	SOPORTE TÉCNICO DE PRIMER NIVEL: Respuesta por EL PRESTADOR ante errores de operación, instalación y de configuración de los sistemas implantados.
+
+•	SOPORTE TÉCNICO DE SEGUNDO NIVEL: Respuesta por EL PRESTADOR ante errores de programas que no impliquen la modificación de los mismos: captación de datos, configuraciones de Sistemas Operativos, Hardware/redes y adiestramiento.
+
+•	SOPORTE DE TERCER NIVEL: Problemas extremos que se envían a los desarrolladores originales del PRODUCTOR para un análisis en profundidad y apoyo de alto nivel (revisión interna de la Base de Datos, reconstrucción de saldos, limpieza de Base de Datos, herramientas de consistencia).
+
+CLÁUSULAS:
+
+1.	OBJETO DEL CONTRATO
+
+1.1	El presente Contrato tiene como objeto establecer las Condiciones Específicas para la prestación del servicio de Soporte al producto Versat Sarasola, a cambio de una contraprestación, conforme se especifica en el Lineas de servicios.
+
+2.	OBLIGACIONES DE LAS PARTES
+
+2.1	Es obligación de EL PRESTADOR:
+
+2.1.1	Prestar el servicio de Soporte al producto Versat Sarasola, única y exclusivamente en las unidades que se describen en el Lineas de servicios que forma parte integrante del presente contrato.
+
+2.1.2	Recepcionar en el Centro de Soporte la solicitud de asistencia técnica realizada por EL CLIENTE, por las vías de comunicación: presencial o telefónica.
+
+2.1.3	El Soporte de Segundo Nivel (asistencia presencial): EL PRESTADOR tendrá un término de tres (3) días hábiles para acudir al CLIENTE, contados a partir de la notificación de la solicitud, y se firmará Orden de Servicio de Soporte.
+
+2.1.4	Si se requiere Soporte de Tercer Nivel, se enviará la Base de Datos del CLIENTE a DATAZUCAR, la que tendrá tres (3) días laborables para dictaminar y emitir dictamen técnico, que se facturará conforme al Lineas de servicios.
+
+2.2	Es obligación del CLIENTE:
+
+2.2.1	Solicitar asistencia técnica en el Centro de Soporte por las vías de comunicación: presencial o telefónica a los números: 41327273 ó 41327980, de lunes a jueves de 8:00 am a 5:00 pm, y viernes de 8:00 am a 4:00 pm.
+
+2.2.2	Recibir el servicio de Soporte única y exclusivamente en las unidades que se describen en el Lineas de servicios.
+
+2.2.3	Firmar la Orden de Servicio de Soporte cuando reciba la asistencia técnica.
+
+2.2.4	EL CLIENTE no realizará cambios ni manipulará internamente la Base de Datos.
+OTROS
+
+Todo lo que no se encuentre estipulado en este contrato será regido por lo pactado en el Contrato Marco No. {{marco_number}} de fecha {{marco_date}}; lo cual es de entera vigencia para LAS PARTES.
+
+VIGENCIA
+
+El presente Contrato, subscrito entre las partes, entrará en vigor a partir de fecha {{start_date}} y mantendrá su vigencia por el término de {{validity_years}} año natural.
+
+Y para que así conste, se subscribe el presente Contrato, en dos ejemplares, a un mismo tenor y efectos legales, en la ciudad de Sancti Spíritus a los {{day}} días del mes de {{month}} del año {{year}}.
+
+{{service_lines_table}}

@@ -85,7 +85,9 @@ class ContratoMarco(models.Model):
                 template_name = "contrato marco empresas.txt"
 
             if template_name:
-                base_path = "c:\\Users\\lilia\\Desktop\\Projects\\Odoo\\instancias\\odoo17_comercial2\\extra_addons\\context\\"
+                _current_dir = os.path.dirname(os.path.abspath(__file__))
+                _module_path = os.path.abspath(os.path.join(_current_dir, ".."))
+                base_path = os.path.join(_module_path, "static", "plantillas")
                 template_path = os.path.join(base_path, template_name)
                 if os.path.exists(template_path):
                     with open(template_path, "r", encoding="utf-8") as f:
@@ -109,9 +111,7 @@ class ContratoMarco(models.Model):
 
         if not content:
             raise UserError(
-                _(
-                    "No template found for this contract type (Database or Filesystem)."
-                )
+                _("No template found for this contract type (Database or Filesystem).")
             )
 
         # Replacement logic (Unified variable mapper)
@@ -262,9 +262,7 @@ class ContratoMarco(models.Model):
                     "register_sheet": highlight(p.register_sheet),
                     "bank_account_mlc": highlight(p.bank_account_mlc),
                     "bank_mlc_branch": highlight(p.bank_mlc_branch),
-                    "partner_bank_municipality": highlight(
-                        p.bank_id_ref.city or ""
-                    ),
+                    "partner_bank_municipality": highlight(p.bank_id_ref.city or ""),
                     "partner_bank_province": highlight(
                         p.bank_id_ref.state_id.name or ""
                     ),
@@ -285,16 +283,12 @@ class ContratoMarco(models.Model):
                     "tcp_bank_mlc_branch": highlight(p.tcp_bank_mlc_branch),
                     "partner_bank_address_mlc": highlight(p.bank_id_ref.street),
                     "partner_bank_municipality_mlc": highlight(p.bank_id_ref.city),
-                    "partner_bank_province_mlc": highlight(
-                        p.bank_id_ref.state_id.name
-                    ),
+                    "partner_bank_province_mlc": highlight(p.bank_id_ref.state_id.name),
                     "partner_bank_name_cup": highlight(p.bank_id_ref.name),
                     "tcp_bank_cup_branch": highlight(p.tcp_bank_cup_branch),
                     "partner_bank_address_cup": highlight(p.bank_id_ref.street),
                     "partner_bank_municipality_cup": highlight(p.bank_id_ref.city),
-                    "partner_bank_province_cup": highlight(
-                        p.bank_id_ref.state_id.name
-                    ),
+                    "partner_bank_province_cup": highlight(p.bank_id_ref.state_id.name),
                 }
             )
 
@@ -370,8 +364,12 @@ class ContratoMarco(models.Model):
         sup_vals = {
             "marco_id": self.id,
             "description": description,
-            "representative_id": self.representative_id.id if self.representative_id else False,
-            "our_representative_id": self.our_representative_id.id if self.our_representative_id else False,
+            "representative_id": self.representative_id.id
+            if self.representative_id
+            else False,
+            "our_representative_id": self.our_representative_id.id
+            if self.our_representative_id
+            else False,
             "authorized_contact_ids": [(6, 0, self.authorized_contact_ids.ids)],
             "our_rep_decision_number": self.our_rep_decision_number,
             "our_rep_decision_date": self.our_rep_decision_date,

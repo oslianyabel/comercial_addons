@@ -1,0 +1,41 @@
+﻿CONTRATO ESPECÍFICO No. {{specific_number}}
+
+AL CONTRATO MARCO DE PRESTACIÓN DE SERVICIOS INFORMÁTICOS No. {{marco_number}}
+
+DE UNA PARTE: Sociedad Mercantil Soluciones DTeam S.U.R.L, Sociedad Unipersonal de Responsabilidad Limitada, de carácter estatal, que en lo adelante y a los efectos de este Contrato se denominará EL PRESTADOR.
+
+DE LA OTRA PARTE: La {{partner_name}}, a través de {{partner_via}} en forma abreviada {{partner_short_name}}, quien en lo adelante y a los efectos del presente contrato se denominará EL CLIENTE.
+
+AMBAS PARTES: Reconociéndose recíprocamente la representación, el carácter y personalidad con que comparecen a nombre de sus respectivas entidades, y dando fe que mantienen los datos referentes a la personalidad jurídica que obran en el Contrato Marco convienen lo siguiente:
+DEFINICIÓN:
+
+•	Servicios externos de funciones y operaciones de TI (Tercerización): Servicios externos de funciones y operaciones de TI, con el objetivo de apoyar todas las acciones inherentes a los servicios informáticos necesarios al cliente, relacionados con la operación de las aplicaciones informáticas comercializadas o desarrolladas por Desoft o sobre las que la empresa presta servicios.
+
+CLÁUSULAS:
+
+1.	OBJETO DEL CONTRATO
+
+1.1	El presente Contrato tiene como objeto establecer las Condiciones Específicas para la prestación del Servicio Externo de funciones y Operaciones TI al producto {{application_name}}.
+
+2.	OBLIGACIONES DE LAS PARTES
+
+2.1	Es obligación de EL PRESTADOR:
+2.1.1 Se designa como Líder del Proyecto a {{our_project_leader}}, quien será el responsable del Proyecto por EL PRESTADOR.
+
+2.3.1 Se designa como Líder del Proyecto a {{project_leader}}, quien será el responsable en el Proyecto por EL CLIENTE.
+2.1.2	Prestar el Servicio Externo de funciones y Operaciones TI, como se describe en el Lineas de servicios y cumplir con el cronograma de ejecución.
+
+2.3	Es obligación del CLIENTE:
+
+2.3.2	Recibir el servicio de Servicio Externo de funciones y Operaciones TI, como se describe en el Lineas de servicios.
+OTROS
+
+Todo lo que no se encuentre estipulado en este contrato será regido por lo pactado en el Contrato Marco No. {{marco_number}} de fecha {{marco_date}}; lo cual es de entera vigencia para LAS PARTES.
+
+VIGENCIA
+
+El presente Contrato entrará en vigor a partir de la fecha de su firma por ambas partes y mantendrá su vigencia hasta que se culmine el servicio pactado.
+
+Y para que así conste, se subscribe el presente Contrato, en dos ejemplares, a un mismo tenor y efectos legales, en la ciudad de Sancti Spíritus a los {{day}} días del mes de {{month}} del año {{year}}.
+
+{{service_lines_table}}

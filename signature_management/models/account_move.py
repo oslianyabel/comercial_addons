@@ -480,6 +480,23 @@ class AccountMove(models.Model):
         if "invoice_line_ids" in vals:
             for move in self:
                 move._sync_invoice_lines_to_service_lines()
+        if "state" in vals:
+            new_state = vals["state"]
+            for move in self:
+                svc_lines = [
+                    l
+                    for l in [
+                        move.service_line_id,
+                        move.ueb_service_line_id,
+                        move.sup_service_line_id,
+                        move.sup_ueb_service_line_id,
+                    ]
+                    if l
+                ]
+                for svc_line in svc_lines:
+                    svc_line.sudo().with_context(is_uninvoice=True).write(
+                        {"invoice_state": new_state}
+                    )
         return result
 
     @api.model_create_multi
@@ -489,7 +506,34 @@ class AccountMove(models.Model):
             if move.contrato_especifico_id and move.move_type == "out_invoice":
                 move._assign_contrato_invoice_name()
                 move._clear_invoice_line_taxes()
+            if move.move_type == "out_invoice":
+                move._propagate_deadline_to_invoice_lines()
         return records
+
+    def _propagate_deadline_to_invoice_lines(self) -> None:
+        """Propagate date_deadline_invoice from the linked service line to the
+        first product invoice line. Handles all four service-line types."""
+        self.ensure_one()
+        svc_line = (
+            self.service_line_id
+            or self.ueb_service_line_id
+            or self.sup_service_line_id
+            or self.sup_ueb_service_line_id
+        )
+        deadline = (
+            getattr(svc_line, "date_deadline_invoice", None) if svc_line else None
+        )
+        if not deadline:
+            return
+        product_lines = self.invoice_line_ids.filtered(
+            lambda l: l.display_type == "product"
+        )
+        if not product_lines:
+            return
+        updates: dict = {"date_deadline_invoice": deadline}
+        if self.service_line_id and not product_lines[0].service_line_id:
+            updates["service_line_id"] = self.service_line_id.id
+        product_lines[0].with_context(check_move_validity=False).write(updates)
 
     def _clear_invoice_line_taxes(self) -> None:
         """Remove taxes from all product lines of this contract invoice."""
@@ -623,6 +667,16 @@ class AccountMove(models.Model):
 
 class AccountMoveLine(models.Model):
     _inherit = "account.move.line"
+
+    service_line_id = fields.Many2one(
+        "contrato.especifico.line",
+        string="Línea de Servicio",
+        ondelete="set null",
+    )
+    date_deadline_invoice = fields.Date(
+        string="Fecha Límite de Facturación",
+        readonly=True,
+    )
 
     @api.depends("product_id", "product_uom_id")
     def _compute_tax_ids(self):

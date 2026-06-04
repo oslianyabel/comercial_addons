@@ -1,0 +1,47 @@
+﻿CONTRATO ESPECÍFICO No. {{specific_number}}
+
+AL CONTRATO MARCO DE PRESTACIÓN DE SERVICIOS INFORMÁTICOS No. {{marco_number}}
+
+DE UNA PARTE: Sociedad Mercantil Soluciones DTeam S.U.R.L, Sociedad Unipersonal de Responsabilidad Limitada, de carácter estatal, que en lo adelante y a los efectos de este Contrato se denominará EL PRESTADOR.
+
+DE LA OTRA PARTE: La {{partner_name}}, a través de {{partner_via}} en forma abreviada {{partner_short_name}}, quien en lo adelante y a los efectos del presente contrato se denominará EL CLIENTE.
+
+AMBAS PARTES: Reconociéndose recíprocamente la representación, el carácter y personalidad con que comparecen a nombre de sus respectivas entidades, y dando fe que mantienen los datos referentes a la personalidad jurídica que obran en el Contrato Marco convienen lo siguiente:
+DEFINICIÓN:
+
+•	Reparación de base de datos: Solución a problemas que se crean en la base de datos debido al mal manejo del sistema por parte de los usuarios, que lleva el análisis de los datos, detección del error y solución del mismo.
+
+CLÁUSULAS:
+
+1.	OBJETO DEL CONTRATO
+
+1.1	El presente Contrato tiene como objeto establecer las Condiciones Específicas para la prestación del servicio Reparación de Base de Datos.
+
+2.	OBLIGACIONES DE LAS PARTES
+
+2.1	Es obligación de EL PRESTADOR:
+2.1.1 Se designa como Líder del Proyecto a {{our_project_leader}}, quien será el responsable del Proyecto por EL PRESTADOR.
+
+2.3.1 Se designa como Líder del Proyecto a {{project_leader}}, quien será el responsable en el Proyecto por EL CLIENTE.
+2.1.2	Prestar el servicio Reparación de Base de Datos a EL CLIENTE como se describe en el Lineas de servicios y cumplir con el cronograma de ejecución.
+
+2.1.3	Analizar los datos, detectar y dar solución a los errores de la Base de Datos del CLIENTE.
+
+2.1.4	Realizar informe del servicio prestado, así como las recomendaciones al respecto.
+
+2.3	Es obligación del CLIENTE:
+
+2.3.2	Recibir el servicio Reparación de Base de Datos, como se describe en el Lineas de servicios.
+
+2.3.3	Recibir el informe del servicio recibido.
+OTROS
+
+Todo lo que no se encuentre estipulado en este contrato será regido por lo pactado en el Contrato Marco No. {{marco_number}} de fecha {{marco_date}}; lo cual es de entera vigencia para LAS PARTES.
+
+VIGENCIA
+
+El presente Contrato entrará en vigor a partir de la fecha de su firma por ambas partes y mantendrá su vigencia hasta que se culmine el servicio pactado.
+
+Y para que así conste, se subscribe el presente Contrato, en dos ejemplares, a un mismo tenor y efectos legales, en la ciudad de Sancti Spíritus a los {{day}} días del mes de {{month}} del año {{year}}.
+
+{{service_lines_table}}

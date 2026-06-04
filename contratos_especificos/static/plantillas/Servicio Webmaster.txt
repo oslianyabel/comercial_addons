@@ -1,0 +1,62 @@
+﻿CONTRATO ESPECÍFICO No. {{specific_number}}
+
+AL CONTRATO MARCO DE PRESTACIÓN DE SERVICIOS INFORMÁTICOS No. {{marco_number}}
+
+DE UNA PARTE: Sociedad Mercantil Soluciones DTeam S.U.R.L, Sociedad Unipersonal de Responsabilidad Limitada, de carácter estatal, que en lo adelante y a los efectos de este Contrato se denominará EL PRESTADOR.
+
+DE LA OTRA PARTE: La {{partner_name}}, a través de {{partner_via}} en forma abreviada {{partner_short_name}}, quien en lo adelante y a los efectos del presente contrato se denominará EL CLIENTE.
+
+AMBAS PARTES: Reconociéndose recíprocamente la representación, el carácter y personalidad con que comparecen a nombre de sus respectivas entidades, y dando fe que mantienen los datos referentes a la personalidad jurídica que obran en el Contrato Marco convienen lo siguiente:
+DEFINICIÓN:
+
+•	Webmaster: Es la persona responsable del desarrollo, correcto funcionamiento y mantenimiento de un sitio web.
+
+CLÁUSULAS:
+
+1.	OBJETO DEL CONTRATO
+
+1.1	El presente Contrato tiene como objeto establecer las Condiciones Específicas para la prestación del servicio Webmaster de Sitio Web.
+
+2.	OBLIGACIONES DE LAS PARTES
+
+2.1	Es obligación de EL PRESTADOR:
+
+2.1.1	Se designa como Líder del Proyecto a {{our_project_leader}}, quien será el responsable del Proyecto.
+
+2.1.2	Prestar el servicio Webmaster en los términos acordados en el presente contrato.
+
+2.1.3	Diseñar y actualizar módulos con contenidos aportados por el CLIENTE (como texto, fotos, videos, etc).
+
+2.1.4	Actualizar y/o agregar complementos a los navegadores para una mejor funcionalidad y seguridad del sitio.
+
+2.1.5	Supervisar y mantener el correcto funcionamiento del sitio web.
+
+2.1.6	Facturar el servicio al CLIENTE según lo descrito en el Lineas de servicios.
+
+2.2	Es obligación del CLIENTE:
+
+2.2.1	Se designa como Líder del Proyecto a {{project_leader}}, quien será el responsable en el Proyecto.
+
+2.2.2	Recibir el servicio Webmaster de Sitio Web, en los términos acordados en el presente contrato.
+
+2.2.3	Entregar a EL PRESTADOR toda la información institucional necesaria (como texto, fotos, videos, etc) para la actualización del sitio web.
+
+2.2.4	Pagar el servicio al PRESTADOR según lo descrito en el Lineas de servicios.
+
+3.	GARANTÍA
+
+3.1	EL PRESTADOR garantiza que el sitio web funcione de forma óptima y con mejores protocolos de seguridad.
+
+3.2	La garantía no será aplicable si se demuestra que el Cliente ha realizado cualquier modificación del sitio sin consentimiento de EL PRESTADOR.
+
+OTROS
+
+Todo lo que no se encuentre estipulado en este contrato será regido por lo pactado en el Contrato Marco No. {{marco_number}} de fecha {{marco_date}}; lo cual es de entera vigencia para LAS PARTES.
+
+VIGENCIA
+
+El presente Contrato entrará en vigor a partir de la fecha {{start_date}} y mantendrá su vigencia hasta {{validity_years}}.
+
+Y para que así conste, se subscribe el presente Contrato, en dos ejemplares, a un mismo tenor y efectos legales, en la ciudad de Sancti Spíritus a los {{day}} días del mes de {{month}} del año {{year}}.
+
+{{service_lines_table}}

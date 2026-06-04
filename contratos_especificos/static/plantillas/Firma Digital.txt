@@ -1,0 +1,70 @@
+﻿CONTRATO ESPECÍFICO No. {{specific_number}}
+
+AL CONTRATO MARCO DE PRESTACIÓN DE SERVICIOS INFORMÁTICOS No. {{marco_number}}
+
+DE UNA PARTE: Sociedad Mercantil Soluciones DTeam S.U.R.L, Sociedad Unipersonal de Responsabilidad Limitada, de carácter estatal, que en lo adelante y a los efectos de este Contrato se denominará EL PRESTADOR.
+
+DE LA OTRA PARTE: La {{partner_name}}, a través de {{partner_via}} en forma abreviada {{partner_short_name}}, quien en lo adelante y a los efectos del presente contrato se denominará EL CLIENTE.
+
+AMBAS PARTES: Reconociéndose recíprocamente la representación, el carácter y personalidad con que comparecen a nombre de sus respectivas entidades, y dando fe que mantienen los datos referentes a la personalidad jurídica que obran en el Contrato Marco convienen lo siguiente:
+DEFINICIÓN:
+
+•	Venta de Certificado digital de usuario: Atención directa que recibe el CLIENTE por Especialistas de Soluciones DTeam S.U.R.L., incluye el registro del CLIENTE, la contratación de los servicios de llave pública solicitados y su correspondiente pago.
+
+•	Servicios Asociados: Instalación de los certificados públicos y privados en cada uno de los dispositivos; Configuración de cada una de las aplicaciones que gestionen firma digital; Pruebas de validación de la firma digital; Adiestramiento en el uso correcto de los certificados; Diseño y personalización de la firma digital; Soporte técnico.
+
+•	Soporte: Sistema de comunicación disponible para el CLIENTE, mediante vía telefónica o presencial, con la finalidad de responder inquietudes sobre la correcta utilización de los certificados digitales.
+
+OBJETO DEL CONTRATO
+
+El presente Contrato tiene por objeto regular las relaciones entre las partes contratantes, en virtud de las cuales EL PRESTADOR brindará la Venta de Certificados Digitales, Servicios Asociados (Instalación, Configuración, Pruebas, Adiestramiento, Diseño) y Soporte.
+
+OBLIGACIONES DE LAS PARTES
+
+Es obligación de EL PRESTADOR:
+
+1. Brindar la Venta de Certificados Digitales, Servicios Asociados y Soporte como se establece en el Lineas de servicios al presente Contrato.
+
+2. Emitir certificados digitales solicitados por EL CLIENTE.
+
+3. Garantizar que al aprobarse la emisión de los certificados digitales por parte de la Autoridad de Certificación Intermedia (ACI), se le envíe automáticamente una notificación al correo electrónico proporcionado por el cliente.
+
+4. Facturar a EL CLIENTE los servicios contratados y ejecutados en la forma y condiciones pactadas en el Lineas de servicios.
+
+Es obligación de EL CLIENTE:
+
+1. Organizar de conjunto con EL PRESTADOR los locales, medios audiovisuales y a los usuarios que utilizarán certificados digitales para recibir el Adiestramiento necesario.
+
+2. No utilizar los certificados digitales en aplicaciones de funciones de cifrado a información digital clasificada como "Ordinaria" o "Confidencial".
+
+3. Garantizar que cada propietario de un certificado digital disponga de una cuenta de correo electrónico.
+
+4. Pagar el servicio recibido en la forma y condiciones pactadas y especificados en el Lineas de servicios.
+
+GARANTÍAS
+
+EL PRESTADOR garantiza que los algoritmos de cifrado usados para generar los certificados cumplen con estándares internacionales de formato (X.509 v3) y de validación mediante OCSP.
+
+OTRAS CONDICIONES
+
+EL PRESTADOR no se hace responsable de la demora en los tiempos de respuesta que ante problemas en la infraestructura tecnológica de EL CLIENTE puedan sobrevenir. En caso de pérdida u olvido de la contraseña, el titular del Certificado Digital tendrá que adquirir un nuevo Certificado con el costo establecido.
+
+VALOR Y PRECIOS
+
+El valor de los servicios ascenderá a la sumatoria de los importes relacionados en las facturas emitidas por EL PRESTADOR a EL CLIENTE.
+
+FORMAS DE PAGO
+
+EL CLIENTE efectuará los pagos a través de transferencia bancaria o cheque nominativo emitidos a favor de EL PRESTADOR, dentro del término de los treinta (30) días naturales siguientes a la recepción de la factura.
+
+OTROS
+
+Todo lo que no se encuentre estipulado en este contrato será regido por lo pactado en el Contrato Marco No. {{marco_number}} de fecha {{marco_date}}; lo cual es de entera vigencia para LAS PARTES.
+
+VIGENCIA
+
+El presente Contrato entrará en vigor a partir de la fecha de su firma, extendiendo sus efectos por el término de dos (2) años, siendo prorrogable por igual período.
+
+Y para que así conste, se subscribe el presente Contrato, en dos ejemplares, a un mismo tenor y efectos legales, en la ciudad de Sancti Spíritus a los {{day}} días del mes de {{month}} del año {{year}}.
+
+{{service_lines_table}}

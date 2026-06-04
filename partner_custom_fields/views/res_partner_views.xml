@@ -98,10 +98,15 @@
             <field name="view_mode">tree,form</field>
         </record>
 
+        <menuitem id="menu_nomencladores_group"
+            name="Nomencladores"
+            parent="contacts.res_partner_menu_config"
+            sequence="19"/>
+
         <menuitem id="menu_res_partner_organism"
             name="Organismos"
             action="action_res_partner_organism"
-            parent="contacts.res_partner_menu_config"
+            parent="partner_custom_fields.menu_nomencladores_group"
             sequence="20"/>
 
         <!-- Vistas y Menú de UEB -->
@@ -166,9 +171,9 @@
         </record>
 
         <menuitem id="menu_res_partner_ueb"
-            name="Nomenclador UEB"
+            name="UEB"
             action="action_res_partner_ueb"
-            parent="contacts.res_partner_menu_config"
+            parent="partner_custom_fields.menu_nomencladores_group"
             sequence="30"/>
 
         <!-- Vistas y Menú de Departamento -->
@@ -227,7 +232,7 @@
         <menuitem id="menu_res_partner_departamento"
             name="Departamentos"
             action="action_res_partner_departamento"
-            parent="contacts.res_partner_menu_config"
+            parent="partner_custom_fields.menu_nomencladores_group"
             sequence="22"/>
     </data>
 </odoo>

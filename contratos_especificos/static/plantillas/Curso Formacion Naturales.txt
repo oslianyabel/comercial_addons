@@ -1,0 +1,63 @@
+﻿CONTRATO ESPECÍFICO No. {{specific_number}}
+
+AL CONTRATO MARCO DE PRESTACIÓN DE SERVICIOS INFORMÁTICOS No. {{marco_number}}
+
+DE UNA PARTE: Sociedad Mercantil Soluciones DTeam S.U.R.L, Sociedad Unipersonal de Responsabilidad Limitada, de carácter estatal, representada en este acto por {{our_representative}}, quien comparece en su condición de {{our_rep_function}}, según Acuerdo Número {{our_rep_decision_number}} tomado en la Primera Reunión del Consejo de la Administración en fecha 2 de Octubre de 2023, donde se le otorga la facultad de firmar contratos económicos con clientes en representación de la Sociedad, lo que fue autorizado previamente por el Socio Único mediante la Decisión No. 5 tomada en fecha 15 de septiembre de 2023, y en uso de tal facultad, en lo adelante y a los efectos del presente instrumento jurídico se denominará EL PRESTADOR.
+
+DE LA OTRA PARTE: La {{partner_name}}, a través de {{partner_via}} en forma abreviada {{partner_short_name}}, quien en lo adelante y a los efectos del presente contrato se denominará EL CLIENTE.
+
+AMBAS PARTES: Reconociéndose recíprocamente la representación, el carácter y personalidad con que comparecen a nombre de sus respectivas entidades, y dando fe que mantienen los datos referentes a la personalidad jurídica que obran en el Contrato Marco convienen lo siguiente:
+CLÁUSULAS:
+
+1.	OBJETO DEL CONTRATO
+
+1.1	Por el presente contrato se establecen los términos y condiciones específicas, bajo las cuales EL PRESTADOR se obliga a la prestación de servicios de formación a Personas Naturales, como se relaciona en el Lineas de servicios. EL CLIENTE a su vez se obliga al pago de dichos servicios de conformidad con lo pactado.
+
+2.	CONDICIONES DEL SERVICIO
+
+2.1	La temática del curso, la duración y el cronograma de ejecución se describen en el Lineas de servicios del presente contrato.
+
+2.2	El curso se realizará en la modalidad presencial en las instalaciones de Soluciones DTeam S.U.R.L.
+
+3.	OBLIGACIONES DE LAS PARTES
+
+3.1	Es obligación de EL PRESTADOR:
+
+3.1.1	Contar con el personal especializado para cumplir con las obligaciones que por el presente contrato adquiere.
+
+3.1.2	Prestar el servicio en la fecha y lugar previamente coordinados.
+
+3.1.3	Aplicar a los cursistas un examen elaborado sobre la base de los contenidos incluidos en la temática del curso.
+
+3.1.4	Entregar a cada CLIENTE el certificado de graduado en un plazo no mayor de los quince (15) días hábiles posteriores a la realización del examen.
+
+3.2	Es obligación del CLIENTE:
+
+3.2.1	Facilitar a EL PRESTADOR su carnet de identidad para consignar sus generales en el Lineas de servicios.
+
+3.2.2	Asistir al curso en la fecha y lugar previamente coordinado.
+
+3.2.3	Asistir al examen que aplicará EL PRESTADOR una vez concluido el curso.
+
+3.2.4	Realizar el pago por el servicio recibido de acuerdo a los precios, formas y plazos pactados en el presente contrato.
+
+4.	PRECIO Y FORMA DE PAGO
+
+4.1	El precio del curso y el importe total se establecen en el Lineas de servicios.
+
+4.2	El pago del servicio será anticipado y EL CLIENTE debe realizarlo el primer día de inicio del curso.
+
+5.	CALIDAD
+
+5.1	EL PRESTADOR garantiza la calidad del servicio, pues cuenta con el personal especializado necesario para cumplir con las obligaciones adquiridas a través del presente contrato.
+OTROS
+
+Todo lo que no se encuentre estipulado en este contrato será regido por lo pactado en el Contrato Marco No. {{marco_number}} de fecha {{marco_date}}; lo cual es de entera vigencia para LAS PARTES.
+
+VIGENCIA
+
+El presente Contrato entrará en vigor a partir de la fecha de su firma por ambas partes y mantendrá su vigencia hasta que se culmine el servicio pactado.
+
+Y para que así conste, se subscribe el presente Contrato, en dos ejemplares, a un mismo tenor y efectos legales, en la ciudad de Sancti Spíritus a los {{day}} días del mes de {{month}} del año {{year}}.
+
+{{service_lines_table}}

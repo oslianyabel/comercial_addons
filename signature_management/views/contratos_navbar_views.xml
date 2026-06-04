@@ -57,6 +57,182 @@
     </record>
 
     <!-- ================================================================
+         VISTA TREE: LINEAS DE FACTURACION
+    ================================================================ -->
+    <record id="view_lineas_facturacion_tree" model="ir.ui.view">
+        <field name="name">contrato.especifico.line.tree.billing</field>
+        <field name="model">contrato.especifico.line</field>
+        <field name="arch" type="xml">
+            <tree string="Líneas de Facturación" create="0" delete="0"
+                  default_order="date_deadline_invoice desc">
+                <field name="contrato_id" string="Contrato"/>
+                <field name="name" string="Descripción"/>
+                <field name="product_id" string="Servicio"/>
+                <field name="quantity" string="Cantidad"/>
+                <field name="uom_id" string="UM"/>
+                <field name="price_unit" string="Precio Unitario (CUP)"/>
+                <field name="price_subtotal" string="Subtotal (CUP)" sum="Total"/>
+                <field name="date_deadline_invoice" string="Límite de Facturación"/>
+                <field name="start_date" string="Inicio" optional="show"/>
+                <field name="end_date" string="Fin" optional="show"/>
+                <field name="invoice_id" string="Factura"/>
+                <button name="action_open_invoice" type="object"
+                        icon="fa-external-link" title="Ir a la factura"
+                        invisible="not invoice_id"/>
+                <field name="invoice_state" string="Estado"
+                       widget="badge"
+                       decoration-info="invoice_state == 'draft'"
+                       decoration-success="invoice_state == 'posted'"
+                       decoration-danger="invoice_state == 'cancel'"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         VISTA SEARCH: LINEAS DE FACTURACION
+    ================================================================ -->
+    <record id="view_lineas_facturacion_search" model="ir.ui.view">
+        <field name="name">contrato.especifico.line.search.billing</field>
+        <field name="model">contrato.especifico.line</field>
+        <field name="arch" type="xml">
+            <search string="Líneas de Facturación">
+                <field name="name" string="Descripción"/>
+                <field name="contrato_id" string="Contrato"/>
+                <field name="product_id" string="Servicio"/>
+                <field name="invoice_id" string="Factura"/>
+                <filter name="atrasadas" string="Atrasadas"
+                        domain="[('is_atrasada', '=', True)]"/>
+                <filter name="este_mes" string="Este Mes"
+                        domain="[('date_deadline_invoice', '&gt;=', (context_today()).strftime('%Y-%m-01')), ('date_deadline_invoice', '&lt;=', (context_today() + relativedelta(day=31)).strftime('%Y-%m-%d'))]"/>
+                <separator/>
+                <filter name="estado_borrador" string="Borrador"
+                        domain="[('invoice_state', '=', 'draft')]"/>
+                <filter name="estado_publicada" string="Publicada"
+                        domain="[('invoice_state', '=', 'posted')]"/>
+                <filter name="estado_cancelada" string="Cancelada"
+                        domain="[('invoice_state', '=', 'cancel')]"/>
+                <group expand="0" string="Agrupar Por">
+                    <filter name="group_by_contrato" string="Contrato"
+                            context="{'group_by': 'contrato_id'}"/>
+                    <filter name="group_by_mes" string="Mes Límite"
+                            context="{'group_by': 'date_deadline_invoice:month'}"/>
+                    <filter name="group_by_estado" string="Estado de Factura"
+                            context="{'group_by': 'invoice_state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         VISTA TREE: LINEAS POR FACTURAR
+    ================================================================ -->
+    <record id="view_lineas_por_facturar_tree" model="ir.ui.view">
+        <field name="name">contrato.especifico.line.lineas.por.facturar.tree</field>
+        <field name="model">contrato.especifico.line</field>
+        <field name="arch" type="xml">
+            <tree string="Líneas por Facturar"
+                  default_order="date_deadline_invoice asc"
+                  decoration-danger="is_deadline_past"
+                  decoration-warning="is_deadline_soon"
+                  create="0" delete="0">
+                <field name="is_deadline_past" column_invisible="1"/>
+                <field name="is_deadline_soon" column_invisible="1"/>
+                <field name="invoiced" column_invisible="1"/>
+                <field name="contrato_id" string="Contrato Específico"/>
+                <button name="action_open_contrato" type="object" string="" icon="fa-external-link"
+                        title="Ver Contrato Específico"
+                        invisible="not contrato_id"/>
+                <field name="contrato_state" string="Estado" widget="badge"
+                       decoration-success="contrato_state == 'firmado'"
+                       decoration-warning="contrato_state == 'entregado'"
+                       decoration-danger="contrato_state == 'cancelado'"
+                       decoration-muted="contrato_state == 'borrador'"/>
+                <field name="name" string="Descripción"/>
+                <field name="product_id" string="Producto"/>
+                <field name="quantity" string="Cantidad"/>
+                <field name="uom_id" string="UOM"/>
+                <field name="price_unit" string="Precio Unit."/>
+                <field name="price_subtotal" string="Subtotal" widget="monetary"/>
+                <field name="date_deadline_invoice" string="Límite de Facturación"/>
+                <button name="action_facturar" string="Facturar" type="object"
+                        icon="fa-money" class="btn-sm btn-primary"
+                        invisible="invoiced"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         VISTA SEARCH: LINEAS POR FACTURAR
+    ================================================================ -->
+    <record id="view_lineas_por_facturar_search" model="ir.ui.view">
+        <field name="name">contrato.especifico.line.lineas.por.facturar.search</field>
+        <field name="model">contrato.especifico.line</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Líneas por Facturar">
+                <field name="name" string="Descripción"/>
+                <field name="contrato_id" string="Contrato"/>
+                <field name="product_id" string="Producto"/>
+                <separator/>
+                <filter name="solo_firmados" string="Contratos Firmados"
+                        domain="[('contrato_id.state', '=', 'firmado')]"/>
+                <separator/>
+                <filter name="vencidas" string="Vencidas"
+                        domain="[('date_deadline_invoice', '&lt;', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter name="proximas" string="Vencen en 7 días"
+                        domain="[('date_deadline_invoice', '&gt;=', context_today().strftime('%Y-%m-%d')), ('date_deadline_invoice', '&lt;=', (context_today() + relativedelta(days=7)).strftime('%Y-%m-%d'))]"/>
+                <separator/>
+                <filter name="mes_actual" string="Mes Actual"
+                        domain="[('date_deadline_invoice', '&gt;=', (context_today()).strftime('%Y-%m-01')), ('date_deadline_invoice', '&lt;=', (context_today() + relativedelta(day=31)).strftime('%Y-%m-%d'))]"/>
+                <filter name="filter_by_deadline_month" string="Por Mes Límite"
+                        date="date_deadline_invoice"/>
+                <group expand="0" string="Agrupar por">
+                    <filter name="group_by_contrato" string="Contrato"
+                            context="{'group_by': 'contrato_id'}"/>
+                    <filter name="group_by_mes" string="Mes Límite"
+                            context="{'group_by': 'date_deadline_invoice:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         SERVER ACTION: FACTURAR SELECCIONADAS (bulk desde lista)
+    ================================================================ -->
+    <record id="action_server_facturar_seleccionadas" model="ir.actions.server">
+        <field name="name">Facturar Seleccionadas</field>
+        <field name="model_id" ref="contratos_especificos.model_contrato_especifico_line"/>
+        <field name="binding_model_id" ref="contratos_especificos.model_contrato_especifico_line"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">action = records.action_facturar_multiples_wizard()</field>
+    </record>
+
+    <!-- ================================================================
+         ACCION: LINEAS POR FACTURAR
+    ================================================================ -->
+    <record id="action_lineas_por_facturar" model="ir.actions.act_window">
+        <field name="name">Líneas por Facturar</field>
+        <field name="res_model">contrato.especifico.line</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('invoiced', '=', False), ('is_invoice_line', '=', False)]</field>
+        <field name="context">{'search_default_mes_actual': 1}</field>
+        <field name="view_ids" eval="[(5, 0, 0), (0, 0, {'view_mode': 'tree', 'view_id': ref('signature_management.view_lineas_por_facturar_tree')})]"/>
+        <field name="search_view_id" ref="view_lineas_por_facturar_search"/>
+    </record>
+
+    <!-- ================================================================
+         ACCION: LINEAS DE FACTURACION (mes actual y atrasadas)
+    ================================================================ -->
+    <record id="action_lineas_facturacion" model="ir.actions.act_window">
+        <field name="name">Líneas de Facturas</field>
+        <field name="res_model">contrato.especifico.line</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('invoiced', '=', False), ('date_deadline_invoice', '&lt;=', (context_today() + relativedelta(day=31)).strftime('%Y-%m-%d'))]</field>
+        <field name="view_ids" eval="[(5, 0, 0), (0, 0, {'view_mode': 'tree', 'view_id': ref('signature_management.view_lineas_facturacion_tree')})]"/>
+        <field name="search_view_id" ref="view_lineas_facturacion_search"/>
+    </record>
+
+    <!-- ================================================================
          ACCION: FACTURAS DE CONTRATOS ESPECIFICOS
     ================================================================ -->
     <record id="action_facturas_contratos" model="ir.actions.act_window">
@@ -88,13 +264,30 @@
     </record>
 
     <!-- ================================================================
-         MENU: FACTURAS
+         MENU: FACTURAS (grupo padre)
     ================================================================ -->
     <menuitem id="menu_facturas_group"
               name="Facturas"
               parent="contratos.menu_contrato_root"
-              action="action_facturas_contratos"
               sequence="40"/>
+
+    <menuitem id="menu_facturas_contratos"
+              name="Facturas"
+              parent="menu_facturas_group"
+              action="action_facturas_contratos"
+              sequence="10"/>
+
+    <menuitem id="menu_lineas_facturacion"
+              name="Líneas de Facturas"
+              parent="menu_facturas_group"
+              action="action_lineas_facturacion"
+              sequence="20"/>
+
+    <menuitem id="menu_lineas_por_facturar"
+              name="Líneas por Facturar"
+              parent="menu_facturas_group"
+              action="action_lineas_por_facturar"
+              sequence="15"/>
 
     <!-- ================================================================
          MENU: CLIENTES

@@ -3,3 +3,8 @@ __pycache__/
 audit*
 check_po*
 .env
+.venv/
+.ruff_cache/
+.claude/
+*.pyc
+*.pyo

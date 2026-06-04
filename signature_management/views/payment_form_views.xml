@@ -33,6 +33,6 @@
     <menuitem id="menu_signature_payment_form"
         name="Formas de pago"
         action="action_signature_payment_form"
-        parent="contacts.res_partner_menu_config"
+        parent="partner_custom_fields.menu_nomencladores_group"
         sequence="50"/>
 </odoo>

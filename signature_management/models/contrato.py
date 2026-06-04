@@ -1,5 +1,10 @@
+import logging
+from datetime import timedelta
+
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
+
+_logger = logging.getLogger(__name__)
 
 
 class ContratoMarco(models.Model):
@@ -66,6 +71,235 @@ class ContratoMarco(models.Model):
                     % specific_contracts
                 )
         return super().unlink()
+
+
+class ContratoEspecificoLine(models.Model):
+    _inherit = "contrato.especifico.line"
+
+    invoice_id = fields.Many2one(
+        "account.move",
+        string="Factura",
+        compute="_compute_invoice_data",
+        store=True,
+    )
+    invoice_state = fields.Selection(
+        [
+            ("draft", "Borrador"),
+            ("posted", "Publicada"),
+            ("cancel", "Cancelada"),
+        ],
+        string="Estado de Factura",
+        compute="_compute_invoice_data",
+        store=True,
+    )
+    is_atrasada = fields.Boolean(
+        string="Facturada con Retraso",
+        compute="_compute_is_atrasada",
+        store=True,
+    )
+
+    @api.depends("invoiced")
+    def _compute_invoice_data(self):
+        super()._compute_invoice_data()
+
+    @api.depends("invoice_id.invoice_date", "date_deadline_invoice")
+    def _compute_is_atrasada(self):
+        for line in self:
+            inv_date = line.invoice_id.invoice_date if line.invoice_id else False
+            deadline = line.date_deadline_invoice
+            line.is_atrasada = bool(inv_date and deadline and inv_date > deadline)
+
+    def action_open_invoice(self) -> dict:
+        self.ensure_one()
+        return {
+            "type": "ir.actions.act_window",
+            "res_model": "account.move",
+            "res_id": self.invoice_id.id,
+            "view_mode": "form",
+            "target": "current",
+        }
+
+    def action_open_contrato(self) -> dict:
+        self.ensure_one()
+        return {
+            "type": "ir.actions.act_window",
+            "res_model": "contrato.especifico",
+            "res_id": self.contrato_id.id,
+            "view_mode": "form",
+            "target": "current",
+        }
+
+    contrato_state = fields.Selection(
+        [
+            ("borrador", "Draft"),
+            ("entregado", "Entregado"),
+            ("firmado", "Signed"),
+            ("cancelado", "Cancelled"),
+        ],
+        string="Estado del Contrato",
+        related="contrato_id.state",
+        store=True,
+    )
+
+    is_deadline_past = fields.Boolean(
+        string="Plazo Vencido",
+        compute="_compute_deadline_status",
+    )
+    is_deadline_soon = fields.Boolean(
+        string="Plazo Próximo",
+        compute="_compute_deadline_status",
+    )
+
+    @api.depends("date_deadline_invoice")
+    def _compute_deadline_status(self):
+        today = fields.Date.today()
+        soon_limit = today + timedelta(days=7)
+        for line in self:
+            deadline = line.date_deadline_invoice
+            if deadline:
+                line.is_deadline_past = deadline < today
+                line.is_deadline_soon = (
+                    not line.is_deadline_past and deadline <= soon_limit
+                )
+            else:
+                line.is_deadline_past = False
+                line.is_deadline_soon = False
+
+    notif_vencida_sent = fields.Boolean(
+        string="Notificación Vencida Enviada",
+        default=False,
+        copy=False,
+    )
+    notif_proxima_sent = fields.Boolean(
+        string="Notificación Próxima Enviada",
+        default=False,
+        copy=False,
+    )
+
+    def write(self, vals: dict) -> bool:
+        if "date_deadline_invoice" in vals:
+            vals["notif_vencida_sent"] = False
+            vals["notif_proxima_sent"] = False
+        return super().write(vals)
+
+    @api.model
+    def _cron_check_billing_deadlines(self) -> None:
+        """Sends push notifications for uninvoiced lines that are overdue or
+        due within 3 days. Each notification is sent only once per line."""
+        from odoo.addons.telegram_notifier.telegram_service import send_message
+
+        today = fields.Date.today()
+        soon_threshold = today + timedelta(days=3)
+
+        base_domain = [("invoiced", "=", False), ("is_invoice_line", "=", False)]
+
+        overdue_lines = self.search(
+            base_domain
+            + [
+                ("date_deadline_invoice", "<", today),
+                ("notif_vencida_sent", "=", False),
+            ]
+        )
+        upcoming_lines = self.search(
+            base_domain
+            + [
+                ("date_deadline_invoice", ">=", today),
+                ("date_deadline_invoice", "<=", soon_threshold),
+                ("notif_proxima_sent", "=", False),
+            ]
+        )
+
+        internal_partners = (
+            self.env["res.users"]
+            .search([("share", "=", False), ("active", "=", True)])
+            .mapped("partner_id")
+        )
+
+        if overdue_lines:
+            count = len(overdue_lines)
+            bus_msg = {
+                "title": "⚠️ Líneas de servicio vencidas",
+                "message": (
+                    f"Hay {count} línea(s) de servicio con Límite de Facturación "
+                    "vencido que aún no se han facturado."
+                ),
+                "type": "warning",
+                "sticky": True,
+            }
+            for partner in internal_partners:
+                self.env["bus.bus"]._sendone(partner, "simple_notification", bus_msg)
+
+            lines_detail = "\n".join(
+                f"  • {l.contrato_id.name} | {l.name} | Límite: {l.date_deadline_invoice}"
+                for l in overdue_lines
+            )
+            send_message(
+                f"⚠️ Líneas de servicio VENCIDAS sin facturar: {count}\n\n{lines_detail}"
+            )
+            overdue_lines.with_context(is_uninvoice=True).write(
+                {"notif_vencida_sent": True}
+            )
+            _logger.info(
+                "Billing deadline cron: sent overdue notification for %d lines.", count
+            )
+
+        if upcoming_lines:
+            count = len(upcoming_lines)
+            bus_msg = {
+                "title": "🔔 Líneas de servicio próximas a vencer",
+                "message": (
+                    f"Hay {count} línea(s) de servicio con Límite de Facturación "
+                    "en los próximos 3 días que aún no se han facturado."
+                ),
+                "type": "warning",
+                "sticky": True,
+            }
+            for partner in internal_partners:
+                self.env["bus.bus"]._sendone(partner, "simple_notification", bus_msg)
+
+            lines_detail = "\n".join(
+                f"  • {l.contrato_id.name} | {l.name} | Límite: {l.date_deadline_invoice}"
+                for l in upcoming_lines
+            )
+            send_message(
+                f"🔔 Líneas de servicio próximas a vencer ({count}):\n\n{lines_detail}"
+            )
+            upcoming_lines.with_context(is_uninvoice=True).write(
+                {"notif_proxima_sent": True}
+            )
+            _logger.info(
+                "Billing deadline cron: sent upcoming notification for %d lines.", count
+            )
+
+    def action_facturar_multiples_wizard(self) -> dict:
+        """Abre el wizard de facturación para las líneas uninvoiced seleccionadas."""
+        lines = self.filtered(lambda l: not l.invoiced and not l.is_invoice_line)
+        if not lines:
+            raise UserError(
+                _("No hay líneas pendientes de facturar entre las seleccionadas.")
+            )
+        contracts = lines.mapped("contrato_id")
+        if len(contracts) > 1:
+            raise UserError(
+                _(
+                    "Solo puede facturar líneas de un único contrato en una operación. "
+                    "Seleccione líneas pertenecientes al mismo contrato."
+                )
+            )
+        wizard = self.env["lineas.por.facturar.multiples.wizard"].create(
+            {
+                "line_ids": [(6, 0, lines.ids)],
+                "contrato_id": contracts.id,
+            }
+        )
+        return {
+            "name": _("Facturar Líneas Seleccionadas"),
+            "type": "ir.actions.act_window",
+            "res_model": "lineas.por.facturar.multiples.wizard",
+            "res_id": wizard.id,
+            "view_mode": "form",
+            "target": "new",
+        }
 
 
 class ContratoEspecifico(models.Model):

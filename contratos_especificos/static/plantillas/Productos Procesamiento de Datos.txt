@@ -1,0 +1,42 @@
+﻿CONTRATO ESPECÍFICO No. {{specific_number}}
+
+AL CONTRATO MARCO DE PRESTACIÓN DE SERVICIOS INFORMÁTICOS No. {{marco_number}}
+
+DE UNA PARTE: Sociedad Mercantil Soluciones DTeam S.U.R.L, Sociedad Unipersonal de Responsabilidad Limitada, de carácter estatal, representada en este acto por {{our_representative}}, quien comparece en su condición de {{our_rep_function}}, según Acuerdo Número {{our_rep_decision_number}} tomado en la Primera Reunión del Consejo de la Administración en fecha 2 de Octubre de 2023, donde se le otorga la facultad de firmar contratos económicos con clientes en representación de la Sociedad, lo que fue autorizado previamente por el Socio Único mediante la Decisión No. 5 tomada en fecha 15 de septiembre de 2023, y en uso de tal facultad, en lo adelante y a los efectos del presente instrumento jurídico se denominará EL PRESTADOR.
+
+DE LA OTRA PARTE: La {{partner_name}}, a través de {{partner_via}} en forma abreviada {{partner_short_name}}, quien en lo adelante y a los efectos del presente contrato se denominará EL CLIENTE.
+
+AMBAS PARTES: Reconociéndose recíprocamente la representación, el carácter y personalidad con que comparecen a nombre de sus respectivas entidades, y dando fe que mantienen los datos referentes a la personalidad jurídica que obran en el Contrato Marco convienen lo siguiente:
+DEFINICIÓN:
+
+•	Procesamiento de datos: Consiste en la revisión, captación, validación, cálculo e impresión de informaciones derivadas de aplicaciones comercializadas por Soluciones DTeam S.U.R.L. o procedentes de otras fuentes.
+
+CLÁUSULAS:
+
+1.	OBJETO DEL CONTRATO
+
+1.1	El presente Contrato tiene como objeto establecer las Condiciones Específicas para la prestación del servicio de Procesamiento de Datos al producto {{application_name}}.
+
+2.	OBLIGACIONES DE LAS PARTES
+
+2.1	Es obligación de EL PRESTADOR:
+2.1.1 Se designa como Líder del Proyecto a {{our_project_leader}}, quien será el responsable del Proyecto por EL PRESTADOR.
+
+2.3.1 Se designa como Líder del Proyecto a {{project_leader}}, quien será el responsable en el Proyecto por EL CLIENTE.
+2.1.2	Prestar el servicio de Procesamiento de Datos al producto {{application_name}}, en las unidades que se describen en el Lineas de servicios y cumplir con el cronograma de ejecución.
+
+2.3	Es obligación del CLIENTE:
+
+2.3.2	Recibir el servicio de Procesamiento de Datos, en las unidades que se describen en el Lineas de servicios.
+
+OTROS
+
+Todo lo que no se encuentre estipulado en este contrato será regido por lo pactado en el Contrato Marco No. {{marco_number}} de fecha {{marco_date}}; lo cual es de entera vigencia para LAS PARTES.
+
+VIGENCIA
+
+El presente Contrato entrará en vigor a partir de la fecha de su firma por ambas partes y mantendrá su vigencia por el término de un (1) mes natural.
+
+Y para que así conste, se subscribe el presente Contrato, en dos ejemplares, a un mismo tenor y efectos legales, en la ciudad de Sancti Spíritus a los {{day}} días del mes de {{month}} del año {{year}}.
+
+{{service_lines_table}}

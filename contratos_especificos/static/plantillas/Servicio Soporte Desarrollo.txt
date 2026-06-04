@@ -1,0 +1,27 @@
+CONTRATO ESPECÍFICO No. {{specific_number}}
+AL CONTRATO MARCO DE PRESTACIÓN DE SERVICIOS INFORMÁTICOS No. {{marco_number}}
+DE UNA PARTE: Sociedad Mercantil Soluciones DTeam S.U.R.L, Sociedad Unipersonal de Responsabilidad Limitada, de carácter estatal, que en lo adelante y a los efectos de este Contrato se denominará EL PRESTADOR.
+DE LA OTRA PARTE: La {{partner_name}}, a través de {{partner_via}} en forma abreviada {{partner_short_name}}, quien en lo adelante y a los efectos del presente contrato se denominará EL CLIENTE.
+AMBAS PARTES: Reconociéndose recíprocamente la representación, el carácter y personalidad con que comparecen a nombre de sus respectivas entidades, y dando fe que mantienen los datos referentes a la personalidad jurídica que obran en el Contrato Marco convienen lo siguiente:
+DEFINICIÓN:
+•	Soporte: Es el servicio de asistencia técnica que brinda el distribuidor de una aplicación relacionada con aclaración de dudas de operación o errores de operación, aunque impliquen la modificación de los programas y corrección o ajuste de las bases de datos. Se realiza de manera presencial
+CLÁUSULAS:
+1.	OBJETO DEL CONTRATO
+1.1	El presente Contrato tiene como objeto establecer las Condiciones Específicas para la prestación del servicio de Soporte al Desarrollo a la Medida {{application_name}}, como se relaciona en el Lineas de servicios, que forma parte integrante del presente instrumento jurídico.
+2.	OBLIGACIONES DE LAS PARTES
+2.1	Es obligación de EL PRESTADOR:
+2.1.1	Prestar el servicio de Soporte al Desarrollo a la Medida {{application_name}}, como se describe en la Cláusula 3.
+2.1.2	Recepcionar en el Centro de Soporte, por las vías de comunicación: presencial o telefónica, la solicitud de asistencia técnica realizada por EL CLIENTE.
+2.1.3	Ejecutar el servicio de Soporte, de forma presencial, dando solución a la necesidad de EL CLIENTE, para lo cual EL PRESTADOR tendrá un término de tres (3) días hábiles, para acudir al CLIENTE, contados a partir de la notificación de la solicitud del servicio realizada en el Centro de Soporte, y se firmará Orden de Servicio de Soporte.
+2.2	Es obligación del CLIENTE:
+2.2.1	Solicitar asistencia técnica en el Centro de Soporte por las vías de comunicación: presencial o telefónica a los números: 41327273 ó 41327980, de lunes a jueves, dentro del horario de 8:00 am a 5:00 pm, y los viernes de 8:00 am a 4:00 pm.
+2.2.2	Recibir el servicio de Soporte al Desarrollo a la Medida {{application_name}}, como se describe en la Cláusula 3.
+2.2.3	Firmar la Orden de Servicio de Soporte cuando reciba la asistencia técnica.
+2.2.4	De requerirse una modificación en la aplicación {{application_name}}, que no sea resultado de un error de la misma, se realizará un nuevo contrato y pago adicional.		
+3.	OTROS
+3.1	Todo lo que no se encuentre estipulado en este contrato será regido por lo pactado en el Contrato Marco No. {{marco_number}} de fecha {{marco_date}}; lo cual es de entera vigencia para LAS PARTES.
+4.	VIGENCIA
+4.1	El presente Contrato, subscrito entre las partes, entrará en vigor a partir de fecha {{start_date}} y mantendrá su vigencia por el término de {{validity_years}} año natural.
+
+Y para que así conste, se subscribe el presente Contrato, en dos ejemplares, a un mismo tenor y efectos legales, en la ciudad de Sancti Spíritus a los {{day}} días del mes de {{month}} del año {{year}}.
+

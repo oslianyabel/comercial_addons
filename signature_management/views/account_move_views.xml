@@ -12,6 +12,9 @@
                 <attribute name="optional">show</attribute>
                 <attribute name="string">Total</attribute>
             </xpath>
+            <xpath expr="//field[@name='invoice_line_ids']//field[@name='price_subtotal']" position="after">
+                <field name="date_deadline_invoice" optional="show" string="Límite de Facturación" readonly="1"/>
+            </xpath>
             <xpath expr="//div[@name='button_box']" position="inside">
                 <button class="oe_stat_button"
                         name="action_open_contrato_especifico"

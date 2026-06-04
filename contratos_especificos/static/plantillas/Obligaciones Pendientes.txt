@@ -1,0 +1,28 @@
+﻿CONTRATO ESPECÍFICO No. {{specific_number}}
+
+AL CONTRATO MARCO DE PRESTACIÓN DE SERVICIOS INFORMÁTICOS No. {{marco_number}}
+
+DE UNA PARTE: Sociedad Mercantil Soluciones DTeam S.U.R.L, Sociedad Unipersonal de Responsabilidad Limitada, de carácter estatal, que en lo adelante y a los efectos de este Contrato se denominará EL PRESTADOR.
+
+DE LA OTRA PARTE: La {{partner_name}}, a través de {{partner_via}} en forma abreviada {{partner_short_name}}, quien en lo adelante y a los efectos del presente contrato se denominará EL CLIENTE.
+
+AMBAS PARTES: Reconociéndose recíprocamente la representación, el carácter y personalidad con que comparecen a nombre de sus respectivas entidades, y dando fe que mantienen los datos referentes a la personalidad jurídica que obran en el Contrato Marco convienen lo siguiente:
+CLÁUSULAS:
+
+PRIMERA: Que en fecha {{marco_date}} las partes suscribieron un acta de acuerdo de terminación del contrato marco número {{marco_number}}, donde acordaron que las obligaciones suscritas en los contratos específicos se describirían en el nuevo contrato firmado con la Sociedad Unipersonal de Responsabilidad Limitada Soluciones DTeam, S.U.R.L. a los efectos de cumplimentar los servicios pactados pendientes de ejecutar por el prestador y las obligaciones de pago que hayan sido contraídas por el cliente.
+
+SEGUNDA: La prestación de los servicios pendientes, el importe y fecha de facturación se describen en el Lineas de servicios adjunto.
+
+TERCERA: Ambas partes acuerdan que se presten los servicios informáticos descritos en los plazos y precios precisados en la cláusula anterior.
+
+OTROS
+
+Todo lo que no se encuentre estipulado en este contrato será regido por lo pactado en el Contrato Marco No. {{marco_number}}; lo cual es de entera vigencia para LAS PARTES.
+
+VIGENCIA
+
+El presente Contrato entrará en vigor a partir de la fecha de su firma por ambas partes y mantendrá su vigencia hasta que se culmine el servicio pactado.
+
+Y para que así conste, se subscribe el presente Contrato, en dos ejemplares, a un mismo tenor y efectos legales, en la ciudad de Sancti Spíritus a los {{day}} días del mes de {{month}} del año {{year}}.
+
+{{service_lines_table}}
